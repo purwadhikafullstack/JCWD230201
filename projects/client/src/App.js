@@ -1,6 +1,6 @@
 //import dependencies
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import {useState} from 'react'
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import {useEffect, useState} from 'react'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 
@@ -20,6 +20,7 @@ import Footer from './components/homeUser/footer/footer';
 function App() {
   let [username,setUsername] = useState()
   let navigate = useNavigate()
+  let location = useLocation()
   
   
   let loginAccount = async(inputEmail,inputPassword)=>{
@@ -29,11 +30,18 @@ function App() {
         console.log(response)
         setUsername(response.data.data.name)
         localStorage.setItem('token', response.data.data.id)
-        toast.success('Login Success!')
+        toast.success('Login Success!',{
+          style:{
+            background:"black",
+            color:'white'
+          }
+        })
 
         setTimeout(()=>{
-          toast('redirecting...')
-      }, 2000)
+          toast('redirecting...',{
+            duration:2500
+          })
+      }, 200)
 
         setTimeout(()=>{
             navigate('/admin')
@@ -43,7 +51,18 @@ function App() {
     }
 }
 
+useEffect(()=>{
+  console.log(location.pathname.split('/')[1])
+},[])
+
  return(
+  location.pathname.split('/')[1]=="admin"?
+  <>
+  <Routes>
+    <Route path='/admin' element={<Admin data={{username}}/>} />
+  </Routes>
+  </>
+  :
   <>
      <NavbarUser />
      <Routes>
@@ -55,6 +74,7 @@ function App() {
      <Toaster/>
      <Footer />
   </>
+  
   );
 }
 

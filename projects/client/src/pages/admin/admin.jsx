@@ -16,12 +16,17 @@ export default function Admin(props) {
             <div className='text-black border w-4/5 flex flex-col'>
 
                 <div>
-a
+                This is Top Bar Admin
                     {/* top bar */}
                 </div>
+                
                      
                         
                 <Outlet/>
+                
+                <div>
+                    this is content
+                </div>
                 {/* after sidebar */}
             </div>
 

@@ -7,8 +7,8 @@ import ManageAccount from '../manageAccount/manageaccount'
 export default function SidebarAdmin(){
     return(
         <div className="flex flex-col px-5 py-5 w-1/5 h-screen bg-black text-white">
-        <div className='mb-10 text-center'>
-            iVRT
+        <div className='mb-10 text-center text-3xl font-semibold'>
+            iFrit
         </div>
 
         <div className='flex flex-col gap-4'>
