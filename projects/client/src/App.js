@@ -4,10 +4,13 @@ import {useState} from 'react'
 import axios from 'axios'
 import toast, {Toaster} from 'react-hot-toast'
 
+
+
 //import pages
 import Login from './pages/login/login';
 // import Home from './pages/home/home.jsx';
 import Register from './pages/register/register';
+import Admin from './pages/admin/admin';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -18,7 +21,9 @@ function App() {
   let [username,setUsername] = useState()
   let navigate = useNavigate()
   
+  
   let loginAccount = async(inputEmail,inputPassword)=>{
+    console.log(inputEmail)
     try {
         let response = await axios.post('http://localhost:8000/admin/login', {email:inputEmail,password:inputPassword})
         console.log(response)
@@ -34,7 +39,7 @@ function App() {
             navigate('/admin')
         }, 3000)
     } catch (error) {
-        console.log(error.response.data.message)
+        console.log(error)
     }
 }
 
@@ -45,6 +50,7 @@ function App() {
        {/* <Route path='/' element={<Home />} /> */}
        <Route path='/login' element={<Login funcLogin={{loginAccount}} />} />
        {/* <Route path='/register' element={<Register />} /> */}
+       <Route path='/admin' element={<Admin data={{username}}/>} />
      </Routes>
      <Toaster/>
      <Footer />
