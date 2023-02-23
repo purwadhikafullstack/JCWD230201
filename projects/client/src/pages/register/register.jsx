@@ -76,7 +76,7 @@ export default function Register() {
                     </button>
 
                     <div className="mt-2 flex justify-center">
-                        Already have an account? <Link to='/login' className="font-bold hover:text-gray-700 ml-2">Login Here</Link>
+                        Already have an account? <Link to='/login' className="font-bold ml-2 hover:text-gray-700 ml-2">Login Here</Link>
                     </div>
 
                 </div>
