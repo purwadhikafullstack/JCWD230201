@@ -16,6 +16,9 @@ const {adminRouter} = require('./routers')
 // NOTE : Add your routes here
 app.use('/admin', adminRouter)
 
+app.use('/users', userRouter)
+app.use('/product', productRouter)
+
 // ### Sequelize Synchronous
 const Sequelize = require('sequelize');
 const Models = require('./models');
