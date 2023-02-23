@@ -83,7 +83,7 @@ module.exports= {
                 data: error
             })
         }
-    },
+    } ,
     getCategory: async(req,res)=>{
         try {
             let data = await db.category.findAll({
