@@ -12,7 +12,7 @@ export default function NavbarUser() {
                     <Link to='/'>
                         <div className="mr-10">
                             <button className="text-3xl">
-                                iFrit
+                                iVrt
                             </button>
                         </div>
                     </Link>
@@ -190,10 +190,22 @@ export default function NavbarUser() {
                 </div>
                 <div className="flex gap-5 text-2xl">
                     <button>
-                        <MdSearch />
+                        <Tooltip
+                            content="Search"
+                            placement="bottom"
+                            className=" mt-6"
+                        >
+                            <MdSearch />
+                        </Tooltip>
                     </button>
                     <button>
-                        <MdFavorite />
+                        <Tooltip
+                            content="Wishlist"
+                            placement="bottom"
+                            className=" mt-6"
+                        >
+                            <MdFavorite />
+                        </Tooltip>
                     </button>
                     <Link to='/cart'>
                         <Tooltip
