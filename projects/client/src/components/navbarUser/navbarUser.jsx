@@ -12,7 +12,7 @@ export default function NavbarUser() {
                     <Link to='/'>
                         <div className="mr-10">
                             <button className="text-3xl">
-                                iVrt
+                                iFrit
                             </button>
                         </div>
                     </Link>

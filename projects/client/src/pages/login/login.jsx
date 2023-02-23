@@ -6,7 +6,6 @@ export default function Login() {
         <>
             {/* Main */}
             <div className="flex justify-center items-center h-screen">
-
                 {/* Card */}
                 <div className="border-2 border-gray-200 w-max px-5 py-5 rounded-lg shadow-lg">
 
@@ -41,7 +40,6 @@ export default function Login() {
                     </div>
 
                 </div>
-
             </div>
         </>
     )
