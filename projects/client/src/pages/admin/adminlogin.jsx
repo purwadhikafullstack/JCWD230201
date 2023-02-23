@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 
 
-export default function Login(props) {
+export default function AdminLogin() {
 
     let navigate = useNavigate()
     const { user, setUser } = useContext(userData)
@@ -45,7 +45,7 @@ export default function Login(props) {
                 <div className="border-2 border-gray-200 w-max px-5 py-5 rounded-lg shadow-lg">
 
                     <div>
-                        <h1 className="font-bold text-xl">Login</h1>
+                        <h1 className="font-bold text-xl">Login into Admin</h1>
                     </div>
 
                     <div className="my-5">
@@ -56,11 +56,6 @@ export default function Login(props) {
                     <div className="my-5">
                         <p className="font-semibold">Password</p>
                         <input ref={password} required type='password' className="py-1 px-1 w-96 rounded mt-2 focus:ring-transparent focus:border-black" />
-                    </div>
-
-                    <div className="flex items-center mr-4">
-                        <input id="red-checkbox" type="checkbox" value="" className="w-4 h-4 text-neutral-900 bg-gray-100 border-gray-300 rounded focus:ring-transparent dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label htmlFor="red-checkbox" className="ml-2 text-sm font-medium dark:text-gray-300">Ingat Saya</label>
                     </div>
 
                     <button onClick={async () => {
