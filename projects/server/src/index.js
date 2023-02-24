@@ -11,13 +11,12 @@ app.use(cors());
 app.use(express.json());
 
 //#region API ROUTES
-const {adminRouter} = require('./routers')
+const {adminRouter,userRouter} = require('./routers')
+
 // ===========================
 // NOTE : Add your routes here
 app.use('/admin', adminRouter)
-
 app.use('/users', userRouter)
-app.use('/product', productRouter)
 
 // ### Sequelize Synchronous
 const Sequelize = require('sequelize');
