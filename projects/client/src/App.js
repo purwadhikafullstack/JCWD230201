@@ -17,14 +17,16 @@ import AdminLogin from './pages/admin/adminlogin';
 import NavbarUser from './components/navbarUser/navbarUser';
 import Footer from './components/homeUser/footer/footer';
 import Product from './components/product/product';
+import ProductDetail from './components/product_detail/product_detail';
 
 
 function App() {
   let [user, setUser] = useState('a')
   let navigate = useNavigate()
   let location = useLocation()
-  
+
   const [show, setShow] = useState([])
+  const [showDetail, setShowDetail] = useState([])
 
   let userValue = useMemo(()=> ({user,setUser}), [user,setUser])
 
@@ -64,6 +66,7 @@ function App() {
             <Route path='/product/2' element={<Product data={{show}}/>} />
             <Route path='/product/3' element={<Product data={{show}}/>} />
             <Route path='/product/4' element={<Product data={{show}}/>} />
+            <Route path='/product/productdetail/:id' element={<ProductDetail func={{setShowDetail}} data={{showDetail, show}} />} />
           </Routes>
           <Toaster />
           <Footer />
