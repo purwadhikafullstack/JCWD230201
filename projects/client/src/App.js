@@ -1,8 +1,7 @@
 //import dependencies
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
-import axios from 'axios'
-import toast, { Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 import { userData } from './data/userData'
 import { CheckLogin } from './utils/checklogin';
 
@@ -16,12 +15,18 @@ import AdminLogin from './pages/admin/adminlogin';
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
 import Footer from './components/homeUser/footer/footer';
+import AdminSetting from './components/adminContainer/adminsetting';
+import Dashboard from './components/adminContainer/dashboard';
+import AdminSettingProfile from './components/adminContainer/adminsettingprofile';
+import GetAllAccount from './components/adminContainer/getallaccount';
+import Error from './components/error404/error';
+import ErrorAdmin from './components/error404/erroradmin';
 import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
 
 
 function App() {
-  let [user, setUser] = useState('a')
+  let [user, setUser] = useState(null)
   let navigate = useNavigate()
   let location = useLocation()
 
@@ -30,30 +35,35 @@ function App() {
 
   let userValue = useMemo(()=> ({user,setUser}), [user,setUser])
 
-  let keepLogin = async()=>{
+  let keepLogin = async () => {
     let response = await CheckLogin()
     console.log(response.id)
-    if(!response){
+    if (!response) {
       localStorage.removeItem('token')
-      setUser('')
+      setUser(null)
     }
     setUser(response)
   }
 
-  useEffect( () => {
-     keepLogin()
+  useEffect(() => {
+    keepLogin()
   }, [])
 
   return (
     <userData.Provider value={userValue}>
       {
       location.pathname.split('/')[1] == "admin" ?
-        <>
-          <Routes>
-            <Route path='/admin' element={<Admin/>} >
-            </Route>
-          </Routes>
-        </>
+          <>
+            <Routes>
+              <Route path='/admin' element={<Admin />} >
+                <Route path='' element={<Dashboard />} />
+                <Route path='all-user' element={<GetAllAccount/>}/>
+                <Route path='setting' element={<AdminSetting />} />
+                <Route path='profile/:id' element={<AdminSettingProfile />} />
+                <Route path='*' element={<ErrorAdmin/>} />
+              </Route>
+            </Routes>
+          </>
         :
         <>
           <NavbarUser func={{setShow}} data={{show}}/>
@@ -62,6 +72,7 @@ function App() {
             <Route path='/login' element={<Login/>} />
             <Route path='/register' element={<Register />} />
             <Route path='/login-admin' element={<AdminLogin/>}/>
+             <Route path='*' element={<Error/>} />
             <Route path='/product/1' element={<Product data={{show}}/>} />
             <Route path='/product/2' element={<Product data={{show}}/>} />
             <Route path='/product/3' element={<Product data={{show}}/>} />

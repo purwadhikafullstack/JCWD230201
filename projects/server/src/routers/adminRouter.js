@@ -9,8 +9,11 @@ const {tokenVerify} = require('../middleware/verifyToken')
 
 // path nya
 Router.post('/login', adminController.adminLogin)
-// Router.post('/register', adminController.register) buat inject super admin
+Router.post('/profile-setting', adminController.findAdmin)
+Router.post('/update', adminController.update)
+Router.post('/register', adminController.register)
 Router.get('/getAdmin', adminController.getAllAdmin)
+Router.get('/getAllUser', adminController.getAllUser)
 Router.get('/keep-login', tokenVerify, adminController.keep_login)
 
 //

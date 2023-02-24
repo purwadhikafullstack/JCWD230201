@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.location_warehouse,{
-        foreignKey:'admin_id'
+      this.belongsTo(models.location_warehouse,{
+        foreignKey:'location_warehouse_id'
       })
     }
   }

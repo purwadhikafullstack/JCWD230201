@@ -30,12 +30,12 @@ export default function ManageAccount(){
         {
             toogleMA ?
                 <div className='flex flex-col gap-3 mt-3' >
-                    <button className='ml-5 flex text-sm items-center gap-2'>
+                    <button onClick={()=> navigate('all-user') }  className='ml-5 flex text-sm items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
                         <FaUserFriends size={'20px'} />
                         All Account
                     </button>
 
-                    <button onClick={()=> navigate('setting') } className='ml-5 flex text-sm items-center gap-2'>
+                    <button onClick={()=> navigate('setting') } className='ml-5 flex text-sm items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
                         <FaUserCog size={'18px'} />
                         Admin Settings
                     </button>
