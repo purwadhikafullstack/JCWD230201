@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.location_product,{
         foreignKey:'location_warehouse_id'
       }),
-      this.belongsTo(models.admin,{
-        foreignKey:'admin_id'
+      this.hasOne(models.admin,{
+        foreignKey:'location_warehouse_id'
       })
     }
   }
