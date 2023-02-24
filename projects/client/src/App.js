@@ -16,12 +16,15 @@ import AdminLogin from './pages/admin/adminlogin';
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
 import Footer from './components/homeUser/footer/footer';
+import Product from './components/product/product';
 
 
 function App() {
   let [user, setUser] = useState('a')
   let navigate = useNavigate()
   let location = useLocation()
+  
+  const [show, setShow] = useState([])
 
   let userValue = useMemo(()=> ({user,setUser}), [user,setUser])
 
@@ -51,12 +54,16 @@ function App() {
         </>
         :
         <>
-          <NavbarUser />
+          <NavbarUser func={{setShow}} data={{show}}/>
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login/>} />
             <Route path='/register' element={<Register />} />
             <Route path='/login-admin' element={<AdminLogin/>}/>
+            <Route path='/product/1' element={<Product data={{show}}/>} />
+            <Route path='/product/2' element={<Product data={{show}}/>} />
+            <Route path='/product/3' element={<Product data={{show}}/>} />
+            <Route path='/product/4' element={<Product data={{show}}/>} />
           </Routes>
           <Toaster />
           <Footer />
