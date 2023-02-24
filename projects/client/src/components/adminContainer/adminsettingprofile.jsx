@@ -102,7 +102,7 @@ export default function AdminSettingProfile() {
 
             </div>
             :
-           navigate('/page-not-found')
+           navigate('*')
            :
            navigate('/page-not-found')
     )

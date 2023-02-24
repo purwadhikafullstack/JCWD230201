@@ -108,6 +108,6 @@ export default function AdminSetting() {
             </div>
         </div>
         :
-        navigate('/page-not-found')
+        navigate('*')
     )
 }
