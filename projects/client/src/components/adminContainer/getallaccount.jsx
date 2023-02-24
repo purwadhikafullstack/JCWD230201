@@ -103,7 +103,7 @@ export default function GetAllAccount(){
         </div>
     </div>
     :
-    navigate('/page-not-found')
+    navigate('/*')
     :
     navigate('/page-not-found')
     )

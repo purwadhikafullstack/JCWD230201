@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 //#region API ROUTES
-const {adminRouter,userRouter} = require('./routers')
+const {adminRouter,userRouter,productRouter} = require('./routers')
 
 // ===========================
 // NOTE : Add your routes here
