@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
 import { userData } from '../../data/userData'
+import MenuAdminSetting from '../menu dropdown/menuadminsetting'
 
 import './adminsetting.css'
 
@@ -47,9 +48,6 @@ export default function AdminSetting() {
                                 Name
                             </th>
                             <th>
-                                Role
-                            </th>
-                            <th>
                                 Phone number
                             </th>
                             <th>
@@ -81,9 +79,6 @@ export default function AdminSetting() {
                                                 {value.name}
                                             </td>
                                             <td>
-                                                Admin Warehouse
-                                            </td>
-                                            <td>
                                                 {value.phone_number?value.phone_number:'-'}
                                             </td>
                                             <td>
@@ -92,6 +87,9 @@ export default function AdminSetting() {
                                                 '-':
                                                 value.location_warehouse_id
                                                 }
+                                            </td>
+                                            <td>   
+                                            <MenuAdminSetting/>
                                             </td>
                                         </tr>
                                     )

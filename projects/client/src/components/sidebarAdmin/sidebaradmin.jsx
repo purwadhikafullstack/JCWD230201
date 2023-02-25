@@ -1,4 +1,4 @@
-import { FaWarehouse } from 'react-icons/fa'
+import { TbBuildingWarehouse } from 'react-icons/tb'
 import { MdOutlineSpaceDashboard, MdAssignment } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
@@ -34,7 +34,7 @@ export default function SidebarAdmin(){
             
 
             <button className='flex items-center opacity-50 ease-in focus:text-white duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                <FaWarehouse size={'20px'} />
+                <TbBuildingWarehouse     size={'20px'} />
                 Warehouse
             </button>
 
