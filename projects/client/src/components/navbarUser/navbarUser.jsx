@@ -10,7 +10,7 @@ export default function NavbarUser(props) {
 
     let getCategory = async()=>{
         try {
-            let response = await axios.get(`http://localhost:5050/product/category`)
+            let response = await axios.get(`http://localhost:8000/product/category`)
             // setCategory(data.data)
             // console.log(response.data.data)
             setCategory(response.data.data)
@@ -21,7 +21,7 @@ export default function NavbarUser(props) {
 
     let getProduct = async(name)=>{
         try {
-            let {data} = await axios.get(`http://localhost:5050/product/${name}`)
+            let {data} = await axios.get(`http://localhost:8000/product/${name}`)
             props.func.setShow(data.data)
         } catch (error) {
             console.log(error)

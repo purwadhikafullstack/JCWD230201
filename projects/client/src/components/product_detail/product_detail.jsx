@@ -32,7 +32,7 @@ export default function ProductDetail(props) {
     let getProductDetail = async()=>{
         try {
             // console.log(id);
-            let response = await axios.get(`http://localhost:5050/product/productdetail/${id}`)
+            let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
             // console.log(response.data.data[0].product_images[0].img);
             setDetail(response.data.data[0])
             setDetailProduct(response.data.data[0].product_details)
@@ -43,7 +43,7 @@ export default function ProductDetail(props) {
 
     let getSelected = async(mem)=>{
         try {
-            let response = await axios.get(`http://localhost:5050/product/${id}/${colors}/${mem}`)
+            let response = await axios.get(`http://localhost:8000/product/${id}/${colors}/${mem}`)
             setMemory(mem)
             setSelected(response.data.data[0]);
         } catch (error) {
