@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
 import { userData } from '../../data/userData'
-import MenuAdminSetting from '../menu dropdown/menuadminsetting'
+import MenuAdminSetting from '../menuDropdown/menuadminsetting'
 
 import './adminsetting.css'
 
