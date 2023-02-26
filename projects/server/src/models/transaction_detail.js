@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     product_name:DataTypes.STRING,
     qty: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
+    weight: DataTypes.INTEGER,
+    memory_storage: DataTypes.INTEGER,
+    color:DataTypes.STRING,
+    connectivity:DataTypes.STRING,
+    screen_size:DataTypes.STRING,
+    processor:DataTypes.STRING,
     createdAt:{
       type:DataTypes.DATE,
       defaultValue:sequelize.literal('CURRENT_TIMESTAMP')

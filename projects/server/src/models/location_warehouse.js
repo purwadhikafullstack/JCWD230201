@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       }),
       this.hasOne(models.admin,{
         foreignKey:'location_warehouse_id'
+      }),
+      this.hasMany(models.transaction,{
+        foreignKey:'location_warehouse_id'
       })
     }
   }

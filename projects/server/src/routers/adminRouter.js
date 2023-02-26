@@ -15,6 +15,7 @@ Router.post('/register', adminController.register)
 Router.get('/getAdmin', adminController.getAllAdmin)
 Router.get('/getAllUser', adminController.getAllUser)
 Router.get('/keep-login', tokenVerify, adminController.keep_login)
+Router.post('/delete', adminController.delete)
 
 //
 module.exports = Router

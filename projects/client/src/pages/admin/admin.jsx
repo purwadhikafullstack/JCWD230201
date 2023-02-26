@@ -40,7 +40,7 @@ export default function Admin() {
             <SidebarAdmin />
             <div className='text-black border w-4/5 flex flex-col'>
                 {user.username ?
-                    <div className='flex justify-end gap-4 p-4 border border-b-gray-300'>
+                    <div className='flex justify-end gap-4 p-4 border shadow-lg border-b-gray-300'>
                       
 
                         <button onClick={()=>logout()}>

@@ -2,6 +2,7 @@ import { useEffect,useState,useContext } from "react"
 import axios from 'axios'
 import { userData } from '../../data/userData'
 import { useNavigate } from "react-router-dom"
+import Loading from '../loading/loading'
 
 export default function GetAllAccount(){
     let navigate = useNavigate()
@@ -28,6 +29,7 @@ export default function GetAllAccount(){
     return(
         user.role?
             user.role==1?
+            dataAdmin?
         <div className="p-5 flex flex-col gap-2">
         <div className="text-2xl font-semibold">
             Hello Sir!
@@ -72,10 +74,7 @@ export default function GetAllAccount(){
                                                 {index+1}
                                             </td>
                                             <td className=''>
-                                                <button className='hover:text-blue-700 hover:underline-offset-4'>
                                                 {value.email}
-                                                </button>
-                                               
                                             </td>
                                             <td>
                                                 {value.name}
@@ -102,6 +101,8 @@ export default function GetAllAccount(){
 
         </div>
     </div>
+    :
+    <Loading/>
     :
     navigate('/*')
     :

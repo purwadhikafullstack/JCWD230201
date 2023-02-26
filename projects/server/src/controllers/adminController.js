@@ -65,7 +65,7 @@ module.exports = {
     adminLogin: async (req, res) => {
         try {
             let { email, password } = req.body
-            console.log(password)
+            // console.log(password)
 
             if(!email || !password ) throw {message : 'Please Fill All Data!'}
  
@@ -160,6 +160,18 @@ module.exports = {
         } catch (error) {
             console.log(error)
         }
+    },
+    delete:async(req,res)=>{
+        let {id} = req.body
+        let deleteAdmin = await db.admin.destroy({
+            where:{
+                id
+            }
+        })
+        res.status(201).send({
+            isError:false,
+            message:'Admin Deleted!',
+        })
     },
     keep_login: async (req, res) => {
 
