@@ -1,5 +1,5 @@
 //define router
-const adminRouter = require('./adminRouter')
+const adminRouter = require('./adminRouter'), transactionRouter = require('./transactionRouter')
 const productRouter = require('./productRouter')
 const userRouter = require('./userRouter')
 
@@ -8,5 +8,6 @@ const userRouter = require('./userRouter')
 module.exports={
     adminRouter,
     productRouter,
-    userRouter
+    userRouter,
+    transactionRouter
 }

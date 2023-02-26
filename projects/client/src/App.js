@@ -23,6 +23,8 @@ import Error from './components/error404/error';
 import ErrorAdmin from './components/error404/erroradmin';
 import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
+import AddAdmin from './components/adminContainer/addadmin';
+import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
 
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
   const [show, setShow] = useState([])
   const [showDetail, setShowDetail] = useState([])
 
-  let userValue = useMemo(()=> ({user,setUser}), [user,setUser])
+  let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
 
   let keepLogin = async () => {
     let response = await CheckLogin()
@@ -52,37 +54,39 @@ function App() {
   return (
     <userData.Provider value={userValue}>
       {
-      location.pathname.split('/')[1] == "admin" ?
+        location.pathname.split('/')[1] == "admin" ?
           <>
             <Routes>
               <Route path='/admin' element={<Admin />} >
                 <Route path='' element={<Dashboard />} />
-                <Route path='all-user' element={<GetAllAccount/>}/>
+                <Route path='all-user' element={<GetAllAccount />} />
                 <Route path='setting' element={<AdminSetting />} />
+                <Route path='setting/addNewAdmin' element={<AddAdmin />} />
                 <Route path='profile/:id' element={<AdminSettingProfile />} />
-                <Route path='*' element={<ErrorAdmin/>} />
+                <Route path='All-Transaction' element={<AllTransaction/>}/>
+                <Route path='*' element={<ErrorAdmin />} />
               </Route>
             </Routes>
           </>
-        :
-        <>
-          <NavbarUser func={{setShow}} data={{show}}/>
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login/>} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/login-admin' element={<AdminLogin/>}/>
-             <Route path='*' element={<Error/>} />
-            <Route path='/product/1' element={<Product data={{show}}/>} />
-            <Route path='/product/2' element={<Product data={{show}}/>} />
-            <Route path='/product/3' element={<Product data={{show}}/>} />
-            <Route path='/product/4' element={<Product data={{show}}/>} />
-            <Route path='/product/productdetail/:id' element={<ProductDetail func={{setShowDetail}} data={{showDetail, show}} />} />
-          </Routes>
-          <Toaster />
-          <Footer />
-        </>
-        }
+          :
+          <>
+            <NavbarUser func={{ setShow }} data={{ show }} />
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/login-admin' element={<AdminLogin />} />
+              <Route path='*' element={<Error />} />
+              <Route path='/product/1' element={<Product data={{ show }} />} />
+              <Route path='/product/2' element={<Product data={{ show }} />} />
+              <Route path='/product/3' element={<Product data={{ show }} />} />
+              <Route path='/product/4' element={<Product data={{ show }} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail }} data={{ showDetail, show }} />} />
+            </Routes>
+            <Toaster />
+            <Footer />
+          </>
+      }
     </userData.Provider>
   );
 }

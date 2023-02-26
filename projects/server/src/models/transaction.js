@@ -26,6 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       }),
       this.hasMany(models.status_transaction_log,{
         foreignKey:'transaction_id'
+      }),
+      this.belongsTo(models.location_warehouse,{
+        foreignKey:'location_warehouse_id'
       })
     }
   }
@@ -33,10 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     ongkir: DataTypes.INTEGER,
     receiver:DataTypes.STRING,
     address:DataTypes.STRING,
-    status_transaction:{
-      type: DataTypes.STRING,
-      defaultValue: 'Menunggu Pembayaran'
-    },
+    warehouse_city:DataTypes.STRING,
     exprired:{
       type:DataTypes.DATE,
       defaultValue : moment().add(1, 'hours').toDate()
