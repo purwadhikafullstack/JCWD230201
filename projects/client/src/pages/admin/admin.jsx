@@ -12,7 +12,7 @@ import Loading from '../../components/loading/loading'
 
 export default function Admin() {
     const { user, setUser } = useContext(userData)
-    console.log(user)
+    // console.log(user)
     let navigate = useNavigate()
 
     let logout = () =>{
