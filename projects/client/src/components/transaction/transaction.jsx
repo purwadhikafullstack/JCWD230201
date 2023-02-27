@@ -8,7 +8,7 @@ export default function Transaction() {
     let navigate = useNavigate()
     let [toogleMA, setToogleMA] = useState(false)
     let [shotgun, setShotgun] = useState([
-        'All Transaction', 'New Transaction', 'Ready to Ship', 'On The Way', 'Finished', 'Rejected'
+        'All Transaction', 'Waiting For Payment', 'Processing', 'Shipped', 'Order Confirmed', 'Canceled'
     ])
     return (
         <div className='flex flex-col'>

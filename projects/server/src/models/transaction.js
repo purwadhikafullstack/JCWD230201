@@ -37,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     receiver:DataTypes.STRING,
     address:DataTypes.STRING,
     warehouse_city:DataTypes.STRING,
+    courier:DataTypes.STRING,
     exprired:{
       type:DataTypes.DATE,
       defaultValue : moment().add(1, 'hours').toDate()

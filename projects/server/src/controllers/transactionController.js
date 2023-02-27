@@ -8,9 +8,11 @@ module.exports= {
     allTransaction:async(req,res)=>{
         
         let response = await db.transaction.findAll({
-            include:{
-                model:db.location_warehouse
-            }
+            include:[
+               { model: db.location_warehouse},
+               {model:db.transaction_detail},
+               {model:db.order_status}
+        ]
         })
 
         res.status(201).send({
