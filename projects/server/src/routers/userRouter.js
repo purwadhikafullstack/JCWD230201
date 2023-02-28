@@ -8,6 +8,8 @@ const { userController } = require('./../controllers')
 
 //path nya
 Router.post('/register', userController.register)
+Router.patch('/activation/:id', userController.activation)
+Router.get('/getStatus/:id', userController.getStatusUser)
 
 //
 module.exports = Router

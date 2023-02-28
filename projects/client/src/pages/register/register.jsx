@@ -25,14 +25,11 @@ export default function Register() {
             if (isNaN(inputPhoneNumber)) throw { message: 'Please input a number' }
 
             setDisabledButton(true)
-            const toastId = toast.loading("Loading...")
 
             let result = await axios.post(`http://localhost:8000/users/register`, { name: inputName, email: inputEmail, phone_number: inputPhoneNumber })
             console.log(result)
 
-            toast.success(`Register success, please check your email`, {
-                id: toastId
-            })
+            toast.success(`Register success, please check your email`)
 
             fullName.current.value = ''
             email.current.value = ''
@@ -97,6 +94,9 @@ export default function Register() {
                     toastOptions={{
                         success: {
                             duration: 10000
+                        },
+                        error: {
+                            duration: 5000
                         }
                     }}
                 />
