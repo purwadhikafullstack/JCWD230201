@@ -9,6 +9,7 @@ import { CheckLogin } from './utils/checklogin';
 import Login from './pages/login/login';
 import Home from './pages/home/home.jsx';
 import Register from './pages/register/register';
+import Activation from './pages/activation/activation';
 import Admin from './pages/admin/admin';
 import AdminLogin from './pages/admin/adminlogin';
 
@@ -39,7 +40,7 @@ function App() {
 
   let keepLogin = async () => {
     let response = await CheckLogin()
-    console.log(response.id)
+    // console.log(response.id)
     if (!response) {
       localStorage.removeItem('token')
       setUser(null)
@@ -63,7 +64,7 @@ function App() {
                 <Route path='setting' element={<AdminSetting />} />
                 <Route path='setting/addNewAdmin' element={<AddAdmin />} />
                 <Route path='profile/:id' element={<AdminSettingProfile />} />
-                <Route path='All-Transaction' element={<AllTransaction/>}/>
+                <Route path='All-Transaction' element={<AllTransaction />} />
                 <Route path='*' element={<ErrorAdmin />} />
               </Route>
             </Routes>
@@ -75,6 +76,7 @@ function App() {
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
               <Route path='/register' element={<Register />} />
+              <Route path='/activation/:id' element={<Activation />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/1' element={<Product data={{ show }} />} />

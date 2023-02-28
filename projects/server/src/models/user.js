@@ -11,38 +11,41 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.transaction,{
-        foreignKey:'user_id'
+      this.hasMany(models.transaction, {
+        foreignKey: 'user_id'
       }),
-      this.hasMany(models.cart,{
-        foreignKey:'user_id'
-      }),
-      this.hasMany(models.user_address,{
-        foreignKey:'user_id'
-      })
+        this.hasMany(models.cart, {
+          foreignKey: 'user_id'
+        }),
+        this.hasMany(models.user_address, {
+          foreignKey: 'user_id'
+        })
     }
   }
   user.init({
-    id:{
-      allowNull:false,
-      autoIncrement:false,
-      primaryKey:true,
+    id: {
+      allowNull: false,
+      autoIncrement: false,
+      primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    password:DataTypes.STRING,
     status: DataTypes.STRING,
     name: DataTypes.STRING,
-    phone_number: DataTypes.INTEGER,
+    phone_number: DataTypes.STRING,
     photo_profile: DataTypes.STRING,
-    createdAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    updatedAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
