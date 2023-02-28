@@ -39,8 +39,6 @@ export default function Activation(props) {
             let result = await axios.patch(`http://localhost:8000/users/activation/${id}`, { password: inputPassword })
             console.log(result)
 
-
-            console.log('ancac')
             password.current.value = ''
             confirmPassword.current.value = ''
 
@@ -50,7 +48,6 @@ export default function Activation(props) {
             setStatusUser(resultStatus.data.data.status)
 
 
-
         } catch (error) {
             console.log(error)
             toast.error(error.message)
@@ -58,6 +55,7 @@ export default function Activation(props) {
             confirmPassword.current.value = ''
         }
     }
+
 
 
     let changeVisiblePassword = () => {
@@ -82,14 +80,24 @@ export default function Activation(props) {
         }
     }
 
+    let getStatusUser = async () => {
+        try {
+            let resultStatus = await axios.get(`http://localhost:8000/users/getStatus/${id}`)
+            setStatusUser(resultStatus.data.data.status)
+            console.log(resultStatus.data.data.status)
+
+        } catch (error) {
+
+        }
+    }
+
+    useEffect(() => {
+        getStatusUser()
+    }, [])
+
     if (statusUser === 'Verified') {
         return <Navigate to='/login' />
     }
-
-
-    // useEffect(() => {
-    //     onActivation()
-    // }, [])
 
     return (
         <>
@@ -98,39 +106,30 @@ export default function Activation(props) {
                     <div className="flex justify-center font-bold text-3xl py-2 border-b-2 border-gray-500">
                         Welcome to iFrit
                     </div>
-                    {statusUser === 'Unverified' ?
-                        <>
-                            <div className="text-gray-400 font-semibold py-3">
-                                <ul>
-                                    Password
-                                </ul>
-                                <li>At least have 8 characters</li>
-                                <li>Must contain Number</li>
-                            </div>
-                            <div className="py-3 font-semibold">
-                                Password
-                            </div>
-                            <div className="flex items-center relative">
-                                <input ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
-                                <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
-                            </div>
-                            <div className="py-3 font-semibold">
-                                Confirm Password
-                            </div>
-                            <div className="flex items-center relative">
-                                <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
-                                <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
-                            </div>
-                            <button onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                                Submit
-                            </button>
-                        </>
-                        :
-                        <>
-                            <div className="flex justify-center text-2xl font-semibold py-5">
-                                Your acount already verified!
-                            </div>
-                        </>}
+                    <div className="text-gray-400 font-semibold py-3">
+                        <ul>
+                            Password
+                        </ul>
+                        <li>At least have 8 characters</li>
+                        <li>Must contain Number</li>
+                    </div>
+                    <div className="py-3 font-semibold">
+                        Password
+                    </div>
+                    <div className="flex items-center relative">
+                        <input ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                        <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                    </div>
+                    <div className="py-3 font-semibold">
+                        Confirm Password
+                    </div>
+                    <div className="flex items-center relative">
+                        <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                        <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                    </div>
+                    <button onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                        Submit
+                    </button>
 
                 </div>
                 <Toaster />
