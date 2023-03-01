@@ -72,12 +72,13 @@ module.exports = {
             let dataAdmin = await db.admin.findOne({
                 where: {
                     email
-                }
+                },
+                include:[{model:db.location_warehouse}]
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
             if (!hashMatch(password, dataAdmin.password)) throw { message: 'Password wrong!' }
           
-            console.log(dataAdmin.name)
+            console.log(dataAdmin.location_warehouse)
             let token = await createToken({ id: dataAdmin.id })
 
             res.status(201).send({
@@ -87,7 +88,10 @@ module.exports = {
                 {
                     'username': `${dataAdmin.name}`,
                     'token': token,
-                    'role': `${dataAdmin.role}`
+                    'role': `${dataAdmin.role}`,
+                    'warehouse': dataAdmin.location_warehouse_id?
+                        dataAdmin.location_warehouse.city:null
+                    
                 }
 
             })
@@ -181,7 +185,8 @@ module.exports = {
         let getDataAdmin = await db.admin.findOne({
             where: {
                 id: getToken.id
-            }
+            },
+            include:[{model:db.location_warehouse}]
         })
 
 
@@ -191,7 +196,9 @@ module.exports = {
             data: {
                 token: getToken,
                 username: getDataAdmin.name,
-                role:getDataAdmin.role
+                role:getDataAdmin.role,
+                warehouse:getDataAdmin.location_warehouse_id?
+                getDataAdmin.location_warehouse.city:null
             }
         })
     }

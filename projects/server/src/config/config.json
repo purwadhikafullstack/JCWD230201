@@ -4,8 +4,7 @@
     "password":"jcwd2302",
     "database": "warehouse",
     "host": "localhost",
-    "dialect": "mysql",
-    "timezone":"+07:00"
+    "dialect": "mysql"
   },
   "test": {
     "username": "root",

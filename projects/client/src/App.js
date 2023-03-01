@@ -2,7 +2,6 @@
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { userData } from './data/userData'
 import { CheckLogin } from './utils/checklogin';
 
 //import pages
@@ -27,9 +26,14 @@ import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
 
+//import context for global
+import { userData } from './data/userData'
+import {TransactionData} from './data/transactionAdmin'
+
 
 function App() {
   let [user, setUser] = useState(null)
+  let [transaction, setTransaction] = useState(null)
   let navigate = useNavigate()
   let location = useLocation()
 
@@ -37,6 +41,7 @@ function App() {
   const [showDetail, setShowDetail] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
+  let transactionDetail = useMemo(()=> ({ transaction, setTransaction }), [transaction, setTransaction] )
 
   let keepLogin = async () => {
     let response = await CheckLogin()
@@ -57,6 +62,7 @@ function App() {
       {
         location.pathname.split('/')[1] == "admin" ?
           <>
+          <TransactionData.Provider value={transactionDetail}>
             <Routes>
               <Route path='/admin' element={<Admin />} >
                 <Route path='' element={<Dashboard />} />
@@ -68,6 +74,7 @@ function App() {
                 <Route path='*' element={<ErrorAdmin />} />
               </Route>
             </Routes>
+            </TransactionData.Provider>
           </>
           :
           <>
