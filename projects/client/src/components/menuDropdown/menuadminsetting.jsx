@@ -1,25 +1,25 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useRef, useState } from 'react'
-import {ChevronDownIcon} from '@heroicons/react/20/solid'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import toast,{Toaster} from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 export default function MenuAdminSetting(data) {
   let navigate = useNavigate()
 
-  let toProfile = async(input) =>{
+  let toProfile = async (input) => {
     navigate(`/admin/profile/${input}`)
-}
+  }
 
-let deleteAdmin = async(input) =>{
-    let response = await axios.post('http://localhost:8000/admin/delete', {id:input})
-    toast.success(response.data.message) 
-    setTimeout(()=>{
+  let deleteAdmin = async (input) => {
+    let response = await axios.post('http://localhost:8000/admin/delete', { id: input })
+    toast.success(response.data.message)
+    setTimeout(() => {
       toast('Loading..')
       window.location.reload(false)
-    },2000)
-}
+    }, 2000)
+  }
   return (
     <div className="">
       <Menu as="div" className="relative inline-block text-left">
@@ -45,11 +45,10 @@ let deleteAdmin = async(input) =>{
             <div className="px-1 py-1 ">
               <Menu.Item >
                 {({ active }) => (
-                  <button 
-                    onClick={()=>toProfile(data.data)}
-                    className={`${
-                      active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  <button
+                    onClick={() => toProfile(data.data)}
+                    className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                   >
                     {active ? (
                       <EditActiveIcon
@@ -62,16 +61,15 @@ let deleteAdmin = async(input) =>{
                         aria-hidden="true"
                       />
                     )}
-                   Edit
+                    Edit
                   </button>
                 )}
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <button onClick={()=> deleteAdmin(data.data)}
-                    className={`${
-                      active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  <button onClick={() => deleteAdmin(data.data)}
+                    className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                   >
                     {active ? (
                       <DeleteActiveIcon
@@ -128,146 +126,6 @@ function EditActiveIcon(props) {
         stroke="#C4B5FD"
         strokeWidth="2"
       />
-    </svg>
-  )
-}
-
-function DuplicateInactiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4 4H12V12H4V4Z"
-        fill="#EDE9FE"
-        stroke="#A78BFA"
-        strokeWidth="2"
-      />
-      <path
-        d="M8 8H16V16H8V8Z"
-        fill="#EDE9FE"
-        stroke="#A78BFA"
-        strokeWidth="2"
-      />
-    </svg>
-  )
-}
-
-function DuplicateActiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M4 4H12V12H4V4Z"
-        fill="#8B5CF6"
-        stroke="#C4B5FD"
-        strokeWidth="2"
-      />
-      <path
-        d="M8 8H16V16H8V8Z"
-        fill="#8B5CF6"
-        stroke="#C4B5FD"
-        strokeWidth="2"
-      />
-    </svg>
-  )
-}
-
-function ArchiveInactiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="5"
-        y="8"
-        width="10"
-        height="8"
-        fill="#EDE9FE"
-        stroke="#A78BFA"
-        strokeWidth="2"
-      />
-      <rect
-        x="4"
-        y="4"
-        width="12"
-        height="4"
-        fill="#EDE9FE"
-        stroke="#A78BFA"
-        strokeWidth="2"
-      />
-      <path d="M8 12H12" stroke="#A78BFA" strokeWidth="2" />
-    </svg>
-  )
-}
-
-function ArchiveActiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect
-        x="5"
-        y="8"
-        width="10"
-        height="8"
-        fill="#8B5CF6"
-        stroke="#C4B5FD"
-        strokeWidth="2"
-      />
-      <rect
-        x="4"
-        y="4"
-        width="12"
-        height="4"
-        fill="#8B5CF6"
-        stroke="#C4B5FD"
-        strokeWidth="2"
-      />
-      <path d="M8 12H12" stroke="#A78BFA" strokeWidth="2" />
-    </svg>
-  )
-}
-
-function MoveInactiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M10 4H16V10" stroke="#A78BFA" strokeWidth="2" />
-      <path d="M16 4L8 12" stroke="#A78BFA" strokeWidth="2" />
-      <path d="M8 6H4V16H14V12" stroke="#A78BFA" strokeWidth="2" />
-    </svg>
-  )
-}
-
-function MoveActiveIcon(props) {
-  return (
-    <svg
-      {...props}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M10 4H16V10" stroke="#C4B5FD" strokeWidth="2" />
-      <path d="M16 4L8 12" stroke="#C4B5FD" strokeWidth="2" />
-      <path d="M8 6H4V16H14V12" stroke="#C4B5FD" strokeWidth="2" />
     </svg>
   )
 }
