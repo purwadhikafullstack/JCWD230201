@@ -1,9 +1,14 @@
 import { Card } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 // import iphonedisc from './../../Assets/iphonedisc.jpg'
 
 export default function Product(props){
+    const {id} = useParams()
 
+    useEffect(()=>{
+        props.func.getProduct(id)
+    },[])
     return(
         <div className="pt-28">
             {/* {console.log(props.data.show[0].product_images[0].img)} */}

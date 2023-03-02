@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdSearch, MdFavorite, MdShoppingBag, MdPerson } from 'react-icons/md'
 import { useState, useEffect } from "react";
 import { Tooltip } from "flowbite-react";
@@ -7,6 +7,8 @@ import axios from "axios";
 export default function NavbarUser(props) {
 
     const [category, setCategory] = useState([])
+
+    let navigate = useNavigate()
 
     let getCategory = async()=>{
         try {
@@ -19,18 +21,8 @@ export default function NavbarUser(props) {
         }
     }
 
-    let getProduct = async(name)=>{
-        try {
-            let {data} = await axios.get(`http://localhost:8000/product/${name}`)
-            props.func.setShow(data.data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     useEffect(() => {
       getCategory()
-    //   getProduct()
     }, [])
 
     return (
@@ -46,13 +38,13 @@ export default function NavbarUser(props) {
                         return(
                             <Link to={`/product/${value.id}`}>
                                 <div className="group relative dropdown px-4 py-7 text-white hover:bg-neutral-500 hover:text-neutral-900 cursor-pointer tracking-wide">
-                                    <button onClick={()=>getProduct(value.id)}>{value.name}</button>
+                                    <button onClick={()=>props.func.getProduct(value.id)}>{value.name}</button>
                                     <div className="group-hover:block dropdown-menu absolute hidden h-auto">
                                         <ul className="mt-7 w-48 -ml-4 bg-white shadow py-5 px-3 bg-opacity-80 rounded-b">
                                         {value.products? value.products.map((val)=>{
                                             return(
                                                 <Link to={`/product/productdetail/${val.id}`}>
-                                                    <li className="py-3">
+                                                    <li onClick={()=>props.func.getProductDetail(val.id)} className="py-3">
                                                         <div className="block text-neutral-800 text-base hover:text-neutral-500 cursor-pointer">
                                                             {val.name}
                                                         </div>
