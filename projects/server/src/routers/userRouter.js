@@ -10,6 +10,8 @@ const { userController } = require('./../controllers')
 Router.post('/register', userController.register)
 Router.patch('/activation/:id', userController.activation)
 Router.get('/getStatus/:id', userController.getStatusUser)
+Router.post('/login', userController.userLogin)
+
 
 //
 module.exports = Router
