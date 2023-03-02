@@ -20,13 +20,10 @@ export const LoginAccount = async (inputEmail, inputPassword, toogle) => {
                 
             }  
         }
-    }
+    
     catch (error) {
         return {
             response: error.response.data.message
         }
     }
-
-
-
 }
