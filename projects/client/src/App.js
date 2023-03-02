@@ -25,6 +25,7 @@ import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
+import Shipping from './components/shipping/shipping';
 
 //import context for global
 import { userData } from './data/userData'
@@ -39,6 +40,8 @@ function App() {
 
   const [show, setShow] = useState([])
   const [showDetail, setShowDetail] = useState([])
+  const [detail, setDetail] = useState([])
+  const [detailProduct, setDetailProduct] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(()=> ({ transaction, setTransaction }), [transaction, setTransaction] )
@@ -51,6 +54,27 @@ function App() {
       setUser(null)
     }
     setUser(response)
+  }
+
+  let getProductDetail = async(id)=>{
+    try {
+        // console.log(id);
+        let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
+        // console.log(response.data.data[0].product_images[0].img);
+        setDetail(response.data.data[0])
+        setDetailProduct(response.data.data[0].product_details)
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+  let getProduct = async(id)=>{
+    try {
+        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
+        setShow(data.data)
+    } catch (error) {
+        console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -78,7 +102,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ setShow }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail,getProduct }} data={{ show }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -86,11 +110,9 @@ function App() {
               <Route path='/activation/:id' element={<Activation />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/1' element={<Product data={{ show }} />} />
-              <Route path='/product/2' element={<Product data={{ show }} />} />
-              <Route path='/product/3' element={<Product data={{ show }} />} />
-              <Route path='/product/4' element={<Product data={{ show }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail }} data={{ showDetail, show }} />} />
+              <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
+              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail,getProductDetail }}/>} />
             </Routes>
             <Toaster />
             <Footer />
