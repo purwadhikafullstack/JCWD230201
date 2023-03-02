@@ -2,7 +2,6 @@
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
 import { Toaster } from 'react-hot-toast'
-import { userData } from './data/userData'
 import { CheckLogin } from './utils/checklogin';
 
 //import pages
@@ -31,17 +30,26 @@ import ConfirmEmail from './pages/confirmEmail/confirmEmail';
 import ResetPassword from './pages/resetPassword/resetPassword';
 import MyAccountInfo from './pages/my-account-info/myAccountInfo';
 import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
+import Shipping from './components/shipping/shipping';
+
+//import context for global
+import { userData } from './data/userData'
+import {TransactionData} from './data/transactionAdmin'
 
 
 function App() {
   let [user, setUser] = useState(null)
+  let [transaction, setTransaction] = useState(null)
   let navigate = useNavigate()
   let location = useLocation()
 
   const [show, setShow] = useState([])
   const [showDetail, setShowDetail] = useState([])
+  const [detail, setDetail] = useState([])
+  const [detailProduct, setDetailProduct] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
+  let transactionDetail = useMemo(()=> ({ transaction, setTransaction }), [transaction, setTransaction] )
 
   let keepLogin = async () => {
     let response = await CheckLogin()
@@ -53,6 +61,27 @@ function App() {
     setUser(response)
   }
 
+  let getProductDetail = async(id)=>{
+    try {
+        // console.log(id);
+        let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
+        // console.log(response.data.data[0].product_images[0].img);
+        setDetail(response.data.data[0])
+        setDetailProduct(response.data.data[0].product_details)
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+  let getProduct = async(id)=>{
+    try {
+        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
+        setShow(data.data)
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
   useEffect(() => {
     keepLogin()
   }, [])
@@ -62,6 +91,7 @@ function App() {
       {
         location.pathname.split('/')[1] == "admin" ?
           <>
+          <TransactionData.Provider value={transactionDetail}>
             <Routes>
               <Route path='/admin' element={<Admin />} >
                 <Route path='' element={<Dashboard />} />
@@ -73,10 +103,11 @@ function App() {
                 <Route path='*' element={<ErrorAdmin />} />
               </Route>
             </Routes>
+            </TransactionData.Provider>
           </>
           :
           <>
-            <NavbarUser func={{ setShow }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail,getProduct }} data={{ show }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -84,11 +115,9 @@ function App() {
               <Route path='/activation/:id' element={<Activation />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/1' element={<Product data={{ show }} />} />
-              <Route path='/product/2' element={<Product data={{ show }} />} />
-              <Route path='/product/3' element={<Product data={{ show }} />} />
-              <Route path='/product/4' element={<Product data={{ show }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail }} data={{ showDetail, show }} />} />
+              <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
+              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail,getProductDetail }}/>} />
             </Routes>
             <Toaster />
             <Footer />

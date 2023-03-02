@@ -11,12 +11,14 @@ export const LoginAccount = async (inputEmail, inputPassword, toogle) => {
         console.log('user') // taro disini buat API user
 
         console.log(response)
-
-        return {
-            response: response.data.message,
-            id: response.data.data.token,
-            username: response.data.data.username,
-            role: response.data.data.role
+            return{
+                response:response.data.message,
+                id:response.data.data.token,
+                username:response.data.data.username,
+                role:response.data.data.role,
+                warehouse:response.data.data.warehouse
+                
+            }  
         }
     }
     catch (error) {

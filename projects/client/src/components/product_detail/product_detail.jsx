@@ -1,11 +1,6 @@
 import axios from "axios"
-// import { Carousel } from "flowbite-react"
+import { Carousel } from "flowbite-react"
 import { useEffect, useState } from "react"
-// import iPhone14pro from './../../Assets/iphone_14_pro.jpg'
-// import iPhone14pro1 from './../../Assets/iphone_14_pro_1.jpg'
-// import iPhone14pro2 from './../../Assets/iphone_14_pro_2.jpg'
-// import iPhone14pro3 from './../../Assets/iphone_14_pro_3.jpg'
-// import iPhone14pro4 from './../../Assets/iphone_14_pro_4.jpg'
 import {useParams} from 'react-router-dom';
 
 export default function ProductDetail(props) {
@@ -13,12 +8,9 @@ export default function ProductDetail(props) {
     const {id} = useParams()
 
     const [quantity, setQuantity] = useState(1)
-    const [detail, setDetail] = useState([])
-    const [detailProduct, setDetailProduct] = useState([])
     const [colors, setColors] = useState([])
     const [memory, setMemory] = useState([])
     const [selected, setSelected] = useState(0)
-    // const [arrDuplicate, setArrDuplicate] = useState([])
 
     let incrementQuantity = () => {
         setQuantity(quantity + 1)
@@ -26,18 +18,6 @@ export default function ProductDetail(props) {
     let decrementQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1)
-        }
-    }
-
-    let getProductDetail = async()=>{
-        try {
-            // console.log(id);
-            let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
-            // console.log(response.data.data[0].product_images[0].img);
-            setDetail(response.data.data[0])
-            setDetailProduct(response.data.data[0].product_details)
-        } catch (error) {
-            console.log(error)
         }
     }
 
@@ -53,33 +33,32 @@ export default function ProductDetail(props) {
 
     
     let arrColor = []
-    for(let i=0 ; i<detailProduct.length ; i++){
-        if(!arrColor.includes(detailProduct[i].color)){
-            arrColor.push(detailProduct[i].color)
+    for(let i=0 ; i<props.data.detailProduct.length ; i++){
+        if(!arrColor.includes(props.data.detailProduct[i].color)){
+            arrColor.push(props.data.detailProduct[i].color)
         }
     }
-    // console.log(arrColor);
+    console.log(arrColor);
     
     let arrMemory = []
-    for(let i=0 ; i<detailProduct.length ; i++){
-        if(!arrMemory.includes(detailProduct[i].memory_storage)){
-            arrMemory.push(detailProduct[i].memory_storage)
+    for(let i=0 ; i<props.data.detailProduct.length ; i++){
+        if(!arrMemory.includes(props.data.detailProduct[i].memory_storage)){
+            arrMemory.push(props.data.detailProduct[i].memory_storage)
         }
     }
-    // console.log(arrMemory);
-
-    useEffect(() => {
-      getProductDetail()
+    console.log(arrMemory);
+    
+    useEffect(()=>{
+        props.func.getProductDetail(id)
     },[])
     
-    if(detail.length==0){
+    if(props.data.detail.length==0){
         return(
             <div>
                 Loading...
             </div>
         )
     }
-
     return (
         <>
         {/* {console.log(detail)} */}
@@ -88,14 +67,14 @@ export default function ProductDetail(props) {
             <div className="pt-28 flex justify-center gap-7">
                 <div className="w-96 h-full">
                     <div className="grid h-56 sm:h-64 xl:h-80 2xl:h-96">
-                        {/* <Carousel> */}            
-                            <img src={require(`../../Assets/${detail.product_images[0].img}`)} alt="...." />                                    
-                        {/* </Carousel> */}
+                        <Carousel>            
+                            <img src={require(`../../Assets/${props.data.detail.product_images[0].img}`)} alt="...." />                                    
+                        </Carousel>
                     </div>
                 </div>
                 <div className="border rounded px-4 py-5">
                     <div className="text-2xl font-bold">
-                        {detail.name}
+                        {props.data.detail.name}
                     </div>
                     <div>
                     <div className="text-sm font-bold py-3 px-1">
@@ -133,7 +112,7 @@ export default function ProductDetail(props) {
                     </div>
                     
                     <div className="w-96 mt-10">
-                        {detail.description}
+                        {props.data.detail.description}
                     </div>
                     <div className="font-semibold mt-10">
                         Isi Kotak :
@@ -145,7 +124,7 @@ export default function ProductDetail(props) {
                 </div>
                 <div className="flex flex-col items-center px-7 py-3 h-max border rounded w-[250px]">
                     <div className="text-2xl font-semibold">
-                        Rp {selected?(selected.price*quantity).toLocaleString():detailProduct[0].price.toLocaleString()}
+                        Rp {selected?(selected.price*quantity).toLocaleString():props.data.detailProduct[0].price.toLocaleString()}
                     </div>
                     <div className="mt-1 line-through">
                         Rp. 19.999.000
@@ -165,6 +144,8 @@ export default function ProductDetail(props) {
                         Add to cart
                     </button>
                 </div>
+                {console.log(props.data.detail)}
+                {console.log(props.data.detailProduct)}
             </div>
         </>
     )
