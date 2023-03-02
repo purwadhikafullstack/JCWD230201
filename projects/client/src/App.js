@@ -26,6 +26,11 @@ import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
+import MyAccount from './pages/my-account/myaccount';
+import ConfirmEmail from './pages/confirmEmail/confirmEmail';
+import ResetPassword from './pages/resetPassword/resetPassword';
+import MyAccountInfo from './pages/my-account-info/myAccountInfo';
+import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 
 
 function App() {

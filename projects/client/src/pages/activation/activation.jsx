@@ -18,11 +18,16 @@ export default function Activation(props) {
 
     const [statusUser, setStatusUser] = useState('')
 
+    const [inputPassword, setInputPassword] = useState()
+
     let { id } = useParams()
+
+    let character = /^.{8,30}$/
+    let character1 = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
 
     let onActivation = async () => {
         try {
-            let inputPassword = password.current.value
+            // let inputPassword = password.current.value
             let inputConfirmPassword = confirmPassword.current.value
             // console.log(inputPassword)
             // console.log(inputConfirmPassword)
@@ -31,12 +36,11 @@ export default function Activation(props) {
 
             if (inputPassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
-            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(inputPassword)) throw { message: 'Password must contains number' }
+            if (!character1.test(inputPassword)) throw { message: 'Password must contains number' }
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
-            let result = await axios.patch(`http://localhost:8000/users/activation/${id}`, { password: inputPassword })
+            let result = await axios.patch(`http://localhost:8000/users/reset-password/${id}`, { password: inputPassword })
             console.log(result)
 
             password.current.value = ''
@@ -106,18 +110,12 @@ export default function Activation(props) {
                     <div className="flex justify-center font-bold text-3xl py-2 border-b-2 border-gray-500">
                         Welcome to iFrit
                     </div>
-                    <div className="text-gray-400 font-semibold py-3">
-                        <ul>
-                            Password
-                        </ul>
-                        <li>At least have 8 characters</li>
-                        <li>Must contain Number</li>
-                    </div>
+
                     <div className="py-3 font-semibold">
                         Password
                     </div>
                     <div className="flex items-center relative">
-                        <input ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                        <input onChange={(e) => setInputPassword(e.target.value)} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
                         <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                     </div>
                     <div className="py-3 font-semibold">
@@ -126,6 +124,14 @@ export default function Activation(props) {
                     <div className="flex items-center relative">
                         <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
                         <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                    </div>
+                    <div className="text-gray-400 font-semibold py-3">
+                        <ul>
+                            Password
+                        </ul>
+                        <li className={(!inputPassword ? '' : character.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>At least have 8 characters</li>
+                        {/*  */}
+                        <li className={(!inputPassword ? '' : character1.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>Must contain Number</li>
                     </div>
                     <button onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
                         Submit
