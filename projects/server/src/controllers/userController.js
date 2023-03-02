@@ -19,6 +19,7 @@ const transporter = require('./../helpers/transporter')
 const fs = require('fs').promises
 
 const handlebars = require('handlebars');
+const { match } = require('assert');
 
 module.exports = {
     register: async (req, res) => {
@@ -61,18 +62,10 @@ module.exports = {
             let { id } = req.params
             let { password } = req.body
 
-            if (password.length < 8) return res.status(400).send({
-                isError: true,
-                message: 'Password at least has 8 characters',
-                data: null
-            })
+            if (password.length < 8) throw { message: 'Password at least has 8 characters' }
 
             let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(password)) return res.status(400).send({
-                isError: true,
-                message: 'Password must contains number',
-                data: null
-            })
+            if (!character.test(password)) throw { message: 'Password must contains number' }
 
             await users.update(
                 { status: 'Verified', password: await hashPassword(password) },
@@ -117,7 +110,51 @@ module.exports = {
             })
 
         } catch (error) {
-            res.status(400).send({
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    userLogin: async (req, res) => {
+        try {
+            let { email, password } = req.body
+            console.log(email)
+            console.log(password)
+
+            if (!password) throw { message: 'Please Fill All Data!' }
+
+            let dataUser = await db.user.findOne({
+                where: {
+                    email
+                }
+            })
+            console.log(dataUser.dataValues)
+            if (!dataUser) throw { message: 'Account not found!' }
+
+            let matchPassword = await hashMatch(password, dataUser.dataValues.password)
+
+            if (matchPassword === false) return res.status(404).send({
+                isError: true,
+                message: 'Password Not Found',
+                data: null
+            })
+
+            const token = createToken({ id: dataUser.dataValues.id, name: dataUser.dataValues.name })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Login Success',
+                data: {
+                    'username': `${dataUser.dataValues.name}`,
+                    'token': token,
+                    'role': null
+                }
+            })
+
+        } catch (error) {
+            res.status(404).send({
                 isError: true,
                 message: error.message,
                 data: null
