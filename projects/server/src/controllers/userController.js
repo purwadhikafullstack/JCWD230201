@@ -27,6 +27,14 @@ module.exports = {
         try {
             let { name, email, phone_number } = req.body
 
+            let dataEmail = await db.user.findOne({
+                where:{
+                    email
+                }
+            })
+
+            if(dataEmail) throw {message:'Email already register'}
+
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: 'Abcde12345', status: 'Unverified' }, { transaction: t })
             console.log(resCreateUsers)
 
@@ -153,6 +161,76 @@ module.exports = {
                 }
             })
 
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    confirmEmail: async (req, res) => {
+        try {
+            let { email } = req.body
+            // console.log(email)
+
+            let data = await db.user.findOne({
+                where: {
+                    email
+                }
+            })
+
+            if (!data) throw { message: 'Email Not Found!' }
+
+            const template = await fs.readFile('./template/resetpassword.html', 'utf-8')
+            const templateToCompile = await handlebars.compile(template)
+            const newTemplate = templateToCompile({ name: data.name, email, url: `http://localhost:3000/reset-password/${data.id}` })
+            await transporter.sendMail({
+                from: 'iFrit',
+                to: email,
+                subject: 'Reset Password',
+                html: newTemplate
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Get Email Success!',
+                data,
+            })
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    resetPassword: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let { id } = req.params
+            let { password } = req.body
+
+            if (password.length < 8) throw { message: 'Password at least has 8 characters' }
+
+            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+            if (!character.test(password)) throw { message: 'Password must contains number' }
+
+            await users.update(
+                { password: await hashPassword(password) },
+                {
+                    where: {
+                        id
+                    }
+                }, { transaction: t }
+            )
+
+            await t.commit()
+            res.status(201).send({
+                isError: false,
+                message: 'Reset Password Success',
+                data: null
+            })
         } catch (error) {
             res.status(404).send({
                 isError: true,

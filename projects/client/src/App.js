@@ -3,6 +3,7 @@ import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { CheckLogin } from './utils/checklogin';
+import axios from 'axios';
 
 //import pages
 import Login from './pages/login/login';
@@ -25,11 +26,8 @@ import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
-import MyAccount from './pages/my-account/myaccount';
 import ConfirmEmail from './pages/confirmEmail/confirmEmail';
 import ResetPassword from './pages/resetPassword/resetPassword';
-import MyAccountInfo from './pages/my-account-info/myAccountInfo';
-import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 import Shipping from './components/shipping/shipping';
 
 //import context for global
@@ -113,6 +111,8 @@ function App() {
               <Route path='/login' element={<Login />} />
               <Route path='/register' element={<Register />} />
               <Route path='/activation/:id' element={<Activation />} />
+              <Route path='/confirm-email' element={<ConfirmEmail />} />
+              <Route path='/reset-password/:id' element={<ResetPassword />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />
