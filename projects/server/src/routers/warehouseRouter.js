@@ -9,6 +9,7 @@ const { warehouseController } = require('./../controllers')
 //path nya
 Router.get('/getwh', warehouseController.getDataWH)
 Router.post('/addWH', warehouseController.addWH)
+Router.post('/updateWH', warehouseController.updateWH)
+Router.post('/deleteWH', warehouseController.deleteWH)
 
-//
 module.exports = Router

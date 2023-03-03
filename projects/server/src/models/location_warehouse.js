@@ -24,8 +24,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   location_warehouse.init({
     city: DataTypes.STRING,
+    city_id:DataTypes.INTEGER,
     subdistrict:DataTypes.STRING,
     province:DataTypes.STRING,
+    province_id:DataTypes.INTEGER,
     address:DataTypes.STRING,
     latitude:DataTypes.STRING,
     longitude:DataTypes.STRING,
