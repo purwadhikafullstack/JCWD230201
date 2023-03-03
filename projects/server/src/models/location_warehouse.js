@@ -26,8 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     subdistrict:DataTypes.STRING,
     province:DataTypes.STRING,
-    latitude:DataTypes.INTEGER,
-    longitude:DataTypes.INTEGER,
+    address:DataTypes.STRING,
+    latitude:DataTypes.STRING,
+    longitude:DataTypes.STRING,
     createdAt:{
       type:DataTypes.DATE,
       defaultValue:sequelize.literal('CURRENT_TIMESTAMP')

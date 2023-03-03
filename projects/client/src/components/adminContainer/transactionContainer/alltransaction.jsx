@@ -10,7 +10,7 @@ import Loading from '../../loading/loading'
 
 export default function AllTransaction() {
     const { transaction, setTransaction } = useContext(TransactionData)
-    const {user,setUser} = useContext(userData)
+    const { user, setUser } = useContext(userData)
 
     let [select, setSelect] = useState(null), [toogle, setToogle] = useState(false), [dataFilter, setDataFilter] = useState([])
     let [dataTR, setDataTR] = useState([]), [totalPrice, setTotalPrice] = useState(0), [date, setDate] = useState([])
@@ -40,14 +40,14 @@ export default function AllTransaction() {
     }
 
     let searchFilter = async (input) => {
-        if(input=="All Transaction") return getAllTr()
+        if (input == "All Transaction") return getAllTr()
         let response = await axios.post('http://localhost:8000/transaction/FWarehouse', { warehouse_city: input })
         setDataTR(response.data.data)
     }
 
 
     let getAllTr = async () => {
-        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse?{warehouse:user.warehouse}:null )
+        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse ? { warehouse: user.warehouse } : null)
         setDataTR(response.data.data)
 
         let loaderPrice = [], loaderDate = []
@@ -77,140 +77,143 @@ export default function AllTransaction() {
     }, [])
 
     return (
-        dataTR?
+        dataTR ?
             <div className="p-5">
                 <div className="text-3xl font-semibold mb-10">
                     Transactions
                 </div>
                 {
-                    !user.warehouse?
-                    <div>
-                         <div className='flex items-center justify-end '>
-                    <div className="filter-dropdown-dalam-produk">
-                        <select onChange={(e) => filter(e.target.value)}
-                            className="form-control border border-gray-300 shadow-lg" placeholder="Filter"
-                        >
-                            {
-                                option.map((item, index) => {
-                                    return (
-                                        <option value={item} >{item}</option>
-                                    )
-                                })
-                            }
-                        </select>
-                    </div>
-                </div>
+                    !user.warehouse ?
+                        <div>
+                            <div className='flex justify-end gap-3 '>
+                                {
+                                    dataFilter.length > 0 ?
+                                        <div>
+                                            <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-300 shadow-lg rounded-md" placeholder="Select Warehouse">
+                                                <option value="All Transaction">All Transaction</option>
+                                                {
+                                                    dataFilter.map((item, index) => {
+                                                        return (
+                                                            <option value={item.city}>{item.city}</option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                        </div> : null
+                                }
+                                <div className="relative">
 
-                <div className='flex justify-between items-center mt-5'>
-                    <div className='flex'>
-                        transaction per page
-                    </div>
-                    {
-                        dataFilter.length > 0 ?
-                            <div>
-                                <select onChange={(e)=>searchFilter(e.target.value)} className="border-gray-300 shadow-lg" placeholder="Select Warehouse">
-                                <option value="All Transaction">All Transaction</option>
-                                    {
-                                        dataFilter.map((item, index) => {
-                                            return (
-                                                <option value={item.city}>{item.city}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div> : null
-                    }
-                </div>
-                    </div>
-                    :
-                    null
+                                    <select onChange={(e) => filter(e.target.value)}
+                                        className="rounded-md border border-gray-300 shadow-lg" placeholder="Filter"
+                                    >
+                                        {
+                                            option.map((item, index) => {
+                                                return (
+                                                    <option value={item} >{item}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div className='flex justify-start items-center mt-5'>
+                                <div className='flex'>
+                                    transaction per page
+                                </div>
+
+                            </div>
+                        </div>
+                        :
+                        null
                 }
-               
+
 
                 <div className='h-full flex flex-col gap-7 mt-5'>
-                    {   
-                        dataTR.length>0?
-                        dataTR.map((item, index) => {
-                            return (
-                                <div className='flex flex-col border border-slate-200 shadow-xl z-0'>
-                                    <div className='flex font-semibold gap-3 p-3'>
-                                        <div className='flex w-1/2 gap-3'>
-                                            <div className='font-semibold'>
-                                                {item.id}
+                    {
+                        dataTR.length > 0 ?
+                            dataTR.map((item, index) => {
+                                return (
+                                    <div className='flex flex-col rounded-md border border-slate-200 shadow-xl z-0'>
+                                        <div className='flex font-semibold gap-3 p-3'>
+                                            <div className='flex w-1/2 gap-3'>
+                                                <div className='font-semibold'>
+                                                    {item.id}
+                                                </div>
+
+                                                <div className={`${shotgunStatus[item.order_status_id - 1]}`}>
+                                                    {item.order_status.status}
+                                                </div>
+
+                                                <div className='flex items-center opacity-50 gap-3'>
+                                                    <BsClock />
+                                                    {(date[index])}
+                                                </div>
                                             </div>
 
-                                            <div className={`${shotgunStatus[item.order_status_id - 1]}`}>
-                                                {item.order_status.status}
-                                            </div>
-
-                                            <div className='flex items-center opacity-50 gap-3'>
-                                                <BsClock />
-                                                {(date[index])}
+                                            <div className='flex w-1/2 justify-end items-center gap-3'>
+                                                <div className='opacity-60 text-sm font-medium'>
+                                                    Deliver from :
+                                                </div>
+                                                WH-{item.location_warehouse.city}
                                             </div>
                                         </div>
 
-                                        <div className='flex w-1/2 justify-end items-center gap-3'>
-                                            <div className='opacity-60 text-sm font-medium'>
-                                                Deliver from :
-                                            </div>
-                                            WH-{item.location_warehouse.city}
-                                        </div>
-                                    </div>
+                                        <div className='flex px-5 justify-between'>
+                                            <div className='w-4/5 flex flex-col'>
+                                                <div className='flex'>
+                                                    <img src={require(`../../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                    <div className='mt-4 font-bold flex flex-col items-start'>
+                                                        <button>
+                                                            {item.transaction_details[0].product_name}
+                                                        </button>
+                                                        <div className='text-sm opacity-60 font-medium'>
+                                                            {item.transaction_details[0].qty} item x Rp. {(item.transaction_details[0].price).toLocaleString()}
+                                                        </div>
+                                                        {
+                                                            (item.transaction_details.length - 1) == 0 ?
+                                                                null
+                                                                :
+                                                                <div className='text-sm opacity-60 font-medium'>
+                                                                    ({item.transaction_details.length - 1} products more..)
+                                                                </div>
+                                                        }
 
-                                    <div className='flex px-5 justify-between'>
-                                        <div className='w-4/5 flex flex-col'>
-                                            <div className='flex'>
-                                                <img src={require(`../../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
-                                                <div className='mt-4 font-bold flex flex-col items-start'>
-                                                    <button>
-                                                        {item.transaction_details[0].product_name}
-                                                    </button>
-                                                    <div className='text-sm opacity-60 font-medium'>
-                                                        {item.transaction_details[0].qty} item x Rp. {(item.transaction_details[0].price).toLocaleString()}
                                                     </div>
-                                                    {
-                                                        (item.transaction_details.length - 1) == 0 ?
-                                                            null
-                                                            :
-                                                            <div className='text-sm opacity-60 font-medium'>
-                                                                ({item.transaction_details.length - 1} products more..)
-                                                            </div>
-                                                    }
+                                                </div>
+                                            </div>
 
+                                            <div className='w-1/5 flex'>
+                                                <div className='border'></div>
+                                                <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
+                                                    <div className='text-sm font-medium opacity-60'>Total Shopping</div>
+                                                    <div>RP. {(totalPrice[index]).toLocaleString()}</div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className='w-1/5 flex'>
-                                            <div className='border'></div>
-                                            <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
-                                                <div className='text-sm font-medium opacity-60'>Total Shopping</div>
-                                                <div>RP. {(totalPrice[index]).toLocaleString()}</div>
-                                            </div>
+                                        <div className='flex items-center gap-8 p-5 text-green-500'>
+                                            <button className='flex items-center gap-2'>
+                                                <BsFillChatDotsFill />
+                                                Chat with Buyer
+                                            </button>
+
+                                            <button onClick={() => description(index)} className='flex gap-2 items-center'>
+                                                <MdOutlineDescription />
+                                                Transaction Description
+                                            </button>
                                         </div>
                                     </div>
-
-                                    <div className='flex items-center gap-8 p-5 text-green-500'>
-                                        <button className='flex items-center gap-2'>
-                                            <BsFillChatDotsFill />
-                                            Chat with Buyer
-                                        </button>
-
-                                        <button onClick={() => description(index)} className='flex gap-2 items-center'>
-                                            <MdOutlineDescription />
-                                            Transaction Description
-                                        </button>
-                                    </div>
-                                </div>
-                            )
-                        })
-                        :
-                        <div className='h-full w-full flex flex-col items-center justify-center'>
+                                )
+                            })
+                            :
+                            <div className='h-full w-full flex flex-col items-center justify-center'>
                                 <img src={noData} width={'300px'} alt="" />
                                 <div className='text-xl font-semibold'>
                                     Sorry Data Not Found
                                 </div>
-                        </div>
+                            </div>
                     }
 
                 </div>

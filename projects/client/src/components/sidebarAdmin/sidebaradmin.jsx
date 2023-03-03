@@ -33,7 +33,7 @@ export default function SidebarAdmin() {
                             : null
                     }
                      <Transaction />
-                    <button className='flex items-center opacity-50 ease-in focus:text-white duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                    <button onClick={(()=> navigate('warehouse'))} className='flex items-center opacity-50 ease-in focus:text-white duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
                         <TbBuildingWarehouse size={'20px'} />
                         Warehouse
                     </button>

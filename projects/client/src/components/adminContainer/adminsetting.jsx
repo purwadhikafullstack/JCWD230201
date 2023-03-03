@@ -6,7 +6,7 @@ import MenuAdminSetting from '../menuDropdown/menuadminsetting'
 import Loading from '../loading/loading'
 import { AiOutlinePlus } from 'react-icons/ai'
 
-import './adminsetting.css'
+
 
 export default function AdminSetting() {
     let { user, setUser } = useContext(userData)
@@ -37,7 +37,7 @@ export default function AdminSetting() {
                         <div>
                             Welcome to Admin Settings! here all the active admin!
                         </div>
-                        <button onClick={() => navigate('addNewAdmin')} className='p-1 overflow-hidden gap-4 flex items-center duration-300 hover:w-48 w-8 h-8 rounded-xl hover:bg-emerald-600 font-bold text-white bg-emerald-500'>
+                        <button onClick={() => navigate('addNewAdmin')} className='p-1 overflow-hidden gap-4 flex items-center duration-300 hover:w-48 w-8 h-8 rounded-xl hover:bg-emerald-300 hover:text-white text-white bg-emerald-500'>
                             <div><AiOutlinePlus size={'22px'} /></div>
                             <div className='overflow-hidden h-full flex gap-1'>
                                 <div>Add</div> <div> New</div> <div> Admin</div>
