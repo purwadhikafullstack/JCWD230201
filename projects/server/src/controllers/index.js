@@ -1,6 +1,6 @@
 //define router
 const adminController = require('./adminController'), transactionController= require('./transactionController')
-const productController = require('./productController')
+const productController = require('./productController'), warehouseController = require('./warehouseController')
 const userController = require('./userController')
 const addressController = require('./addressController')
 const rajaongkirController = require('./rajaongkirController')
@@ -13,6 +13,7 @@ module.exports={
     userController,
     transactionController,
     addressController,
-    rajaongkirController
+    rajaongkirController,
+    warehouseController
 
 }

@@ -3,10 +3,12 @@ export const CheckLogin = async() =>{
         try{
                 let getTokenId = localStorage.getItem('token')
                 // console.log(getTokenId)
-                let response = getTokenId==null? null : await axios.get(`http://localhost:8000/admin/keep-login?token=${getTokenId}`)
-                   console.log(response)       
+                
+                let response =await axios.get(`http://localhost:8000/admin/keep-login?token=${getTokenId}`)
+                // console.log(response)   
+                if(!response || !getTokenId)return null    
                
-                   if(!response || !getTokenId)return null
+                  
                 return{
                         id:response.data.data.token,
                         username:response.data.data.username,
@@ -14,6 +16,7 @@ export const CheckLogin = async() =>{
                         warehouse:response.data.data.warehouse
                 }
         }catch(error){
+                console.log(error)
                 return{
                         id:null,
                         username:null
