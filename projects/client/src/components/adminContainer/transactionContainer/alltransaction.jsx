@@ -11,6 +11,7 @@ import Loading from '../../loading/loading'
 export default function AllTransaction() {
     const { transaction, setTransaction } = useContext(TransactionData)
     const { user, setUser } = useContext(userData)
+    console.log(user)
 
     let [select, setSelect] = useState(null), [toogle, setToogle] = useState(false), [dataFilter, setDataFilter] = useState([])
     let [dataTR, setDataTR] = useState([]), [totalPrice, setTotalPrice] = useState(0), [date, setDate] = useState([])
@@ -77,6 +78,7 @@ export default function AllTransaction() {
     }, [])
 
     return (
+    
         dataTR ?
             <div className="p-5">
                 <div className="text-3xl font-semibold mb-10">

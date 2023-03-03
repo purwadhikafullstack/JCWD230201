@@ -28,15 +28,16 @@ export default function SidebarAdmin() {
                         user.role == 1 ?
                             <div className='flex flex-col gap-3'>
                                 <ManageAccount />
-                               
+                                <button onClick={(() => navigate('warehouse'))} className='flex items-center opacity-50 ease-in focus:text-white duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                                    <TbBuildingWarehouse size={'20px'} />
+                                    Warehouse
+                                </button>
+
                             </div>
                             : null
                     }
-                     <Transaction />
-                    <button onClick={(()=> navigate('warehouse'))} className='flex items-center opacity-50 ease-in focus:text-white duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                        <TbBuildingWarehouse size={'20px'} />
-                        Warehouse
-                    </button>
+                    <Transaction />
+
                     <button className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
                         <MdAssignment size={'20px'} />
                         Sales Reports
