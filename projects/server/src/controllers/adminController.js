@@ -77,7 +77,7 @@ module.exports = {
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
             if (!hashMatch(password, dataAdmin.password)) throw { message: 'Password wrong!' }
-          
+          console.log(dataAdmin)
             console.log(dataAdmin.location_warehouse)
             let token = await createToken({ id: dataAdmin.id })
 

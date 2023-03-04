@@ -4,6 +4,7 @@ const productRouter = require('./productRouter')
 const userRouter = require('./userRouter')
 const addressRouter = require('./addressRouter')
 const rajaongkirRouter = require('./rajaongkirRouter')
+const warehouseRouter = require('./warehouseRouter')
 
 //export it
 
@@ -13,5 +14,6 @@ module.exports={
     userRouter,
     transactionRouter,
     addressRouter,
-    rajaongkirRouter
+    rajaongkirRouter,
+    warehouseRouter
 }
