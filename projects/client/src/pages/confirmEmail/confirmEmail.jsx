@@ -42,7 +42,7 @@ export default function ConfirmEmail() {
             <div className="pt-28 flex justify-center items-center h-screen">
                 <div className="flex flex-col h-max w-max px-5 py-3 border border-gray-500 shadow-xl rounded">
                     <div className="flex justify-start font-bold text-3xl py-2 border-b-2 border-gray-300">
-                        Confirm Email
+                        Reset Password
                     </div>
 
                     <div className="py-3">

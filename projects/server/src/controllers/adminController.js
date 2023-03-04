@@ -181,25 +181,24 @@ module.exports = {
 
         let getToken = req.dataToken
 
+
+
         console.log(getToken)
-        let getDataAdmin = await db.admin.findOne({
+
+
+        let getDataUser = await db.user.findOne({
             where: {
                 id: getToken.id
-            },
-            include:[{model:db.location_warehouse}]
-        })
-
-
-        if (getToken) return res.status(201).send({
-            isError: false,
-            message: 'token still valid',
-            data: {
-                token: getToken,
-                username: getDataAdmin.name,
-                role:getDataAdmin.role,
-                warehouse:getDataAdmin.location_warehouse_id?
-                getDataAdmin.location_warehouse.city:null
             }
         })
+        console.log(getDataUser)
+        if (!getDataUser) {
+            getDataUser = await db.admin.findOne({
+                where: {
+                    id: getToken.id
+                },
+                include: [{ model: db.location_warehouse }]
+            })
+        }
     }
 }

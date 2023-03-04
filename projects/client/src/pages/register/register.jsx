@@ -36,7 +36,7 @@ export default function Register() {
             phoneNumber.current.value = ''
 
         } catch (error) {
-            // console.log(error)
+            console.log(error)
             toast.error(error.message)
             fullName.current.value = ''
             email.current.value = ''

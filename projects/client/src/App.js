@@ -12,6 +12,11 @@ import Register from './pages/register/register';
 import Activation from './pages/activation/activation';
 import Admin from './pages/admin/admin';
 import AdminLogin from './pages/admin/adminlogin';
+import ConfirmEmail from './pages/confirmEmail/confirmEmail';
+import ResetPassword from './pages/resetPassword/resetPassword';
+import MyAccount from './pages/my-account/myaccount';
+import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
+import MyAccountInfo from './pages/my-account-info/myAccountInfo';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -26,8 +31,6 @@ import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
-import ConfirmEmail from './pages/confirmEmail/confirmEmail';
-import ResetPassword from './pages/resetPassword/resetPassword';
 import Shipping from './components/shipping/shipping';
 import Warehouse from './components/adminContainer/warehouse';
 
@@ -116,6 +119,10 @@ function App() {
               <Route path='/activation/:id' element={<Activation />} />
               <Route path='/confirm-email' element={<ConfirmEmail />} />
               <Route path='/reset-password/:id' element={<ResetPassword />} />
+              <Route path='/my-account' element={<MyAccount/>}>
+                <Route path='' element={<DashboardAccount />} />
+                <Route path='information' element={<MyAccountInfo />} />  
+              </Route>
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />

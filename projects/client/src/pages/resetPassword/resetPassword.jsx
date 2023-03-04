@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { Navigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { toast, Toaster } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Spinner } from "flowbite-react"
@@ -18,6 +18,7 @@ export default function ResetPassword() {
 
     const [inputPassword, setInputPassword] = useState()
 
+    let navigate = useNavigate()
 
     let { id } = useParams()
 
@@ -44,6 +45,15 @@ export default function ResetPassword() {
 
             toast.success('Change Password Success')
 
+            setTimeout(() => {
+                toast('redirecting...', {
+                    duration: 2500
+                })
+            }, 2000)
+
+            setTimeout(() => {
+                navigate('/login')
+            }, 3000)
 
         } catch (error) {
             console.log(error)
@@ -74,6 +84,8 @@ export default function ResetPassword() {
             setTypeConfirmPassword('password')
         }
     }
+
+
 
     return (
         <>
