@@ -40,7 +40,7 @@ export default function Activation(props) {
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
-            let result = await axios.patch(`http://localhost:8000/users/reset-password/${id}`, { password: inputPassword })
+            let result = await axios.patch(`http://localhost:8000/users/activation/${id}`, { password: inputPassword })
             console.log(result)
 
             password.current.value = ''

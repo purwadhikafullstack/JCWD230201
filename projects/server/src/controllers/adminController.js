@@ -194,11 +194,11 @@ module.exports = {
             isError: false,
             message: 'token still valid',
             data: {
-                token: getToken,
-                username: getDataAdmin.name,
-                role:getDataAdmin.role,
-                warehouse:getDataAdmin.location_warehouse_id?
-                getDataAdmin.location_warehouse.city:null
+                // token: getToken,
+                // username: getDataAdmin.name,
+                // role:getDataAdmin.role,
+                // warehouse:getDataAdmin.location_warehouse_id?
+                // getDataAdmin.location_warehouse.city:null
             }
         })
     }

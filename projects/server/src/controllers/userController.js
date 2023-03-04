@@ -13,6 +13,9 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 //import jwt
 const { createToken } = require('../lib/jwt');
 
+// Import Delete Files
+const deleteFiles = require('./../helpers/deleteFiles')
+
 // Import transporter
 const transporter = require('./../helpers/transporter')
 
@@ -28,14 +31,14 @@ module.exports = {
             let { name, email, phone_number } = req.body
 
             let dataEmail = await db.user.findOne({
-                where:{
+                where: {
                     email
                 }
             })
 
-            if(dataEmail) throw {message:'Email already register'}
+            if (dataEmail) throw { message: 'Email already register' }
 
-            let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: 'Abcde12345', status: 'Unverified' }, { transaction: t })
+            let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
             console.log(resCreateUsers)
 
             const template = await fs.readFile('./template/confirmation.html', 'utf-8')
@@ -60,7 +63,7 @@ module.exports = {
             console.log(error)
             res.status(401).send({
                 isError: true,
-                message: error.errors[0].message,
+                message: error,
             })
         }
     },
@@ -114,7 +117,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'get Status Success',
-                data
+                data,
             })
 
         } catch (error) {
@@ -138,18 +141,18 @@ module.exports = {
                     email
                 }
             })
-            console.log(dataUser.dataValues)
+            // console.log(dataUser.dataValues)
             if (!dataUser) throw { message: 'Account not found!' }
 
             let matchPassword = await hashMatch(password, dataUser.dataValues.password)
 
             if (matchPassword === false) return res.status(404).send({
                 isError: true,
-                message: 'Password Not Found',
+                message: 'Password doesnt exist',
                 data: null
             })
 
-            const token = createToken({ id: dataUser.dataValues.id, name: dataUser.dataValues.name })
+            const token = createToken({ id: dataUser.dataValues.id })
 
             res.status(201).send({
                 isError: false,
@@ -157,7 +160,8 @@ module.exports = {
                 data: {
                     'username': `${dataUser.dataValues.name}`,
                     'token': token,
-                    'role': null
+                    'role': null,
+                    'id': dataUser.dataValues.id
                 }
             })
 
@@ -236,6 +240,149 @@ module.exports = {
                 isError: true,
                 message: error.message,
                 data: null
+            })
+        }
+    },
+    keep_login: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let tokenUser = await db.user.findOne({
+                where: {
+                    id: getToken.id
+                }
+            })
+            // console.log(tokenUser)
+
+            res.status(201).send({
+                isError: false,
+                message: 'Token still valid',
+                data: tokenUser
+            })
+
+        } catch (error) {
+            console.log(error)
+            res.status(401).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+
+        }
+    },
+    updatePhotoProfile: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            await users.update({ photo_profile: req.files.images[0].path }, {
+                where: {
+                    id: getToken.id
+                }
+            }, { transaction: t })
+
+            await t.commit()
+            res.status(201).send({
+                isError: false,
+                message: 'Update Photo Profile Success!',
+                data: null
+            })
+
+        } catch (error) {
+            await t.rollback()
+            deleteFiles(req.files)
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    updateDataProfile: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let getToken = req.dataToken
+
+            let { name, phone_number } = req.body
+
+            if(phone_number.length>13) throw {message:'Please input valid phone number'}
+
+            await users.update({
+                name, phone_number
+            }, {
+                where: {
+                    id: getToken.id
+                }
+            }, { transaction: t })
+
+            await t.commit()
+            res.status(201).send({
+                isError:false,
+                message:'Update Data Profile Success!',
+                data:null
+            })
+        } catch (error) {
+            await t.rollback()
+            console.log(error)
+            res.status(404).send({
+                isError:true,
+                message:error.message,
+                data:null
+            })
+        }
+    },
+    changePassword:async(req,res)=>{
+        const t = await sequelize.transaction()
+        try {
+            let getToken = req.dataToken
+
+            let {oldPassword,newPassword,newConfirmPassword}= req.body
+
+            let getData = await db.user.findOne({
+                where:{
+                    id:getToken.id
+                }
+            })
+            
+            if(!oldPassword || !newPassword ||!newConfirmPassword) throw {message:'Please input fields'}
+          
+            let matchPassword = await hashMatch(oldPassword, getData.password)
+            
+            if (matchPassword === false) return res.status(404).send({
+                isError: true,
+                message: 'Your password wrong!',
+                data: null
+            })
+
+            if (newPassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+            if (!character.test(newPassword)) throw { message: 'Password must contains number' }
+
+            await users.update({
+                password: await hashPassword(newPassword)
+            },{
+                where:{
+                    id:getToken.id
+                }
+            })
+
+            await t.commit()
+            res.status(201).send({
+                isError:false,
+                message:'Change Password Success!',
+                data:null
+            })
+        } catch (error) {
+            await t.rollback()
+            console.log(error)
+            res.status(404).send({
+                isError:true,
+                message:error.message,
+                data:null
             })
         }
     }

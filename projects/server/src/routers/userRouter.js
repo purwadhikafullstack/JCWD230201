@@ -4,6 +4,8 @@ const Router = express.Router()
 
 //import all controller
 const { userController } = require('./../controllers')
+const { tokenVerify } = require('../middleware/verifyToken')
+const upload = require('../middleware/upload')
 
 
 //path nya
@@ -13,6 +15,10 @@ Router.get('/getStatus/:id', userController.getStatusUser)
 Router.post('/login', userController.userLogin)
 Router.post('/confirm-email', userController.confirmEmail)
 Router.patch('/reset-password/:id', userController.resetPassword)
+Router.get('/keep-login', tokenVerify, userController.keep_login)
+Router.post('/update-photo_profile', upload, tokenVerify, userController.updatePhotoProfile)
+Router.post('/update-data_profile', tokenVerify, userController.updateDataProfile)
+Router.post('/change-password', tokenVerify, userController.changePassword)
 
 //
 module.exports = Router
