@@ -17,6 +17,22 @@ module.exports = {
             data: getWH
         })
     },
+    getEmptyWH:async(req,res)=>{
+        let getWH = await db.location_warehouse.findAll({
+                include:[{model:db.admin}]
+        })
+        console.log(getWH[6].dataValues.admin==null)
+        let loader =    getWH.filter((item)=> item.dataValues.admin==null)
+        // getWH.forEach(item=>item.dataValues.admin==null?loader.push(item.admin):null)
+        
+        
+        res.status(201).send({
+            isError:false,
+            message:'Get Data Success!',
+            data:loader
+        })
+
+    },
     addWH: async (req, res) => {
         let { province, city, subdistrict, address, city_id, province_id } = req.body
 

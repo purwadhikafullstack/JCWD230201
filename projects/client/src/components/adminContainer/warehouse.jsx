@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { userData } from '../../data/userData'
 import Loading from '../loading/loading'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { Modal, Button, Label, TextInput } from 'flowbite-react'
+import { Modal, Button, Label } from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
@@ -17,8 +17,11 @@ export default function Warehouse() {
     let [show, setShow] = useState(false), [show2, setShow2] = useState(false), [popDelete, setPopDelete] = useState(false)
     let onProvince = useRef(), changeProvince = useRef()
     let onCity = useRef(), changeCity = useRef()
-    let onSubdistrict = useRef()
-    let WH_address = useRef()
+    let onSubdistrict = useRef(), onSubdistrictC = useRef()
+    let WH_address = useRef(), WH_addressC = useRef()
+
+    // console.log(onProvince.current.value)
+    // console.log(onCity.current.value)
 
     let [dataWH, setDataWH] = useState([]), [chosenWH, setChosenWH] = useState({})
     const [arrProvince, setArrProvince] = useState([]), [changeP, setChangeP] = useState([])
@@ -31,12 +34,12 @@ export default function Warehouse() {
     }
     let postAddress = async () => {
         try {
-            if (onProvince.current.value == 'Please Select Province' || onCity.current.value === 'Please Select City') throw { message: 'Incomplete Input' }
+            if (onProvince.current.value == 'Please Select Province' || onCity.current.value === 'Please Select City') throw { message: 'Incomplete Input KONTOL' }
             let inputProvince = onProvince.current.value.split(", ")[1]
             let inputWH_Address = WH_address.current.value
             let inputCity = onCity.current.value.split(",")[1]
             let inputSubdistrict = onSubdistrict.current.value
-            if (inputProvince.length === 0 || inputCity.length === 0 || inputSubdistrict.length === 0 || inputWH_Address === 0) throw { message: 'Incomplete Input' }
+            if (!inputSubdistrict|| !inputWH_Address) throw { message: 'Incomplete Input' }
             let response = await axios.post(`http://localhost:8000/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
             toast.success(response.data.message)
             setShow(!show)
@@ -63,11 +66,11 @@ export default function Warehouse() {
         try {
             let inputProvince = changeProvince == 'Please Select Province' ? chosenWH.province : changeProvince.current.value.split(", ")[1]
 
-            let inputWH_Address = WH_address.current.value ? WH_address.current.value : chosenWH.address
+            let inputWH_Address = WH_addressC.current.value ? WH_addressC.current.value : chosenWH.address
 
             let inputCity = changeCity.current.value == 'Please Select City' ? chosenWH.city : changeCity.current.value.split(",")[1]
 
-            let inputSubdistrict = onSubdistrict.current.value ? onSubdistrict.current.value : chosenWH.subdistrict
+            let inputSubdistrict = onSubdistrictC.current.value ? onSubdistrictC.current.value : chosenWH.subdistrict
 
             let inputCity_id = changeCity.current.value == 'Please Select City' ? chosenWH.city_id : changeCity.current.value.split(",")[0]
 
@@ -133,7 +136,7 @@ export default function Warehouse() {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
             });
-            setChangeC(data.data.data.results)
+            setArrCity(data.data.data.results)
         } catch (error) {
             console.log(error);
         }
@@ -171,12 +174,12 @@ export default function Warehouse() {
                                 <div>
                                     Search
                                 </div>
-                                <Button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-black'>
+                                <button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-black'>
                                     <div><AiOutlinePlus size={'22px'} /></div>
-                                    <div className='overflow-hidden flex gap-3 ml-5 h-full'>
+                                    <div className='overflow-hidden flex gap-3 ml-3 h-full'>
                                         <div>Add</div> <div> New</div> <div> Warehouse</div>
                                     </div>
-                                </Button>
+                                </button>
                                 <Modal
                                     show={show}
                                     size="md"
@@ -217,7 +220,7 @@ export default function Warehouse() {
                                                         </div>
                                                         <select
                                                             ref={onCity}
-
+                                                            
                                                             id="city"
                                                             className="w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black"
                                                         >   <option value={null}>Please Select City</option>
@@ -271,7 +274,7 @@ export default function Warehouse() {
 
 
                             </div>
-                            <Modal className='overflow-scroll pt-72'
+                            <Modal className='overflow-scroll pt-96'
                                 show={show2}
                                 size="md"
                                 popup={true}
@@ -354,7 +357,7 @@ export default function Warehouse() {
                                                     value="Subdisctrict"
                                                 />
                                             </div>
-                                            <input className='w-full py-2 mb-10 px-2 border border-black focus:ring-transparent focus:border-black' ref={onSubdistrict}
+                                            <input className='w-full py-2 mb-10 px-2 border border-black focus:ring-transparent focus:border-black' ref={onSubdistrictC}
                                                 id="Subdisctrict"
                                                 placeholder="Subdistrict"
                                                 required={true}
@@ -375,7 +378,7 @@ export default function Warehouse() {
                                                     value="WH Address"
                                                 />
                                             </div>
-                                            <input className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' ref={WH_address}
+                                            <input className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' ref={WH_addressC}
                                                 id="Address"
                                                 placeholder="Jalan xxx xxx"
                                                 required={true}
@@ -385,7 +388,7 @@ export default function Warehouse() {
                                         <div className=" flex justify-center pt-10">
                                             <Button disabled={disable} onClick={() => {
                                                 setDisable(!disable)
-                                                updateWH()
+                                                
                                             }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>
                                                 {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading...</span> : 'Submit'}
                                             </Button>
