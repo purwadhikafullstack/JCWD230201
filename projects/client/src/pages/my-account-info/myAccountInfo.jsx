@@ -230,7 +230,7 @@ export default function MyAccountInfo() {
                     </div>
                 </div>
                 <div className="border py-5 px-5">
-                    <button onClick={() => updateProfile()} className="bg-black text-white font-semibold px-10 py-2 rounded-sm">
+                    <button onClick={() => updateDataProfile()} className="bg-black text-white font-semibold px-10 py-2 rounded-sm">
                         SAVE
                     </button>
                 </div>

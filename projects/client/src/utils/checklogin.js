@@ -11,8 +11,6 @@ export const CheckLogin = async () => {
                 })
                 console.log(response)
                 if (!response || !getTokenId) return null
-
-
                 return {
                         id: response.data.data.token,
                         username: response.data.data.username,

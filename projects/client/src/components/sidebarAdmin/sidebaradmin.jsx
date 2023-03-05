@@ -13,7 +13,7 @@ export default function SidebarAdmin() {
 
     let navigate = useNavigate()
     return (
-        <div className="fixed px-5 py-5 w-60 h-screen bg-black text-white z-0">
+        <div className="fixed px-5 py-5 w-60 h-screen bg-zinc-900 text-white z-0">
             <div className='flex flex-col h-full fixed'>
                 <div className='mb-10 text-center text-3xl font-semibold'>
                     iFrit

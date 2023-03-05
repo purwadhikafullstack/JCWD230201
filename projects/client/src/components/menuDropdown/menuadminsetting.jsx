@@ -1,30 +1,83 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
+import { Modal, Label, Button } from 'flowbite-react'
+import { AiOutlineLoading3Quarters, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 export default function MenuAdminSetting(data) {
-  let navigate = useNavigate()
+  // console.log(data.data)
+  let [update, setUpdate] = useState(false), [dataEmptyWH, setDataEmptyWH] = useState([]), [disable, setDisable] = useState(false)
+  let [visible, setVisible] = useState({
+    check: false,
+    disable: false,
+    update: false,
+    password: false
+  })
 
-  let toProfile = async (input) => {
-    navigate(`/admin/profile/${input}`)
+  let [profile, setProfile] = useState({
+    id: '',
+    name: '',
+    email: '',
+    gender: '',
+    phone_number: '',
+    location_warehouse_id: null,
+    password: ''
+  })
+  // console.log(data.data)
+
+  let getEmptyWH = async () => {
+    let response = await axios.get('http://localhost:8000/warehouse/AvailableWH')
+    setDataEmptyWH(response.data.data)
+    console.log(response.data.data)
   }
 
-  let deleteAdmin = async (input) => {
-    let response = await axios.post('http://localhost:8000/admin/delete', { id: input })
+  let submit = async () => {
+    try {
+      console.log(profile)
+      let response = await axios.post('http://localhost:8000/admin/update', profile)
+      console.log(response)
+      toast.success(response.data.message)
+      setTimeout(() => {
+        window.location.reload(false)
+      }, 2000)
+    } catch (error) {
+      setVisible({...visible, disable:false})
+        toast.error(error.response.data.message)
+    }
+
+  }
+
+
+
+  let deleteAdmin = async () => {
+    let response = await axios.post('http://localhost:8000/admin/delete', { id: profile.id })
     toast.success(response.data.message)
     setTimeout(() => {
       toast('Loading..')
       window.location.reload(false)
     }, 2000)
   }
+
   return (
     <div className="">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-70 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+          <Menu.Button
+            onClick={() => {
+              setProfile({
+                ...profile,
+                id: data.data.id,
+                name: data.data.name,
+                email: data.data.email,
+                gender: data.data.gender,
+                phone_number: data.data.phone_number,
+                location_warehouse_id: data.data.location_warehouse_id,
+                password: ''
+              })
+            }}
+            className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-70 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
             Options
             <ChevronDownIcon
               className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
@@ -41,12 +94,16 @@ export default function MenuAdminSetting(data) {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-10 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="fixed z-10 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="px-1 py-1 ">
               <Menu.Item >
                 {({ active }) => (
                   <button
-                    onClick={() => toProfile(data.data)}
+                    onClick={() => {
+                      getEmptyWH()
+
+                      setVisible({ ...visible, update: visible.update ? false : true })
+                    }}
                     className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
                       } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                   >
@@ -90,6 +147,127 @@ export default function MenuAdminSetting(data) {
           </Menu.Items>
         </Transition>
       </Menu>
+
+      <Modal className='overflow-scroll pt-60'
+        show={visible.update}
+        size="lg"
+        popup={true}
+        onClose={() => setVisible({ ...visible, update: visible.update ? false : true })}>
+        <Modal.Header />
+        <Modal.Body>
+          <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+            <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
+              Change {data.data.name}'s Data
+            </h3>
+
+            <div>
+              <div className="mb-2 block">
+                <Label
+                  value="Name Admin"
+                />
+              </div>
+              <input onChange={(e) => setProfile({ ...profile, name: e.target.value })} className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black'
+                id="name"
+                placeholder={data.data.name}
+                required={true}
+              />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label
+                  value="Email Admin"
+                />
+              </div>
+              <input className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' id="Address"
+                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                placeholder={data.data.email}
+                required={true}
+              />
+            </div>
+
+            <div className='flex gap-3'>
+              <div className='w-1/5'>
+                <div className="mb-2 block">
+                  <Label
+                    value="Gender"
+                  />
+                </div >
+                <select className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black'
+                  onChange={(e) => setProfile({ ...profile, gender: e.target.value })}
+                  id="Gender"
+                  placeholder={data.data.gender}
+                  required={true}
+                >
+                  <option value={data.data.gender}>{data.data.gender}</option> <option value={data.data.gender == 'F' ? 'M' : 'F'}>{data.data.gender == 'F' ? 'M' : 'F'}</option>
+                </select>
+              </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label
+                    value="Phone Number"
+                  />
+                </div>
+                <input
+                  className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' id="phone_number"
+                  onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
+                  placeholder={data.data.phone_number ? data.data.phone_number : 'Empty..'}
+                  required={true}
+                />
+              </div>
+            </div>
+
+
+            <div>
+              <div className="mb-2 block">
+                <Label
+                  value="Warehouse"
+                />
+              </div>
+              <select className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black'
+                onChange={(e) => setProfile({ ...profile, location_warehouse_id: e.target.value })}
+                id="warehouse"
+                required={true}
+              >
+                <option value={data.data.location_warehouse}>{data.data.location_warehouse}</option>
+                {
+                  dataEmptyWH.map((item, index) => <option value={item.id}>{item.city}</option>)
+                }
+              </select>
+            </div>
+
+            <div className="mt-5 flex items-center">
+              <input onChange={() => setVisible({ ...visible, check: visible.check ? false : true })} id="black-checkbox" type="checkbox" value="" className="w-4 h-4 mr-2 text-black bg-gray-100 border-gray-300 rounded-sm focus:ring-transparent" />
+              <p className="font-semibold">Change Password ?</p>
+            </div>
+
+            {
+              visible.check ?
+                <div>
+                  <p className="font-semibold mb-3">Input New Password</p>
+                  <div className="flex items-center relative">
+                    <div className="flex items-center relative">
+                      <input
+                        onChange={(e) => setProfile({ ...profile, password: e.target.value })}
+                        type={visible.password ? 'text' : 'password'} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
+                      <button onClick={() => setVisible({ ...visible, password: visible.password ? false : true })} className="absolute right-3 text-xl" >{visible.password ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                    </div>
+                  </div>
+                </div>
+
+                :
+                null}
+
+            <Button disabled={visible.disable} onClick={() => {
+              submit()
+              setVisible({ ...visible, disable: visible.disable ? false : true })
+
+            }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-full'>
+              {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading...</span> : 'Submit'}
+            </Button>
+
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }
