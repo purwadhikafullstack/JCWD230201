@@ -17,7 +17,8 @@ export const CheckLogin = async () => {
                         id: response.data.data.token,
                         username: response.data.data.username,
                         role: response.data.data.role,
-                        warehouse: response.data.data.warehouse
+                        warehouse: response.data.data.warehouse,
+                        photo_profile:response.data.data.photo_profile
                 }
         } catch (error) {
                 return {

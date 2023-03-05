@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { toast, Toaster } from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
 import initialPP from '../../Assets/Blank_PP.jpg'
@@ -8,9 +8,13 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 
 import { Modal, Button } from 'flowbite-react'
 
+import { userData } from '../../data/userData'
+
 export default function MyAccountInfo() {
 
     let navigate = useNavigate()
+
+    const { user, setUser } = useContext(userData)
 
     const [message, setMessage] = useState('')
     const [profile, setProfile] = useState({
@@ -19,7 +23,7 @@ export default function MyAccountInfo() {
         email: '',
         oldpassword: '',
         newpassword: '',
-        newConfirmPassword: '',
+        newconfirmpassword: '',
         photo_profile: []
     })
     const [visible, setVisible] = useState({
@@ -61,7 +65,7 @@ export default function MyAccountInfo() {
 
         } catch (error) {
             console.log(error)
-            setMessage("File Error")
+            setMessage(error.message)
         }
     }
 
@@ -70,9 +74,9 @@ export default function MyAccountInfo() {
             let fd = new FormData()
             fd.append('images', profile.photo_profile[0])
 
-            let data = await axios.post('http://localhost:8000/users/update-photo_profile', fd,{
-                headers:{
-                    "token":localStorage.getItem('token')
+            let data = await axios.post('http://localhost:8000/users/update-photo_profile', fd, {
+                headers: {
+                    "token": localStorage.getItem('token')
                 }
             })
             console.log(data)
@@ -92,7 +96,7 @@ export default function MyAccountInfo() {
             }, 2000)
 
             setTimeout(() => {
-                navigate('/my-account/information')
+                window.location.reload(false)
             }, 3000)
 
         } catch (error) {
@@ -111,38 +115,60 @@ export default function MyAccountInfo() {
                 }
             })
 
-            toast.success("Update Profile Success")
+            toast.success("Update Data Profile Success")
 
             setTimeout(() => {
-                navigate('/my-account/information')
-            }, 3000)
+                window.location.reload(false)
+            }, 2000)
         } catch (error) {
 
         }
     }
 
-    // let updatePassword = async () => {
-    //     try {
-    //         await axios.patch('api masuk', { isinya })
-    //     } catch (error) {
+    let changePassword = async () => {
+        try {
+            if (!profile.oldpassword && profile.newpassword) throw { message: 'Please input your current password' }
 
-    //     }
-    // }
+            if (profile.newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+            if (!character.test(profile.newpassword)) throw { message: 'Password must contains number' }
+
+            if(profile.newpassword!== profile.newconfirmpassword) throw {message:'Confirm password wrong'}
+
+            await axios.patch('http://localhost:8000/users/change-password', { oldpassword: profile.oldpassword, newpassword: profile.newpassword, newconfirmpassword: profile.newconfirmpassword }, {
+                headers: {
+                    "token": localStorage.getItem('token')
+                }
+            })
+
+            toast.success("Change Password Success")
+
+            setProfile({ ...profile, oldpassword: '', newpassword: '', newconfirmpassword: '' })
+
+            setTimeout(() => {
+                window.location.reload(false)
+            }, 2000)
+        } catch (error) {
+            console.log(error)
+            toast.error('Error')
+        }
+    }
 
     useEffect(() => {
         getProfile()
     }, [])
 
     return (
-        <>
+        user ?
             <div className="w-full h-screen">
                 <div className="border text-xl font-bold px-5 py-2">
                     Change Account Information
                 </div>
                 <div className="border p-5 grid grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
-                        <img src={profile.photo_profile.length !== 0 ? `http://localhost:8000/${profile.photo_profile[0]}` : initialPP} className="w-52 h-52 object-cover rounded-full mr-5" />
-                        <div>
+                        <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
+                        <div className="bg-blue-500 mt-3">
                             <Button onClick={() => setModal(!modal)} className="rounded-sm bg-neutral-900 hover:bg-neutral-700 active:ring-0 active:ring-transparent">
                                 Change Profile Picture
                             </Button>
@@ -156,7 +182,7 @@ export default function MyAccountInfo() {
                                 <Modal.Body>
                                     <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 text-center">
                                         <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                                            Choose Profile Picture
+                                            Change Profile Picture
                                         </h3>
                                         <input type="file" accept="image/*" onChange={(e) => onImageValidation(e)} className="w-full pr-3 border rounded-sm" />
                                         <div>
@@ -171,7 +197,7 @@ export default function MyAccountInfo() {
                                 </Modal.Body>
                             </Modal>
                         </div>
-                        
+
                     </div>
 
                     <div>
@@ -203,24 +229,27 @@ export default function MyAccountInfo() {
                                     <div className="my-5">
                                         <p className="font-semibold">Your Password</p>
                                         <div className="flex items-center relative">
-                                            <input onChange={(e) => setProfile({ ...profile, oldPassword: e.target.value })} type={visible.password ? 'text' : 'password'} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <input type={visible.password ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, oldpassword: e.target.value })} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
                                             <button onClick={() => setVisible({ ...visible, password: visible.password ? false : true })} className="absolute right-3 text-xl" >{visible.password ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
                                     <div className="my-5">
                                         <p className="font-semibold">Your New Password</p>
                                         <div className="flex items-center relative">
-                                            <input type={visible.password ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newPassword: e.target.value })} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
-                                            <button onClick={() => setVisible({ ...visible, oldPassword: visible.password ? false : true })} className="absolute right-3 text-xl" >{visible.oldPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                                            <input type={visible.newPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <button onClick={() => setVisible({ ...visible, newPassword: visible.newPassword ? false : true })} className="absolute right-3 text-xl" >{visible.newPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
                                     <div className="my-5">
                                         <p className="font-semibold">Confirm New Password</p>
                                         <div className="flex items-center relative">
-                                            <input onChange={(e) => setProfile({ ...profile, newConfirmPassword: e.target.value })} type={visible.newConfirmPassword ? 'text' : 'password'} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
-                                            <button className="absolute right-3 text-xl" >{visible.confirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                                            <input type={visible.newConfirmPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newconfirmpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <button onClick={() => setVisible({ ...visible, newConfirmPassword: visible.newConfirmPassword ? false : true })} className="absolute right-3 text-xl" >{visible.newConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
+                                    <button onClick={() => changePassword()} className="bg-neutral-900 rounded-sm w-full text-white py-2">
+                                        Submit Password
+                                    </button>
                                 </div>
                             </>
                             :
@@ -230,12 +259,12 @@ export default function MyAccountInfo() {
                     </div>
                 </div>
                 <div className="border py-5 px-5">
-                    <button onClick={() => updateProfile()} className="bg-black text-white font-semibold px-10 py-2 rounded-sm">
+                    <button onClick={() => updateDataProfile()} className="bg-black text-white font-semibold px-10 py-2 rounded-sm">
                         SAVE
                     </button>
                 </div>
                 <Toaster />
             </div>
-        </>
+            : <div>Loading</div>
     )
 }

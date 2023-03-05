@@ -277,7 +277,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
 
-            await users.update({ photo_profile: req.files.images[0].path }, {
+            let profilePicture = await users.update({ photo_profile: req.files.images[0].path }, {
                 where: {
                     id: getToken.id
                 }
@@ -287,7 +287,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'Update Photo Profile Success!',
-                data: null
+                data: profilePicture
             })
 
         } catch (error) {
@@ -308,7 +308,7 @@ module.exports = {
 
             let { name, phone_number } = req.body
 
-            if(phone_number.length>13) throw {message:'Please input valid phone number'}
+            if (phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
             await users.update({
                 name, phone_number
@@ -320,69 +320,69 @@ module.exports = {
 
             await t.commit()
             res.status(201).send({
-                isError:false,
-                message:'Update Data Profile Success!',
-                data:null
+                isError: false,
+                message: 'Update Data Profile Success!',
+                data: null
             })
         } catch (error) {
             await t.rollback()
             console.log(error)
             res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
+                isError: true,
+                message: error.message,
+                data: null
             })
         }
     },
-    changePassword:async(req,res)=>{
+    changePassword: async (req, res) => {
         const t = await sequelize.transaction()
         try {
             let getToken = req.dataToken
 
-            let {oldPassword,newPassword,newConfirmPassword}= req.body
+            let { oldpassword, newpassword, newConfirmpassword } = req.body
 
             let getData = await db.user.findOne({
-                where:{
-                    id:getToken.id
+                where: {
+                    id: getToken.id
                 }
             })
-            
-            if(!oldPassword || !newPassword ||!newConfirmPassword) throw {message:'Please input fields'}
-          
-            let matchPassword = await hashMatch(oldPassword, getData.password)
-            
+
+            if (!oldpassword && newpassword ) throw { message: 'Please input your current password' }
+
+            let matchPassword = await hashMatch(oldpassword, getData.password)
+
             if (matchPassword === false) return res.status(404).send({
                 isError: true,
-                message: 'Your password wrong!',
+                message: 'Your current password wrong!',
                 data: null
             })
 
-            if (newPassword.length < 8) throw { message: 'Password at least has 8 characters' }
+            if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
             let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(newPassword)) throw { message: 'Password must contains number' }
+            if (!character.test(newpassword)) throw { message: 'Password must contains number' }
 
             await users.update({
-                password: await hashPassword(newPassword)
-            },{
-                where:{
-                    id:getToken.id
+                password: await hashPassword(newpassword)
+            }, {
+                where: {
+                    id: getToken.id
                 }
             })
 
             await t.commit()
             res.status(201).send({
-                isError:false,
-                message:'Change Password Success!',
-                data:null
+                isError: false,
+                message: 'Change Password Success!',
+                data: null
             })
         } catch (error) {
             await t.rollback()
             console.log(error)
             res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
+                isError: true,
+                message: error.message,
+                data: null
             })
         }
     }

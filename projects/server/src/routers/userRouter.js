@@ -17,8 +17,8 @@ Router.post('/confirm-email', userController.confirmEmail)
 Router.patch('/reset-password/:id', userController.resetPassword)
 Router.get('/keep-login', tokenVerify, userController.keep_login)
 Router.post('/update-photo_profile', upload, tokenVerify, userController.updatePhotoProfile)
-Router.post('/update-data_profile', tokenVerify, userController.updateDataProfile)
-Router.post('/change-password', tokenVerify, userController.changePassword)
+Router.patch('/update-data_profile', tokenVerify, userController.updateDataProfile)
+Router.patch('/change-password', tokenVerify, userController.changePassword)
 
 //
 module.exports = Router
