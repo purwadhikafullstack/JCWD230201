@@ -144,7 +144,7 @@ export default function MyAccountInfo() {
 
             toast.success("Change Password Success")
 
-            setProfile({ ...profile, oldpassword: '', newpassword: '', newconfirmpassword: '' })
+            // setProfile({ ...profile, oldpassword: '', newpassword: '', newconfirmpassword: '' })
 
             setTimeout(() => {
                 window.location.reload(false)
