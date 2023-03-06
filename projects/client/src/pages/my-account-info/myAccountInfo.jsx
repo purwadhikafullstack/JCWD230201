@@ -109,49 +109,44 @@ export default function MyAccountInfo() {
         try {
             if (profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
-            await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number }, {
-                headers: {
-                    "token": localStorage.getItem('token')
-                }
-            })
+            if (!profile.oldpassword) throw { message: 'Please input your current password' }
 
+            if (!profile.oldpassword && profile.newpassword) throw {message: 'Please input your current password'}
+
+            if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
+                console.log('2')
+
+                await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number }, {
+                    headers: {
+                        "token": localStorage.getItem('token')
+                    }
+                })
+            } else if (profile.name && profile.phone_number && profile.oldpassword && profile.newpassword) {
+                console.log('3')
+
+                if (profile.newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+                let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+                if (!character.test(profile.newpassword)) throw { message: 'Password must contains number' }
+
+                if (profile.newpassword !== profile.newconfirmpassword) throw { message: 'Confirm password wrong' }
+
+                await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number, oldpassword: profile.oldpassword, newpassword: profile.newpassword }, {
+                    headers: {
+                        "token": localStorage.getItem('token')
+                    }
+                })   
+
+            }
             toast.success("Update Data Profile Success")
 
             setTimeout(() => {
                 window.location.reload(false)
             }, 2000)
-        } catch (error) {
 
-        }
-    }
-
-    let changePassword = async () => {
-        try {
-            if (!profile.oldpassword && profile.newpassword) throw { message: 'Please input your current password' }
-
-            if (profile.newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
-
-            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(profile.newpassword)) throw { message: 'Password must contains number' }
-
-            if(profile.newpassword!== profile.newconfirmpassword) throw {message:'Confirm password wrong'}
-
-            await axios.patch('http://localhost:8000/users/change-password', { oldpassword: profile.oldpassword, newpassword: profile.newpassword, newconfirmpassword: profile.newconfirmpassword }, {
-                headers: {
-                    "token": localStorage.getItem('token')
-                }
-            })
-
-            toast.success("Change Password Success")
-
-            // setProfile({ ...profile, oldpassword: '', newpassword: '', newconfirmpassword: '' })
-
-            setTimeout(() => {
-                window.location.reload(false)
-            }, 2000)
         } catch (error) {
             console.log(error)
-            toast.error('Error')
+            toast.error(error.message)
         }
     }
 
@@ -203,12 +198,12 @@ export default function MyAccountInfo() {
                     <div>
                         <div className="my-5">
                             <p className="font-semibold">Name</p>
-                            <input onChange={(e) => setProfile({ ...profile, name: e.target.value })} type='text' defaultValue={profile.name} placeholder='Input your name' className="py-1 px-2 w-full rounded-sm mt-2 focus:ring-transparent focus:border-black" />
+                            <input onChange={(e) => setProfile({ ...profile, name: e.target.value })} type='text' defaultValue={profile.name} placeholder={profile.name} className="py-1 px-2 w-full rounded-sm mt-2 focus:ring-transparent focus:border-black" />
                         </div>
 
                         <div className="my-5">
                             <p className="font-semibold">Phone Number</p>
-                            <input onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })} type='text' defaultValue={profile.phone_number} placeholder='Input your phone number' className="py-1 px-2 w-full rounded-sm mt-2 focus:ring-transparent focus:border-black" />
+                            <input onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })} type='text' defaultValue={profile.phone_number} placeholder={profile.phone_number} className="py-1 px-2 w-full rounded-sm mt-2 focus:ring-transparent focus:border-black" />
                         </div>
 
                         <div className="my-5">
@@ -229,27 +224,24 @@ export default function MyAccountInfo() {
                                     <div className="my-5">
                                         <p className="font-semibold">Your Password</p>
                                         <div className="flex items-center relative">
-                                            <input type={visible.password ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, oldpassword: e.target.value })} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <input type={visible.password ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, oldpassword: e.target.value })} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full rounded-sm" />
                                             <button onClick={() => setVisible({ ...visible, password: visible.password ? false : true })} className="absolute right-3 text-xl" >{visible.password ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
                                     <div className="my-5">
                                         <p className="font-semibold">Your New Password</p>
                                         <div className="flex items-center relative">
-                                            <input type={visible.newPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <input type={visible.newPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full rounded-sm" />
                                             <button onClick={() => setVisible({ ...visible, newPassword: visible.newPassword ? false : true })} className="absolute right-3 text-xl" >{visible.newPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
                                     <div className="my-5">
                                         <p className="font-semibold">Confirm New Password</p>
                                         <div className="flex items-center relative">
-                                            <input type={visible.newConfirmPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newconfirmpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full" />
+                                            <input type={visible.newConfirmPassword ? 'text' : 'password'} onChange={(e) => setProfile({ ...profile, newconfirmpassword: e.target.value })} placeholder="Input your new password" className="focus:border-black focus:ring-transparent w-full rounded-sm" />
                                             <button onClick={() => setVisible({ ...visible, newConfirmPassword: visible.newConfirmPassword ? false : true })} className="absolute right-3 text-xl" >{visible.newConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                         </div>
                                     </div>
-                                    <button onClick={() => changePassword()} className="bg-neutral-900 rounded-sm w-full text-white py-2">
-                                        Submit Password
-                                    </button>
                                 </div>
                             </>
                             :

@@ -1,7 +1,23 @@
 import { Breadcrumb } from "flowbite-react";
-import { Link, Outlet } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 export default function MyAccount() {
+
+    let navigate = useNavigate()
+
+    let logout = () => {
+        toast('Logout..', {
+            style: {
+                backgroundColor: 'black',
+                color: 'white'
+            }
+        })
+        setTimeout(() => {
+            localStorage.removeItem('token')
+            navigate('/')
+        }, 2000)
+    }
 
     return (
         <>
@@ -42,12 +58,16 @@ export default function MyAccount() {
                         </div>
                     </Link>
 
+                    <button onClick={() => logout()} className="bg-neutral-900 text-white py-2 w-full mt-5 rounded-sm ">
+                        Logout
+                    </button>
+
                 </div>
 
                 <div className="col-start-4 col-end-10">
                     <Outlet />
                 </div>
-
+        <Toaster/>
             </div>
         </>
     )

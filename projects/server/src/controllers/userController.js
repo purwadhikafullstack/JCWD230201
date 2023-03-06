@@ -131,8 +131,8 @@ module.exports = {
     userLogin: async (req, res) => {
         try {
             let { email, password } = req.body
-            console.log(email)
-            console.log(password)
+            // console.log(email)
+            // console.log(password)
 
             if (!password) throw { message: 'Please Fill All Data!' }
 
@@ -306,17 +306,53 @@ module.exports = {
         try {
             let getToken = req.dataToken
 
-            let { name, phone_number } = req.body
+            let { name, phone_number, oldpassword, newpassword } = req.body
+            console.log('aaaaaaaaaaaaaaaaa')
+            console.log(name,phone_number,oldpassword,newpassword)
+            console.log(oldpassword)
+            console.log('a')
 
-            if (phone_number.length > 13) throw { message: 'Please input valid phone number' }
+            if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
 
-            await users.update({
-                name, phone_number
-            }, {
+            let getData = await db.user.findOne({
                 where: {
                     id: getToken.id
                 }
-            }, { transaction: t })
+            })
+            
+            let matchPassword = await hashMatch(oldpassword, getData.password)
+
+            if (matchPassword === false) return res.status(404).send({
+                isError: true,
+                message: 'Your current password wrong!',
+                data: null
+            })
+
+            if (phone_number.length > 13) throw { message: 'Please input valid phone number' }
+
+            if (name && phone_number && !oldpassword && !newpassword) {
+                await users.update({
+                    name, phone_number
+                }, {
+                    where: {
+                        id: getToken.id
+                    }
+                }, { transaction: t })
+            } else if (name && phone_number && oldpassword && newpassword) {
+
+                if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+                let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+                if (!character.test(newpassword)) throw { message: 'Password must contains number' }
+
+                await users.update({
+                    name, phone_number, password: await hashPassword(newpassword)
+                }, {
+                    where: {
+                        id: getToken.id
+                    }
+                }, { transaction: t })
+            }
 
             await t.commit()
             res.status(201).send({
@@ -334,56 +370,56 @@ module.exports = {
             })
         }
     },
-    changePassword: async (req, res) => {
-        const t = await sequelize.transaction()
-        try {
-            let getToken = req.dataToken
+    // changePassword: async (req, res) => {
+    //     const t = await sequelize.transaction()
+    //     try {
+    //         let getToken = req.dataToken
 
-            let { oldpassword, newpassword, newConfirmpassword } = req.body
+    //         let { oldpassword, newpassword, newConfirmpassword } = req.body
 
-            let getData = await db.user.findOne({
-                where: {
-                    id: getToken.id
-                }
-            })
+    //         let getData = await db.user.findOne({
+    //             where: {
+    //                 id: getToken.id
+    //             }
+    //         })
 
-            if (!oldpassword && newpassword ) throw { message: 'Please input your current password' }
+    //         if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
 
-            let matchPassword = await hashMatch(oldpassword, getData.password)
+    //         let matchPassword = await hashMatch(oldpassword, getData.password)
 
-            if (matchPassword === false) return res.status(404).send({
-                isError: true,
-                message: 'Your current password wrong!',
-                data: null
-            })
+    //         if (matchPassword === false) return res.status(404).send({
+    //             isError: true,
+    //             message: 'Your current password wrong!',
+    //             data: null
+    //         })
 
-            if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+    //         if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
-            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(newpassword)) throw { message: 'Password must contains number' }
+    //         let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+    //         if (!character.test(newpassword)) throw { message: 'Password must contains number' }
 
-            await users.update({
-                password: await hashPassword(newpassword)
-            }, {
-                where: {
-                    id: getToken.id
-                }
-            })
+    //         await users.update({
+    //             password: await hashPassword(newpassword)
+    //         }, {
+    //             where: {
+    //                 id: getToken.id
+    //             }
+    //         })
 
-            await t.commit()
-            res.status(201).send({
-                isError: false,
-                message: 'Change Password Success!',
-                data: null
-            })
-        } catch (error) {
-            await t.rollback()
-            console.log(error)
-            res.status(404).send({
-                isError: true,
-                message: error.message,
-                data: null
-            })
-        }
-    }
+    //         await t.commit()
+    //         res.status(201).send({
+    //             isError: false,
+    //             message: 'Change Password Success!',
+    //             data: null
+    //         })
+    //     } catch (error) {
+    //         await t.rollback()
+    //         console.log(error)
+    //         res.status(404).send({
+    //             isError: true,
+    //             message: error.message,
+    //             data: null
+    //         })
+    //     }
+    // }
 }
