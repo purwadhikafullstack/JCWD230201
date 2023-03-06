@@ -140,9 +140,16 @@ export default function ProductDetail(props) {
                             +
                         </button>
                     </div>
-                    <button className=" bg-sky-800 text-white font-semibold px-3 py-1 mt-3 rounded">
+                    {localStorage.getItem("token")==null?
+                    
+                    <button className=" bg-gray-300 text-white font-semibold px-3 py-1 mt-3 rounded cursor-not-allowed" disabled>
                         Add to cart
                     </button>
+                    :
+                    <button className="bg-[#113F90] text-white font-semibold px-3 py-1 mt-3 rounded">
+                        Add to cart
+                    </button>
+                }
                 </div>
                 {console.log(props.data.detail)}
                 {console.log(props.data.detailProduct)}

@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     value:DataTypes.INTEGER,
     subdistrict: DataTypes.STRING,
     city:DataTypes.STRING,
+    city_id:DataTypes.INTEGER,
     province: DataTypes.STRING,
     latitude:DataTypes.INTEGER,
     longitude:DataTypes.INTEGER,

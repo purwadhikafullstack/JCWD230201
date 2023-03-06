@@ -9,15 +9,17 @@ const db = require('./../models/index')
 module.exports= {
     getAllAddress: async(req,res)=>{
         try {
-            let {user_id} = req.params
+            let getData = req.dataToken
+            console.log(getData);
             let data = await db.user_address.findAll({
                 where:{
-                    user_id
+                    user_id: getData.id
                 },
                 include :{
                     model: db.user
                 }
             })
+            console.log(data);
             res.status(200).send({
                 isError: false,
                 message: "Get All Address Success",
@@ -33,9 +35,9 @@ module.exports= {
     },
     postAddress: async(req, res)=>{
         try {
-            let {receiver_name, user_address, province, city, subdistrict, phone_number} = req.body
-            let {user_id} = req.params
-            let data = await db.user_address.create({receiver_name, user_address, province, city, subdistrict, phone_number, user_id})
+            let {receiver_name, user_address,value, province, city, city_id, subdistrict, phone_number} = req.body
+            let getData = req.dataToken
+            let data = await db.user_address.create({receiver_name,value, user_address, province, city, city_id, subdistrict, phone_number, user_id: getData.id})
             res.status(200).send({
                 isError: false,
                 message: "Post Address Success",
@@ -48,5 +50,5 @@ module.exports= {
                 data: error
             })
         }
-    }
+    },
 }

@@ -20,7 +20,7 @@ app.use('/admin', adminRouter)
 app.use('/product', productRouter)
 app.use('/users', userRouter)
 app.use('/transaction', transactionRouter)
-app.use('/address', addressRouter)
+app.use('/shipping', addressRouter)
 app.use('/rajaongkir', rajaongkirRouter)
 app.use('/warehouse', warehouseRouter)
 

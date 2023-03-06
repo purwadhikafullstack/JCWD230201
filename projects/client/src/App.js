@@ -84,8 +84,35 @@ function App() {
     }
   }
 
+  let loginKeep = async()=>{
+    try {
+      let response = await axios.post('http://localhost:8000/users/keep-login', {headers: {
+        "token": localStorage.getItem('token')
+    }})
+      setVerifyStatus(response.data.data.status);
+    } catch (error) {
+      
+    }
+  }
+
+  let notRegister = ()=>{
+    // console.log(localStorage);
+    if((localStorage.getItem("token") == null) || (verifyStatus==="Unverified")){
+        setTimeout(() => {
+            toast('Login or Regist First', {
+                duration: 3000
+            })
+        }, 1000)
+  
+        setTimeout(() => {
+            navigate('/')
+        }, 3000)
+    }
+  }
+
   useEffect(() => {
     keepLogin()
+    loginKeep()
   }, [])
 
   return (
@@ -111,7 +138,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail,getProduct }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail,getProduct,notRegister }} data={{ show }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -127,7 +154,7 @@ function App() {
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
-              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail,getProductDetail }}/>} />
+              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail,getProductDetail,notRegister }}/>} />
             </Routes>
             <Toaster />
             <Footer />
