@@ -24,10 +24,13 @@ module.exports = (sequelize, DataTypes) => {
   }
   location_warehouse.init({
     city: DataTypes.STRING,
+    city_id:DataTypes.INTEGER,
     subdistrict:DataTypes.STRING,
     province:DataTypes.STRING,
-    latitude:DataTypes.INTEGER,
-    longitude:DataTypes.INTEGER,
+    province_id:DataTypes.INTEGER,
+    address:DataTypes.STRING,
+    latitude:DataTypes.STRING,
+    longitude:DataTypes.STRING,
     createdAt:{
       type:DataTypes.DATE,
       defaultValue:sequelize.literal('CURRENT_TIMESTAMP')

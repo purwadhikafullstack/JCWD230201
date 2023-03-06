@@ -32,6 +32,7 @@ import ProductDetail from './components/product_detail/product_detail';
 import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
 import Shipping from './components/shipping/shipping';
+import Warehouse from './components/adminContainer/warehouse';
 
 //import context for global
 import { userData } from './data/userData'
@@ -101,7 +102,9 @@ function App() {
                 <Route path='setting/addNewAdmin' element={<AddAdmin />} />
                 <Route path='profile/:id' element={<AdminSettingProfile />} />
                 <Route path='All-Transaction' element={<AllTransaction />} />
+                <Route path='warehouse' element={<Warehouse/>}/>
                 <Route path='*' element={<ErrorAdmin />} />
+               
               </Route>
             </Routes>
             </TransactionData.Provider>
