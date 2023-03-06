@@ -4,7 +4,7 @@ module.exports ={
     tokenVerify:async(req,res,next)=>{
 
         let {token} = req.headers
-        console.log(token)
+        // console.log(token)
         
             console.log(`token is ${token}`)
             if(!token) return res.status(404).send({

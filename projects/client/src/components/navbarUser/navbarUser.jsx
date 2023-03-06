@@ -25,19 +25,6 @@ export default function NavbarUser(props) {
         }
     }
 
-    let logout = () => {
-        toast('Logout..', {
-            style: {
-                backgroundColor: 'black',
-                color: 'white'
-            }
-        })
-        setTimeout(() => {
-            localStorage.removeItem('token')
-            navigate('/')
-        }, 2000)
-    }
-
     useEffect(() => {
         getCategory()
     }, [])
@@ -135,15 +122,6 @@ export default function NavbarUser(props) {
                                     </button>
                                 </Tooltip>
                             </Link>
-                            <Tooltip
-                                content="Logout"
-                                placement="bottom"
-                                className=" mt-6"
-                            >
-                                <button onClick={() => logout()} className="ml-2">
-                                    <MdOutlineLogout />
-                                </button>
-                            </Tooltip>
                         </>
                     }
                 </div>

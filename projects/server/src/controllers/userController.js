@@ -131,8 +131,8 @@ module.exports = {
     userLogin: async (req, res) => {
         try {
             let { email, password } = req.body
-            console.log(email)
-            console.log(password)
+            // console.log(email)
+            // console.log(password)
 
             if (!password) throw { message: 'Please Fill All Data!' }
 
@@ -277,7 +277,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
 
-            await users.update({ photo_profile: req.files.images[0].path }, {
+            let profilePicture = await users.update({ photo_profile: req.files.images[0].path }, {
                 where: {
                     id: getToken.id
                 }
@@ -287,7 +287,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'Update Photo Profile Success!',
-                data: null
+                data: profilePicture
             })
 
         } catch (error) {
@@ -306,83 +306,67 @@ module.exports = {
         try {
             let getToken = req.dataToken
 
-            let { name, phone_number } = req.body
+            let { name, phone_number, oldpassword, newpassword } = req.body
+            console.log('aaaaaaaaaaaaaaaaa')
+            console.log(name,phone_number,oldpassword,newpassword)
+            console.log(oldpassword)
+            console.log('a')
 
-            if(phone_number.length>13) throw {message:'Please input valid phone number'}
+            if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
 
-            await users.update({
-                name, phone_number
-            }, {
+            let getData = await db.user.findOne({
                 where: {
                     id: getToken.id
                 }
-            }, { transaction: t })
-
-            await t.commit()
-            res.status(201).send({
-                isError:false,
-                message:'Update Data Profile Success!',
-                data:null
-            })
-        } catch (error) {
-            await t.rollback()
-            console.log(error)
-            res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
-            })
-        }
-    },
-    changePassword:async(req,res)=>{
-        const t = await sequelize.transaction()
-        try {
-            let getToken = req.dataToken
-
-            let {oldPassword,newPassword,newConfirmPassword}= req.body
-
-            let getData = await db.user.findOne({
-                where:{
-                    id:getToken.id
-                }
             })
             
-            if(!oldPassword || !newPassword ||!newConfirmPassword) throw {message:'Please input fields'}
-          
-            let matchPassword = await hashMatch(oldPassword, getData.password)
-            
+            let matchPassword = await hashMatch(oldpassword, getData.password)
+
             if (matchPassword === false) return res.status(404).send({
                 isError: true,
-                message: 'Your password wrong!',
+                message: 'Your current password wrong!',
                 data: null
             })
 
-            if (newPassword.length < 8) throw { message: 'Password at least has 8 characters' }
+            if (phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
-            let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-            if (!character.test(newPassword)) throw { message: 'Password must contains number' }
+            if (name && phone_number && !oldpassword && !newpassword) {
+                await users.update({
+                    name, phone_number
+                }, {
+                    where: {
+                        id: getToken.id
+                    }
+                }, { transaction: t })
+            } else if (name && phone_number && oldpassword && newpassword) {
 
-            await users.update({
-                password: await hashPassword(newPassword)
-            },{
-                where:{
-                    id:getToken.id
-                }
-            })
+                if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+                let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+                if (!character.test(newpassword)) throw { message: 'Password must contains number' }
+
+                await users.update({
+                    name, phone_number, password: await hashPassword(newpassword)
+                }, {
+                    where: {
+                        id: getToken.id
+                    }
+                }, { transaction: t })
+            }
 
             await t.commit()
             res.status(201).send({
-                isError:false,
-                message:'Change Password Success!',
-                data:null
+                isError: false,
+                message: 'Update Data Profile Success!',
+                data: null
             })
         } catch (error) {
             await t.rollback()
             console.log(error)
             res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
+                isError: true,
+                message: error.message,
+                data: null
             })
         }
     }
