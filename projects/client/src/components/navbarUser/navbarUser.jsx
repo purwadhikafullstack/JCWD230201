@@ -83,17 +83,17 @@ export default function NavbarUser(props) {
                             <MdFavorite />
                         </Tooltip>
                     </button>
-                    <Link to='/cart'>
-                        <Tooltip
-                            content="Cart"
-                            placement="bottom"
-                            className=" mt-6"
-                        >
-                            <button>
+                    <button onClick={()=>props.func.notRegister()}>
+                        <Link to='/cart'>
+                            <Tooltip
+                                content="Cart"
+                                placement="bottom"
+                                className=" mt-6"
+                            >
                                 <MdShoppingBag />
-                            </button>
-                        </Tooltip>
-                    </Link>
+                            </Tooltip>
+                        </Link>
+                    </button>
                     {!localStorage.getItem('token') ?
                         <Link to='/login'>
                             <Tooltip
