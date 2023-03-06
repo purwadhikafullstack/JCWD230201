@@ -44,13 +44,36 @@ module.exports = {
     },
     getAllAdmin: async (req, res) => {
         try {
-            let allData = await db.admin.findAll()
+            let allData = await db.admin.findAll({
+                where:{
+                    role:2
+                },
+                include:[{model:db.location_warehouse}]
+            })
+            console.log(allData[4].dataValues.role)
+            let loader = allData.map((item,index)=>{
+                return(
+                    {
+                        id:item.dataValues.id?item.dataValues.id:null,
+                        name: item.dataValues.name?item.dataValues.name:null,
+                        email:item.dataValues.email?item.dataValues.email:null,
+                        gender:item.dataValues.gender?item.dataValues.gender:null,
+                        phone_number:item.dataValues.phone_number?item.dataValues.phone_number:null,
+                        role:item.dataValues.role?item.dataValues.role:null,
+                        location_warehouse_id:item.dataValues.location_warehouse_id?item.dataValues.location_warehouse_id:null,
+                        location_warehouse:item.dataValues.location_warehouse?item.dataValues.location_warehouse.dataValues.city:null
+                    }
+                )
+            })
+            // console.log(loader)
+            // console.log(allData[1].dataValues.location_warehouse)
 
             res.status(201).send({
                 isError: false,
                 message: 'Get Data Success!',
                 data: {
-                    allData
+                   loader
+
                 }
             })
         } catch (error) {
@@ -77,7 +100,7 @@ module.exports = {
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
             if (!hashMatch(password, dataAdmin.password)) throw { message: 'Password wrong!' }
-
+          console.log(dataAdmin)
             console.log(dataAdmin.location_warehouse)
             let token = await createToken({ id: dataAdmin.id })
 
@@ -107,6 +130,7 @@ module.exports = {
     getAllUser: async (req, res) => {
 
         let allUser = await db.user.findAll()
+
         let allAdmin = await db.admin.findAll({
             where: {
                 role: 2
@@ -145,10 +169,33 @@ module.exports = {
     },
     update: async (req, res) => {
         try {
-            let { id, email, name, phone_number, location_warehouse_id } = req.body
 
+            let {id, email,name,gender,phone_number,location_warehouse_id,password} = req.body
+         
+            if(!name || !email ) throw{message:'Name or Email Empty!'}
+
+            // let matchData = await db.admin.findOne({
+            //     where:{
+            //         [Op.and]:[
+            //             {id},{email},{name}
+            //         ]
+            //     }
+            // }) 
+            // if(matchData) throw {message:'Email or Name has been used!'} 
+
+            if(password.length==0){
+                await db.admin.update({
+                email,name,phone_number,location_warehouse_id,gender
+            },
+            {
+                where:{
+                    id
+                }
+            }
+            )
+        }else {
             await db.admin.update({
-                email, name, phone_number, location_warehouse_id
+                email,name,phone_number,location_warehouse_id,gender,password: await hashPassword(password)
             },
                 {
                     where: {
@@ -156,13 +203,19 @@ module.exports = {
                     }
                 }
             )
+        }
 
             res.status(201).send({
                 isError: false,
                 message: 'update success!'
             })
         } catch (error) {
-            console.log(error)
+          
+            res.status(404).send({
+                isError:true,
+                message:error.message,
+                data:null
+            })
         }
     },
     delete: async (req, res) => {
@@ -181,8 +234,6 @@ module.exports = {
 
         let getToken = req.dataToken
 
-
-
         console.log(getToken)
 
 
@@ -200,7 +251,7 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
         }
-        if (getToken) return res.status(201).send({
+        res.status(201).send({
             isError: false,
             message: 'token still valid',
             data: {
@@ -210,6 +261,9 @@ module.exports = {
                 warehouse: getDataUser.location_warehouse_id ?
                     getDataUser.location_warehouse.city : null,
                 photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null
+                role:getDataUser.role,
+                warehouse:getDataUser.location_warehouse_id?
+                getDataUser.location_warehouse.city:null
             }
         })
     }
