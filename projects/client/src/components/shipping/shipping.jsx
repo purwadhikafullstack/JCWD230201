@@ -5,9 +5,9 @@ import { Modal, Button, TextInput, Label} from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
 import iPhone14pro from './../../Assets/iphone_14_pro.jpg'
 
-export default function Shipping() {
+export default function Shipping(props) {
 
-    const {id} = useParams()
+    // const {id} = useParams()
 
     let onReceiver_name = useRef()
     let onUser_address = useRef()
@@ -15,14 +15,20 @@ export default function Shipping() {
     let onCity = useRef()
     let onSubdistrict = useRef()
     let onPhone_number = useRef()
+    let onCourier = useRef()
+    let onCost = useRef()
 
     const [address, setAddress] = useState([])
+    const [checkAddress, setCheckAddress] = useState([])
     const [valueDefault, setValueDefault] = useState([])
     const [show, setShow] = useState(false)
     const [showAddress, setShowAddress] = useState(false)
     const [arrProvince, setArrProvince] = useState([])
     const [arrCity, setArrCity] = useState([])
+    const [arrInitial, setArrInitial] = useState([])
+    const [arrInitialCity, setArrInitialCity] = useState(0)
     const [selectedCity, setSelectedCity] = useState("")
+    const [selectedCityId, setSelectedCityId] = useState(0)
     const [selectedName, setSelectedName] = useState("")
     const [selectedNumber, setSelectedNumber] = useState("")
     const [selectedUserAddress, setSelectedUserAddress] = useState("")
@@ -35,18 +41,34 @@ export default function Shipping() {
     const [initialProvince, setInitialProvince] = useState("")
     const [initialSubdistrict, setInitialSubdistrict] = useState("")
     const [initialNumber, setInitialNumber] = useState("")
+    const [costShipping, setCostShipping] = useState([])
+    const [priceShipping, setPriceShipping] = useState(0)
+    const [disable, setDisable] = useState(true)
 
     let getAllAddress = async()=>{
         try {
-            let response = await axios.get(`http://localhost:8000/address/${id}`)
+            let response = await axios.get(`http://localhost:8000/shipping`, {
+                headers: {
+                    "token": localStorage.getItem('token')
+                }
+            })
+            console.log(response.data.data);
+            setCheckAddress(response.data.data);
+            let aa = []
+            response.data.data.forEach((item)=>{
+                return item.value==1?aa.push(item):null
+            })
+            console.log(aa[0]);
+            setArrInitial(aa[0])
+            setArrInitialCity(aa[0].city_id)
             setValueDefault(response.data.data);
             setAddress(response.data.data)
-            setInitialCity(response.data.data[0].city)
-            setInitialName(response.data.data[0].receiver_name)
-            setInitialUserAddress(response.data.data[0].user_address)
-            setInitialProvince(response.data.data[0].province)
-            setInitialSubdistrict(response.data.data[0].subdistrict)
-            setInitialNumber(response.data.data[0].phone_umber)
+            setInitialCity(aa[0].city)
+            setInitialName(aa[0].receiver_name)
+            setInitialUserAddress(aa[0].user_address)
+            setInitialProvince(aa[0].province)
+            setInitialSubdistrict(aa[0].subdistrict)
+            setInitialNumber(aa[0].phone_umber)
         } catch (error) {
             console.log(error.message)
         }
@@ -58,10 +80,23 @@ export default function Shipping() {
             let inputUserAddress = onUser_address.current.value
             let inputProvince = onProvince.current.value.split(", ")[1]
             let inputCity = onCity.current.value.split(",")[0]
+            let inputCityId = onCity.current.value.split(",")[1]
             let inputSubdistrict = onSubdistrict.current.value
             let inputPhoneNumber = onPhone_number.current.value
             if (inputReceiverName.length === 0 || inputUserAddress.length === 0 || inputProvince.length === 0 || inputCity.length === 0 || inputSubdistrict.length === 0 || inputPhoneNumber.length === 0) throw { message: 'Incomplete Input' }
-            let response = await axios.post(`http://localhost:8000/address/add-address/${id}`, {receiver_name: inputReceiverName, user_address: inputUserAddress, province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber})
+            let response = checkAddress.length? await axios.post(`http://localhost:8000/shipping/add-address`, {receiver_name: inputReceiverName, value: 0, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber},
+            {
+                headers: {
+                "token": localStorage.getItem('token')
+                }
+            })
+            :
+            await axios.post(`http://localhost:8000/shipping/add-address`, {receiver_name: inputReceiverName, value: 1, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber},
+            {
+                headers: {
+                "token": localStorage.getItem('token')
+                }
+            })
             toast.success(`Add New Address Success`)
             setShow(!show)
             getAllAddress()
@@ -74,7 +109,7 @@ export default function Shipping() {
         try {
           let response = await axios.get("http://localhost:8000/rajaongkir/province", {
             headers: {
-              key: "c597d7d890389c6ff9747205fcf6cf86",
+              key: "767e2faef8f409adc96f179e3a949442",
             },
           });
           setArrProvince(response.data.data);
@@ -88,7 +123,7 @@ export default function Shipping() {
             console.log(onProvince.current.value.split(",")[0])
           let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`,{
               headers: {
-                key: "c597d7d890389c6ff9747205fcf6cf86",
+                key: "767e2faef8f409adc96f179e3a949442",
               },
             });
           setArrCity(data.data.data.results)
@@ -101,13 +136,14 @@ export default function Shipping() {
         try {
             setCheckValue(value)
             setSelectedCity(value.city);
+            setSelectedCityId(value.city_id);
             setSelectedName(value.receiver_name);
             setSelectedNumber(value.phone_number);
             setSelectedUserAddress(value.user_address);
             setSelectedProvince(value.province);
             setSelectedSubdistrict(value.subdistrict);
-
-            setShowAddress(!showAddress)
+            setShowAddress(false)
+            console.log(value);
             
 
         } catch (error) {
@@ -115,9 +151,39 @@ export default function Shipping() {
         }
       }
 
+      let getCost = async()=>{
+          try {
+            console.log(onCourier.current.value);
+            // console.log(onCost.current.value);
+            let data = selectedCityId? await axios.post('http://localhost:8000/rajaongkir/ongkir',{origin: selectedCityId, destination: selectedCityId, weight: 1700, courier: `${onCourier.current.value}`},{
+                headers: {
+                    key: "767e2faef8f409adc96f179e3a949442",
+                },
+            }) :
+            await axios.post('http://localhost:8000/rajaongkir/ongkir',{origin: arrInitialCity, destination: arrInitialCity, weight: 1700, courier: `${onCourier.current.value}`},{
+                headers: {
+                    key: "767e2faef8f409adc96f179e3a949442",
+                },
+            })
+            
+            setCostShipping(data.data.data.results[0].costs);
+              console.log(data);
+              setPriceShipping(costShipping[onCost.current.value.split(",")[1]].cost[0].value);
+      } catch (error) {
+          console.log(error);
+      }
+    }
+
+    let getService = ()=>{
+        getCost()
+        console.log(onCost.current.value)
+    }
+
     useEffect(() => {
       getAllAddress()
       getDataProvince()
+      props.func.notRegister()
+    //   getCost()
     }, [])
     
 
@@ -127,7 +193,7 @@ export default function Shipping() {
                 <div className='font-bold text-3xl flex justify-start py-5'>
                     Shipping
                 </div>
-                <div className='grid grid-cols-5 gap-9'>
+                <div className='grid grid-cols-6 gap-9'>
                     <div className='flex justify-end col-span-3'>
                         <div className='flex-col items-end w-full'>
                             <div className='flex-col items-end border'>
@@ -406,22 +472,47 @@ export default function Shipping() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <div className='font-bold mb-2'>
-                                            Shipping Service
-                                        </div>
-                                        <select className='rounded-sm w-full'>
-                                            <option>Choose Shipping</option>
-                                            <option>JNE</option>
-                                            <option>POS</option>
-                                            <option>Tiki</option>
-                                        </select>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className=' col-span-2'>
+                    <div className='grid gap-5 col-span-3'>
+                        <div className='w-full border'>
+                            <div className='flex justify-between border-b-2 py-3 px-3'>
+                                <div className='flex items-center font-bold'>
+                                    Shipping Courier
+                                </div>
+                            </div>
+                            <div className='flex p-5'>
+                                <div className='grid gap-2 w-full'>
+                                    <div className='font-bold'>
+                                        Choose Courier
+                                    </div>
+                                    <select ref={onCourier} onChange={(e)=>{getCost(e.target.value)
+                                
+                                        onCost.current.value="chooseService"
+                                        setPriceShipping(0)}}  className='rounded-sm w-full'>
+                                        <option value={"choose"}>Choose Shipping</option>
+                                        <option value={"jne"}>JNE</option>
+                                        <option value={"pos"}>POS</option>
+                                        <option value={"tiki"}>Tiki</option>
+                                    </select>
+                                    <div className='font-bold'>
+                                        Choose Service
+                                    </div>
+                                    <select ref={onCost} onChange={(e)=>{getService(e.target.value)
+                                    setDisable(false)}} className='rounded-sm w-full'>
+                                    <option value={"chooseService"}>Choose Service</option>
+                                        {costShipping.map((value,index)=>{
+                                            return(
+                                                <option value={`${value.service},${index}`}>{value.service}</option>
+                                                
+                                            )
+                                        })}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div className='w-full border h-max px-3 py-4'>
                             <div className='font-bold text-xl'>
                                 Summary
@@ -438,8 +529,8 @@ export default function Shipping() {
                                 <div>
                                     Shipping Order 
                                 </div>
-                                <div>
-                                    Rp. 0
+                                <div className=' text-red-500'>
+                                    Rp. {priceShipping}
                                 </div>
                             </div>
                             <div className='flex justify-between py-3 text-lg font-bold border-t-2'>
@@ -447,14 +538,15 @@ export default function Shipping() {
                                     Total Order 
                                 </div>
                                 <div>
-                                    Rp. 21.999.000
+                                    Rp. {(21999000+priceShipping).toLocaleString()}
                                 </div>
                             </div>
-                            <button className='bg-neutral-900 text-white font-bold w-full py-2 rounded'>
+                            <button className={`bg-black text-white font-bold w-full py-2 rounded`} disabled={disable}>
                                 Buy
                             </button>
                         </div>
                     </div>
+                    
                 </div>
                 <Toaster
                     toastOptions={{
