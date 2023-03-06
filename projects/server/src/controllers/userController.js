@@ -369,57 +369,5 @@ module.exports = {
                 data: null
             })
         }
-    },
-    // changePassword: async (req, res) => {
-    //     const t = await sequelize.transaction()
-    //     try {
-    //         let getToken = req.dataToken
-
-    //         let { oldpassword, newpassword, newConfirmpassword } = req.body
-
-    //         let getData = await db.user.findOne({
-    //             where: {
-    //                 id: getToken.id
-    //             }
-    //         })
-
-    //         if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
-
-    //         let matchPassword = await hashMatch(oldpassword, getData.password)
-
-    //         if (matchPassword === false) return res.status(404).send({
-    //             isError: true,
-    //             message: 'Your current password wrong!',
-    //             data: null
-    //         })
-
-    //         if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
-
-    //         let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
-    //         if (!character.test(newpassword)) throw { message: 'Password must contains number' }
-
-    //         await users.update({
-    //             password: await hashPassword(newpassword)
-    //         }, {
-    //             where: {
-    //                 id: getToken.id
-    //             }
-    //         })
-
-    //         await t.commit()
-    //         res.status(201).send({
-    //             isError: false,
-    //             message: 'Change Password Success!',
-    //             data: null
-    //         })
-    //     } catch (error) {
-    //         await t.rollback()
-    //         console.log(error)
-    //         res.status(404).send({
-    //             isError: true,
-    //             message: error.message,
-    //             data: null
-    //         })
-    //     }
-    // }
+    }
 }
