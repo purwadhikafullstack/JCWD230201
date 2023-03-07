@@ -15,9 +15,9 @@ export default function SidebarAdmin() {
     return (
         <div className="fixed px-5 py-5 w-60 h-screen bg-zinc-900 text-white z-0">
             <div className='flex flex-col h-full fixed'>
-                <div className='mb-10 text-center text-3xl font-semibold'>
+                <button onClick={()=> navigate('/')} className='mb-10 text-center text-3xl font-semibold'>
                     iFrit
-                </div>
+                </button>
 
                 <div className='flex flex-col gap-4'>
                     <button onClick={() => navigate('/admin')} className='flex items-center gap-3 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
@@ -38,7 +38,7 @@ export default function SidebarAdmin() {
                     }
                     <Transaction />
 
-                    <button className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                    <button onClick={()=> navigate('sales-report')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
                         <MdAssignment size={'20px'} />
                         Sales Reports
                     </button>

@@ -1,4 +1,6 @@
 'use strict';
+var moment = require('moment'); // require
+
 const {
   Model
 } = require('sequelize');
@@ -30,7 +32,16 @@ module.exports = (sequelize, DataTypes) => {
     gender:DataTypes.STRING,
     role: DataTypes.STRING,
     phone_number: DataTypes.INTEGER,
-    photo_profile: DataTypes.STRING
+    photo_profile: DataTypes.STRING,
+    createdAt:{
+      type:DataTypes.DATE,
+      defaultValue:moment().format()
+    },
+    updatedAt:{
+      type:DataTypes.DATE,
+      defaultValue:moment().format()
+    }
+    
   }, {
     sequelize,
     modelName: 'admin',

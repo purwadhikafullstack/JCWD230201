@@ -3,18 +3,25 @@ const { sequelize } = require('../models')
 const { Op } = require('sequelize')
 
 const db = require('../models/index')
-
+const moment = require('moment')
 module.exports = {
     allTransaction: async (req, res) => {
-        let {warehouse} = req.body
-        
-        let response = warehouse? await db.transaction.findAll({
-            
+        let {warehouse, updatedAt} = req.body
+        console.log(updatedAt)
+        let response = updatedAt? await db.transaction.findAll({
+            include: [
+                { model: db.location_warehouse },
+                { model: db.transaction_detail },
+                { model: db.order_status }
+            ]
+        })
+        :
+        warehouse? await db.transaction.findAll({
             where:{warehouse_city: warehouse},
             include: [
                 { model: db.location_warehouse },
                 { model: db.transaction_detail },
-                { model: db.order_status },
+                { model: db.order_status }
             ]
         })
         :
@@ -22,14 +29,30 @@ module.exports = {
             include: [
                 { model: db.location_warehouse },
                 { model: db.transaction_detail },
-                { model: db.order_status },
+                { model: db.order_status }
             ]
         })
+
+        // let data = []
+        // response.forEach((item)=>{
+        //     data.push({
+        //         id:item.dataValues.id,
+        //         ongkir:item.dataValues.ongkir,
+        //         receiver:item.dataValues.receiver,
+        //         address:item.dataValues.address,
+        //         warehouse_city:item.dataValues.warehouse_city,
+        //         courier:item.dataValues.courier,
+        //         user_name:item.dataValues.user_name,
+        //         phone_number:item.dataValues.phone_number,
+        //         location_warehouse_
+        //     })
+        // })
+       console.log(response[0].dataValues)
 
         res.status(201).send({
             isError: false,
             message: 'get data transaction success!',
-            data: response
+            data : response
         })
     },
     transactionWH: async (req, res) => {

@@ -2,7 +2,7 @@
 const { sequelize } = require('../models')
 const { Op } = require('sequelize')
 const { v4: uuidv4 } = require('uuid');
-
+const moment = require('moment')
 
 //import models
 const db = require('./../models/index')
@@ -113,10 +113,9 @@ module.exports = {
                     'token': token,
                     'role': `${dataAdmin.role}`,
                     'warehouse': dataAdmin.location_warehouse_id ?
-                        dataAdmin.location_warehouse.city : null
-
+                        dataAdmin.location_warehouse.city : null,
+                    'date' : moment(dataAdmin.updatedAt).format()
                 }
-
             })
 
         } catch (error) {
@@ -260,8 +259,8 @@ module.exports = {
                 role: getDataUser.role,
                 warehouse: getDataUser.location_warehouse_id ?
                     getDataUser.location_warehouse.city : null,
-                photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null
-                role:getDataUser.role,
+                photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null,
+                role:getDataUser.role?getDataUser.role:null,
                 warehouse:getDataUser.location_warehouse_id?
                 getDataUser.location_warehouse.city:null
             }
