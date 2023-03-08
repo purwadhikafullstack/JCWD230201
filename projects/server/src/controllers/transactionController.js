@@ -6,9 +6,14 @@ const db = require('../models/index')
 const moment = require('moment')
 module.exports = {
     allTransaction: async (req, res) => {
-        let {warehouse, updatedAt} = req.body
-        console.log(updatedAt)
-        let response = updatedAt? await db.transaction.findAll({
+        let {warehouse, start, end} = req.body
+        
+        let response = start? await db.transaction.findAll({
+            where:{
+                updatedAt:{
+                    [Op.between] : [start, end]
+                }
+            },
             include: [
                 { model: db.location_warehouse },
                 { model: db.transaction_detail },
@@ -47,7 +52,7 @@ module.exports = {
         //         location_warehouse_
         //     })
         // })
-       console.log(response[0].dataValues)
+    //    console.log(response[0].dataValues)
 
         res.status(201).send({
             isError: false,

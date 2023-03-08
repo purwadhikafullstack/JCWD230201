@@ -113,8 +113,7 @@ module.exports = {
                     'token': token,
                     'role': `${dataAdmin.role}`,
                     'warehouse': dataAdmin.location_warehouse_id ?
-                        dataAdmin.location_warehouse.city : null,
-                    'date' : moment(dataAdmin.updatedAt).format()
+                        dataAdmin.location_warehouse.city : null
                 }
             })
 

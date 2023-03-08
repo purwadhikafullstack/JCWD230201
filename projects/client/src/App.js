@@ -88,18 +88,18 @@ function App() {
     }
   }
 
-  let loginKeep = async () => {
-    try {
-      let response = await axios.post('http://localhost:8000/users/keep-login', {
-        headers: {
-          "token": localStorage.getItem('token')
-        }
-      })
-      setVerifyStatus(response.data.data.status);
-    } catch (error) {
+  // let loginKeep = async () => {
+  //   try {
+  //     let response = await axios.post('http://localhost:8000/users/keep-login', {
+  //       headers: {
+  //         "token": localStorage.getItem('token')
+  //       }
+  //     })
+  //     setVerifyStatus(response.data.data.status);
+  //   } catch (error) {
 
-    }
-  }
+  //   }
+  // }
 
   let notRegister = () => {
     // console.log(localStorage);
@@ -118,7 +118,7 @@ function App() {
 
   useEffect(() => {
     keepLogin()
-    loginKeep()
+    // loginKeep()
   }, [])
 
   return (
