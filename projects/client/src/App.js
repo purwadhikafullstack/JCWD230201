@@ -1,7 +1,7 @@
 //import dependencies
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
-import { Toaster } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
 import { CheckLogin } from './utils/checklogin';
 import axios from 'axios';
 
@@ -36,7 +36,8 @@ import Warehouse from './components/adminContainer/warehouse';
 
 //import context for global
 import { userData } from './data/userData'
-import {TransactionData} from './data/transactionAdmin'
+import { TransactionData } from './data/transactionAdmin'
+import MyAccountAddress from './pages/my-account-address/myAccountAddress';
 
 
 function App() {
@@ -49,9 +50,10 @@ function App() {
   const [showDetail, setShowDetail] = useState([])
   const [detail, setDetail] = useState([])
   const [detailProduct, setDetailProduct] = useState([])
+  const [verifyStatus, setVerifyStatus] = useState('')
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
-  let transactionDetail = useMemo(()=> ({ transaction, setTransaction }), [transaction, setTransaction] )
+  let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
 
   let keepLogin = async () => {
     let response = await CheckLogin()
@@ -63,50 +65,52 @@ function App() {
     setUser(response)
   }
 
-  let getProductDetail = async(id)=>{
+  let getProductDetail = async (id) => {
     try {
-        // console.log(id);
-        let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
-        // console.log(response.data.data[0].product_images[0].img);
-        setDetail(response.data.data[0])
-        setDetailProduct(response.data.data[0].product_details)
+      // console.log(id);
+      let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
+      // console.log(response.data.data[0].product_images[0].img);
+      setDetail(response.data.data[0])
+      setDetailProduct(response.data.data[0].product_details)
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
   }
 
-  let getProduct = async(id)=>{
+  let getProduct = async (id) => {
     try {
-        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
-        setShow(data.data)
+      let { data } = await axios.get(`http://localhost:8000/product/${id}`)
+      setShow(data.data)
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
   }
 
-  let loginKeep = async()=>{
+  let loginKeep = async () => {
     try {
-      let response = await axios.post('http://localhost:8000/users/keep-login', {headers: {
-        "token": localStorage.getItem('token')
-    }})
+      let response = await axios.post('http://localhost:8000/users/keep-login', {
+        headers: {
+          "token": localStorage.getItem('token')
+        }
+      })
       setVerifyStatus(response.data.data.status);
     } catch (error) {
-      
+
     }
   }
 
-  let notRegister = ()=>{
+  let notRegister = () => {
     // console.log(localStorage);
-    if((localStorage.getItem("token") == null) || (verifyStatus==="Unverified")){
-        setTimeout(() => {
-            toast('Login or Regist First', {
-                duration: 3000
-            })
-        }, 1000)
-  
-        setTimeout(() => {
-            navigate('/')
-        }, 3000)
+    if ((localStorage.getItem("token") == null) || (verifyStatus === "Unverified")) {
+      setTimeout(() => {
+        toast('Login or Regist First', {
+          duration: 3000
+        })
+      }, 1000)
+
+      setTimeout(() => {
+        navigate('/')
+      }, 3000)
     }
   }
 
@@ -120,25 +124,25 @@ function App() {
       {
         location.pathname.split('/')[1] == "admin" ?
           <>
-          <TransactionData.Provider value={transactionDetail}>
-            <Routes>
-              <Route path='/admin' element={<Admin />} >
-                <Route path='' element={<Dashboard />} />
-                <Route path='all-user' element={<GetAllAccount />} />
-                <Route path='setting' element={<AdminSetting />} />
-                <Route path='setting/addNewAdmin' element={<AddAdmin />} />
-                <Route path='profile/:id' element={<AdminSettingProfile />} />
-                <Route path='All-Transaction' element={<AllTransaction />} />
-                <Route path='warehouse' element={<Warehouse/>}/>
-                <Route path='*' element={<ErrorAdmin />} />
-               
-              </Route>
-            </Routes>
+            <TransactionData.Provider value={transactionDetail}>
+              <Routes>
+                <Route path='/admin' element={<Admin />} >
+                  <Route path='' element={<Dashboard />} />
+                  <Route path='all-user' element={<GetAllAccount />} />
+                  <Route path='setting' element={<AdminSetting />} />
+                  <Route path='setting/addNewAdmin' element={<AddAdmin />} />
+                  <Route path='profile/:id' element={<AdminSettingProfile />} />
+                  <Route path='All-Transaction' element={<AllTransaction />} />
+                  <Route path='warehouse' element={<Warehouse />} />
+                  <Route path='*' element={<ErrorAdmin />} />
+
+                </Route>
+              </Routes>
             </TransactionData.Provider>
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail,getProduct,notRegister }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister }} data={{ show }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -146,15 +150,16 @@ function App() {
               <Route path='/activation/:id' element={<Activation />} />
               <Route path='/confirm-email' element={<ConfirmEmail />} />
               <Route path='/reset-password/:id' element={<ResetPassword />} />
-              <Route path='/my-account' element={<MyAccount/>}>
+              <Route path='/my-account' element={<MyAccount />}>
                 <Route path='' element={<DashboardAccount />} />
-                <Route path='information' element={<MyAccountInfo />} />  
+                <Route path='information' element={<MyAccountInfo />} />
+                <Route path='address' element ={<MyAccountAddress/>}/>
               </Route>
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ show }} func={{getProduct}} />} />
+              <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
-              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail,getProductDetail,notRegister }}/>} />
+              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
             </Routes>
             <Toaster />
             <Footer />

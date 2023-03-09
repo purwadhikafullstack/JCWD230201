@@ -3,9 +3,12 @@ const { sequelize } = require('./../models')
 const { Op } = require('sequelize')
 const { v4: uuidv4 } = require('uuid');
 
+const axios = require('axios')
+
 //import models
 const db = require('./../models/index')
 const users = db.user
+
 
 //import hashing
 const { hashPassword, hashMatch } = require('../lib/hashpassword');
@@ -307,26 +310,16 @@ module.exports = {
             let getToken = req.dataToken
 
             let { name, phone_number, oldpassword, newpassword } = req.body
-            console.log('aaaaaaaaaaaaaaaaa')
-            console.log(name,phone_number,oldpassword,newpassword)
-            console.log(oldpassword)
-            console.log('a')
-
-            if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
 
             let getData = await db.user.findOne({
                 where: {
                     id: getToken.id
                 }
             })
-            
+
             let matchPassword = await hashMatch(oldpassword, getData.password)
 
-            if (matchPassword === false) return res.status(404).send({
-                isError: true,
-                message: 'Your current password wrong!',
-                data: null
-            })
+
 
             if (phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
@@ -340,7 +333,16 @@ module.exports = {
                 }, { transaction: t })
             } else if (name && phone_number && oldpassword && newpassword) {
 
+                if (!oldpassword && newpassword) throw { message: 'Please input your current password' }
+
                 if (newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
+
+                if (matchPassword === false) return res.status(404).send({
+                    isError: true,
+                    message: 'Your current password wrong!',
+                    data: null
+                })
+
 
                 let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
                 if (!character.test(newpassword)) throw { message: 'Password must contains number' }
@@ -366,6 +368,165 @@ module.exports = {
             res.status(404).send({
                 isError: true,
                 message: error.message,
+                data: null
+            })
+        }
+    },
+    addAddressUser: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let { user_id, receiver_name, user_address, phone_number, subdistrict, province_id, province, city_id, city } = req.body
+            // console.log(user_id)
+
+            let checkData = await db.user_address.findOne({
+                where: {
+                    user_id
+                }
+            })
+
+            let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
+            console.log(jalan)
+
+            let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
+            console.log(response.data.results[0].geometry.lat)
+
+            if (!checkData) {
+                await db.user_address.create({
+                    user_id, receiver_name, user_address, value: 1, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
+                }, { transaction: t })
+            } else {
+                await db.user_address.create({
+                    user_id, receiver_name, user_address, value: 0, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
+                }, { transaction: t })
+            }
+
+
+            await t.commit()
+            res.status(201).send({
+                isError: false,
+                message: 'Add Address Success!',
+                data: null
+            })
+
+        } catch (error) {
+            // await t.rollback()
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    updateAddressUser: async (req, res) => {
+        try {
+            let { id, receiver_name, user_address, phone_number, subdistrict, province_id, province, city_id, city } = req.body
+            console.log(province)
+
+            // let checkData = await db.user_address.findOne({
+            //     where: {
+            //         id
+            //     }
+            // })
+
+            await db.user_address.update({
+                receiver_name, user_address, phone_number, subdistrict, province_id, province, city_id, city
+            }, {
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Update Address Success!',
+                data: null
+            })
+        } catch (error) {
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    deleteAddressUser: async (req, res) => {
+        try {
+            let { id } = req.body
+
+            let deleteAddress = await db.user_address.destroy({
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Delete Address Success!',
+                data: null
+            })
+        } catch (error) {
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    changeDefaultAddress: async (req, res) => {
+        try {
+            let { id, user_id } = req.body
+
+            let data = await db.user_address.findAll({
+                where: {
+                    user_id
+                }
+            })
+
+            console.log(data)
+
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].dataValues.value == 1) {
+                    await db.user_address.update({
+                        value: 0
+                    }, {
+                        where: {
+                            user_id
+                        }
+                    })
+                }
+            }
+
+
+
+            let dataToChange = await db.user_address.findOne({
+                where: {
+                    id
+                }
+            })
+
+            if (dataToChange.dataValues.value == 0) {
+                await db.user_address.update({
+                    value: 1
+                }, {
+                    where: {
+                        id
+                    }
+                })
+            }
+
+            res.status(201).send({
+                isError: false,
+                message: 'Change Main Address Success',
+                data: null
+            })
+
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error,
                 data: null
             })
         }

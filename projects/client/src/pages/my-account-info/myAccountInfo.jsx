@@ -66,6 +66,7 @@ export default function MyAccountInfo() {
         } catch (error) {
             console.log(error)
             setMessage(error.message)
+            
         }
     }
 
@@ -80,6 +81,7 @@ export default function MyAccountInfo() {
                 }
             })
             console.log(data)
+            
 
             toast.success('Update Profile Picture Success!', {
                 style: {
@@ -109,9 +111,9 @@ export default function MyAccountInfo() {
         try {
             if (profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
-            if (!profile.oldpassword) throw { message: 'Please input your current password' }
+            // if (!profile.oldpassword) throw { message: 'Please input your current password' }
 
-            if (!profile.oldpassword && profile.newpassword) throw {message: 'Please input your current password'}
+            // if (!profile.oldpassword && profile.newpassword) throw {message: 'Please input your current password'}
 
             if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
                 console.log('2')
@@ -220,7 +222,6 @@ export default function MyAccountInfo() {
                             <>
 
                                 <div className="my-5 items-center">
-                                    <p className=" text-lg font-semibold">Change Password</p>
                                     <div className="my-5">
                                         <p className="font-semibold">Your Password</p>
                                         <div className="flex items-center relative">
