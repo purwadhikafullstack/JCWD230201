@@ -13,8 +13,6 @@ export default function SalesReport() {
     // let date = new Date
     // let yir = date.getFullYear()
 
-    let [filtah, setFiltah] = useState(1)
-
     let [year, setYear] = useState([
         // yir, yir - 1, yir - 2, yir - 3
         2023, 2022, 2021, 2020
@@ -42,7 +40,9 @@ export default function SalesReport() {
         'total': 0,
         'ongkir': 0,
         'discount': 0,
-        'category': {}
+        'transaction': 0,
+        'qty': 0,
+        'category': []
     })
 
     let depault = async () => {
@@ -71,9 +71,8 @@ export default function SalesReport() {
 
     let getSales = async (Y, M, T, WH) => {
         setPickT(T)
-        setFiltah(2)
         try {
-            console.log(M)
+            // console.log(M)
             if (!M && !WH) {
                 var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${pickWH}`)
 
@@ -89,21 +88,34 @@ export default function SalesReport() {
             setPickY(Y)
             setPickM(M)
 
-            console.log(response)
-            if (T == 1) {
 
-                let total_price = 0, total_ongkir = 0, total_discount = 0
-
+            if (T==1) {
+                let total_price = 0, total_ongkir = 0, total_discount = 0, total_product = 0, total_transaction = response.data.data.length
                 response.data.data.forEach((item, index) => {
                     total_ongkir += item.ongkir
-                    item.transaction_details.forEach((item) => total_price += item.price)
+                    item.transaction_details.forEach((item) => {
+                        total_price += item.price
+                        total_product += item.qty
+                    })
                 })
-                console.log(total_price)
-                setVisible({ ...visible, total: total_price, ongkir: total_ongkir })
-                console.log(total_ongkir)
-            }else if (T==2){
-
+                // console.log(total_price)
+                setVisible({ ...visible, total: total_price, ongkir: total_ongkir, transaction: total_transaction, qty: total_product })
+                // console.log(total_ongkir)
+            } else if (T == 2) {
+                // console.log('masuk')
+                let price = 0
+                let loader = [], loader2=[]
+                response.data.data.forEach((item,index)=>{
+                        item.transaction_details.forEach((item)=> price+=item.price)
+                        loader2 = item.products
+                        loader.push({'category':item.name, 'totalC':price, 'product':loader2})
+                        price=0
+                        loader2=[]
+                       
+                })
+                setVisible({ ...visible, category: loader })
             }
+            console.log(response)
             toast.success(`Get Sales data Success!`)
         } catch (error) {
             console.log(error)
@@ -157,7 +169,7 @@ export default function SalesReport() {
                             id="bulan"
                             required={true}
                         >
-                            <option value={''}>Please Select Month</option>
+                            <option value={''}>All Month</option>
                             {
                                 month.map((item, index) => {
                                     return (
@@ -194,13 +206,13 @@ export default function SalesReport() {
             </div>
 
             <div className='flex gap-4 mt-10'>
-                <button onClick={() => getSales(pickY, pickM, 1, pickWH)} disabled={filtah == 1 ? true : false} className={`font-semibold ${filtah == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                <button onClick={() => getSales(pickY, pickM, 1, pickWH)} disabled={pickT == 1 ? true : false} className={`font-semibold ${pickT == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
                     Summary
                 </button>
-                <button onClick={() => getSales(pickY, pickM, 2, pickWH)} disabled={filtah == 2 ? true : false} className={`font-semibold ${filtah == 2 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                <button onClick={() => getSales(pickY, pickM, 2, pickWH)} disabled={pickT == 2 ? true : false} className={`font-semibold ${pickT == 2 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
                     Product Category
                 </button>
-                <button onClick={() => setFiltah(3)} disabled={filtah == 3 ? true : false} className={`font-semibold ${filtah == 3 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                <button onClick={() => setPickT(3)} disabled={pickT == 3 ? true : false} className={`font-semibold ${pickT == 3 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
                     Products
                 </button>
             </div>
@@ -208,10 +220,10 @@ export default function SalesReport() {
             <div className='flex flex-col items-center h-full mt-4 border-t border-slate-200 shadow-md py-6 px-5'>
                 <Outlet />
                 {
-                    filtah == 1 ?
+                    pickT == 1 ?
                         <Summary data={visible} />
                         :
-                        filtah == 2 ?
+                        pickT == 2 ?
                             <Category data={visible} />
                             : null
                 }

@@ -118,30 +118,30 @@ module.exports = {
     },
     getSales: async (req, res) => {
         let { start, end, type, WH } = req.query
-        
-        if (type == 1 && WH==0){
+
+        if (type == 1 && WH == 0) {
             console.log('masuk')
             var response = await db.transaction.findAll({
                 where: {
                     [Op.and]: [
-                            {
-                                updatedAt: {
-                                    [Op.gte]: start,
-                                    [Op.lt]: end
-                                }
-                            },
-                            {
-                                order_status_id:5
+                        {
+                            updatedAt: {
+                                [Op.gte]: start,
+                                [Op.lt]: end
                             }
+                        },
+                        {
+                            order_status_id: 5
+                        }
                     ]
-                  
+
                 },
                 include: [
                     { model: db.location_warehouse },
                     { model: db.transaction_detail },
                     { model: db.order_status }
                 ]
-            })            
+            })
             //ini ceritanya nyoba nge sum di BE
             // var response = await db.transaction.findAll({
             //     attributes:[
@@ -160,29 +160,47 @@ module.exports = {
             //         }
             //     ]
             // })
-        }else if(type == 2 && WH==0){
+        } else if (type == 2 && WH == 0) {
             var response = await db.category.findAll({
                 include: [
-                    {model:db.transaction_detail,
-                        include:[
-                            {model:db.transaction,
+                    {
+                        model: db.transaction_detail,
+                        include: [
+                            {
+                                model: db.transaction,
                                 where: {
                                     [Op.and]: [
-                                            {
-                                                updatedAt: {
-                                                    [Op.gte]: start,
-                                                    [Op.lt]: end
-                                                }
-                                            },
-                                            {
-                                                order_status_id:5
+                                        {
+                                            updatedAt: {
+                                                [Op.gte]: start,
+                                                [Op.lt]: end
                                             }
+                                        },
+                                        {
+                                            order_status_id: 5
+                                        }
                                     ]
-                                  
-                                }}
+
+                                }
+                            }
                         ]
                     },
-                    {model:db.product},
+                    {
+                        model: db.product,
+                        include: [{
+                            model: db.product_detail,
+                            include: [{
+                                model: db.transaction_detail,
+                                required:true,
+                                include: [{
+                                    model: db.transaction,
+                                    where: {
+                                        order_status_id: 5
+                                    }
+                                }]
+                            }]
+                        }]
+                    },
                 ]
             })
         }

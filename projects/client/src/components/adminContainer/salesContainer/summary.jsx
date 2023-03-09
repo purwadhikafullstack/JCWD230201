@@ -1,7 +1,7 @@
 import Loading from '../../core/loading'
 
 export default function Summary(data) {
-    
+    console.log(data.data)
     return (
         <div className="w-full h-full">
             <div className='flex justify-between w-full'>
@@ -29,13 +29,13 @@ export default function Summary(data) {
                         In IDR
                     </div>
                     <div>
-                        {data.data.total?(data.data.total).toLocaleString():<Loading/>}
+                        { (data.data.total).toLocaleString()}
                     </div>
                     <div>
-                        {data.data.ongkir?(data.data.ongkir).toLocaleString():<Loading/>}
+                        {(data.data.ongkir).toLocaleString()}
                     </div>
                     <div>
-                        {data.data.discount?data.data.discount==0?'0':'-'(data.data.discount).toLocaleString():<Loading/>}
+                        -{(data.data.discount).toLocaleString()}
                     </div>
                     <div>
                         0
@@ -46,15 +46,43 @@ export default function Summary(data) {
 
             <hr className='border-1 my-4 border-slate-200 w-full' />
 
-            <div className='flex justify-between w-full text-lg font-semibold'>
+            <div className='flex justify-between w-full text-lg mb-20 font-semibold'>
                 <div>
                     Net Sales
                 </div>
                 <div>
-                    {data.data.total?(data.data.total + data.data.ongkir - data.data.discount).toLocaleString():<Loading/>}
+                    { (data.data.total + data.data.ongkir - data.data.discount).toLocaleString()}
                 </div>
-    </div>
-    {/* ini summary bangsat */}
+            </div>
+            <div className='flex justify-between w-full'>
+                <div className=' flex flex-col gap-2'>
+                    <div className='text-2xl font-semibold mb-3'>
+                       Properties
+                    </div>
+                    <div>
+                        1. All Transaction
+                    </div>
+                    <div>
+                        2. All Items Sold
+                    </div>
+                   
+
+                </div>
+
+                <div className='flex flex-col items-end gap-2'>
+                    <div className='text-2xl font-semibold mb-5'>
+                        In Items
+                    </div>
+                   <div>
+                    {data.data.transaction}
+                   </div>
+                   <div>
+                    {data.data.qty}
+                   </div>
+
+                </div>
+            </div>
+            {/* ini summary bangsat */}
         </div>
     )
 }
