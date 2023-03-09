@@ -1,6 +1,4 @@
-
-
-
+import Loading from '../../core/loading'
 
 export default function Summary(data) {
     
@@ -31,13 +29,13 @@ export default function Summary(data) {
                         In IDR
                     </div>
                     <div>
-                        {(data.data.total).toLocaleString()}
+                        {data.data.total?(data.data.total).toLocaleString():<Loading/>}
                     </div>
                     <div>
-                        {(data.data.ongkir).toLocaleString()}
+                        {data.data.ongkir?(data.data.ongkir).toLocaleString():<Loading/>}
                     </div>
                     <div>
-                        -{(data.data.discount).toLocaleString()}
+                        {data.data.discount?data.data.discount==0?'0':'-'(data.data.discount).toLocaleString():<Loading/>}
                     </div>
                     <div>
                         0
@@ -53,7 +51,7 @@ export default function Summary(data) {
                     Net Sales
                 </div>
                 <div>
-                    {(data.data.total + data.data.ongkir - data.data.discount).toLocaleString()}
+                    {data.data.total?(data.data.total + data.data.ongkir - data.data.discount).toLocaleString():<Loading/>}
                 </div>
     </div>
     {/* ini summary bangsat */}

@@ -6,37 +6,24 @@ const db = require('../models/index')
 const moment = require('moment')
 module.exports = {
     allTransaction: async (req, res) => {
-        let {warehouse, start, end} = req.body
-        
-        let response = start? await db.transaction.findAll({
-            where:{
-                updatedAt:{
-                    [Op.between] : [start, end]
-                }
-            },
+        let { warehouse } = req.body
+
+        let response = warehouse ? await db.transaction.findAll({
+            where: { warehouse_city: warehouse },
             include: [
                 { model: db.location_warehouse },
                 { model: db.transaction_detail },
                 { model: db.order_status }
             ]
         })
-        :
-        warehouse? await db.transaction.findAll({
-            where:{warehouse_city: warehouse},
-            include: [
-                { model: db.location_warehouse },
-                { model: db.transaction_detail },
-                { model: db.order_status }
-            ]
-        })
-        :
-        await db.transaction.findAll({
-            include: [
-                { model: db.location_warehouse },
-                { model: db.transaction_detail },
-                { model: db.order_status }
-            ]
-        })
+            :
+            await db.transaction.findAll({
+                include: [
+                    { model: db.location_warehouse },
+                    { model: db.transaction_detail },
+                    { model: db.order_status }
+                ]
+            })
 
         // let data = []
         // response.forEach((item)=>{
@@ -52,12 +39,12 @@ module.exports = {
         //         location_warehouse_
         //     })
         // })
-    //    console.log(response[0].dataValues)
+        //    console.log(response[0].dataValues)
 
         res.status(201).send({
             isError: false,
             message: 'get data transaction success!',
-            data : response
+            data: response
         })
     },
     transactionWH: async (req, res) => {
@@ -98,37 +85,115 @@ module.exports = {
                 ]
             })
 
-            if(!getData) throw {message:'Data Not Found!'}
+            if (!getData) throw { message: 'Data Not Found!' }
 
             res.status(201).send({
                 isError: false,
-                message:'get data success!',
+                message: 'get data success!',
                 data: getData
             })
         } catch (error) {
             res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
+                isError: true,
+                message: error.message,
+                data: null
             })
         }
     },
-    filter:async(req,res)=>{
+    filter: async (req, res) => {
         try {
-            let {data} = req.body
-            
-                let getData = data=="Warehouse"? await db.location_warehouse.findAll() : null
-                console.log(getData)
-            
+            let { data } = req.body
+
+            let getData = data == "Warehouse" ? await db.location_warehouse.findAll() : null
+            console.log(getData)
+
             res.status(201).send({
-                isError:false,
-                message:'get data success!',
-                data:getData
+                isError: false,
+                message: 'get data success!',
+                data: getData
             })
         } catch (error) {
             console.log(error)
         }
-
+    },
+    getSales: async (req, res) => {
+        let { start, end, type, WH } = req.query
         
+        if (type == 1 && WH==0){
+            console.log('masuk')
+            var response = await db.transaction.findAll({
+                where: {
+                    [Op.and]: [
+                            {
+                                updatedAt: {
+                                    [Op.gte]: start,
+                                    [Op.lt]: end
+                                }
+                            },
+                            {
+                                order_status_id:5
+                            }
+                    ]
+                  
+                },
+                include: [
+                    { model: db.location_warehouse },
+                    { model: db.transaction_detail },
+                    { model: db.order_status }
+                ]
+            })            
+            //ini ceritanya nyoba nge sum di BE
+            // var response = await db.transaction.findAll({
+            //     attributes:[
+            //         [sequelize.fn('sum', 'ongkir'), 'sum']
+            //     ],
+            //     where:{
+            //         updatedAt: {
+            //                         [Op.gte]: start,
+            //                         [Op.lt]: end
+            //     }},
+            //     include:[
+            //         {model: db.transaction_detail,
+            //             attributes:[
+            //                 [sequelize.fn('sum', 'price'), 'sum']
+            //             ]
+            //         }
+            //     ]
+            // })
+        }else if(type == 2 && WH==0){
+            var response = await db.category.findAll({
+                include: [
+                    {model:db.transaction_detail,
+                        include:[
+                            {model:db.transaction,
+                                where: {
+                                    [Op.and]: [
+                                            {
+                                                updatedAt: {
+                                                    [Op.gte]: start,
+                                                    [Op.lt]: end
+                                                }
+                                            },
+                                            {
+                                                order_status_id:5
+                                            }
+                                    ]
+                                  
+                                }}
+                        ]
+                    },
+                    {model:db.product},
+                ]
+            })
+        }
+
+        // let price = await db.transaction.sum('ongkir')
+
+        // console.log(response[0].dataValues.name)
+        console.log(response)
+        res.status(201).send({
+            isError: false,
+            data: response
+        })
     }
 }

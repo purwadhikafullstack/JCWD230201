@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Outlet } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 
+
 //component
 import Summary from './salesContainer/summary'
 import Category from './salesContainer/category'
@@ -12,13 +13,13 @@ export default function SalesReport() {
     // let date = new Date
     // let yir = date.getFullYear()
 
-    let [filtah, setFiltah] = useState('summary'), [by, setBy] = useState('all')
+    let [filtah, setFiltah] = useState(1)
 
     let [year, setYear] = useState([
         // yir, yir - 1, yir - 2, yir - 3
         2023, 2022, 2021, 2020
     ])
-    let [pickM, setPickM] = useState(''), [pickY, setPickY] = useState(year[0]), [data, setData] = useState([])
+    let [pickM, setPickM] = useState(''), [pickY, setPickY] = useState(year[0]), [pickWH, setPickWH] = useState(0), [pickT, setPickT] = useState(1)
 
 
     let [month, setMonth] = useState([
@@ -40,10 +41,11 @@ export default function SalesReport() {
         'month': false,
         'total': 0,
         'ongkir': 0,
-        'discount': 0
+        'discount': 0,
+        'category': {}
     })
 
-    let tahunan = async () => {
+    let depault = async () => {
         try {
             toast('Welcome to sales report Sir!', {
                 style: {
@@ -51,8 +53,7 @@ export default function SalesReport() {
                     color: 'white'
                 }
             })
-            let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { start: `${pickY}-01-01`, end: `${pickY}-12-31` })
-            setData(response.data.data)
+            let response = await axios.get(`http://localhost:8000/transaction/getSales?start=${pickY}-01-01&end=${pickY + 1}-01-01&type=${pickT}&WH=${pickWH}`)
             let total_price = 0, total_ongkir = 0, total_discount = 0
 
             response.data.data.forEach((item, index) => {
@@ -68,21 +69,41 @@ export default function SalesReport() {
         }
     }
 
-    let tahunan2 = async (input) => {
+    let getSales = async (Y, M, T, WH) => {
+        setPickT(T)
+        setFiltah(2)
         try {
+            console.log(M)
+            if (!M && !WH) {
+                var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${pickWH}`)
 
-            setPickY(input)
-            let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { start: `${input}-01-01`, end: `${input}-12-31` })
-            setData(response.data.data)
-            let total_price = 0, total_ongkir = 0, total_discount = 0
 
-            response.data.data.forEach((item, index) => {
-                total_ongkir += item.ongkir
-                item.transaction_details.forEach((item) => total_price += item.price)
-            })
-            console.log(total_price)
-            setVisible({ ...visible, total: total_price, ongkir: total_ongkir })
-            console.log(total_ongkir)
+            } else if (M && !WH) {
+                if (M.split(',')[0] == 12) {
+                    var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${pickWH}`)
+                } else {
+                    var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${pickWH}`)
+                }
+
+            }
+            setPickY(Y)
+            setPickM(M)
+
+            console.log(response)
+            if (T == 1) {
+
+                let total_price = 0, total_ongkir = 0, total_discount = 0
+
+                response.data.data.forEach((item, index) => {
+                    total_ongkir += item.ongkir
+                    item.transaction_details.forEach((item) => total_price += item.price)
+                })
+                console.log(total_price)
+                setVisible({ ...visible, total: total_price, ongkir: total_ongkir })
+                console.log(total_ongkir)
+            }else if (T==2){
+
+            }
             toast.success(`Get Sales data Success!`)
         } catch (error) {
             console.log(error)
@@ -90,20 +111,24 @@ export default function SalesReport() {
     }
 
     useEffect(() => {
-        tahunan()
+        depault()
     }, [])
 
 
     return (
-        <div className="min-h-screen px-10 pt-8 pb-96">
-           <div className='text-3xl font-semibold text-center '>
-                    Sales Report
+        <div className="min-h-screen px-10 pt-5 pb-96">
+
+            <div className="flex flex-col mt-2 mb-10 ">
+                <div className='flex flex-col w-full justify-center mb-5 '>
+                    <div className='text-3xl font-semibold text-center '>
+                        Sales Report
+                    </div>
+                    <div className='text-gray-500 font-semibold my-2 text-center'>
+                        in {pickM ? pickM.split(',')[1] : null} {pickY}
+                    </div>
                 </div>
-                <div className='text-gray-500 font-semibold my-5 text-center'>
-                    in {pickM ? pickM : null} {pickY}
-                </div>
-            <div className="flex mt-8 mb-5 justify-between">
-                <div className='flex w-1/2 gap-5'>
+
+                <div className='flex gap-5'>
                     <div className='sm:min-w-fit'>
                         <div className="mb-2 block ">
                             <Label
@@ -128,7 +153,7 @@ export default function SalesReport() {
                             />
                         </div >
                         <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
-                            onChange={(e) => setPickM(e.target.value)}
+                            onChange={(e) => getSales(pickY, e.target.value, 1, null)}
                             id="bulan"
                             required={true}
                         >
@@ -136,11 +161,10 @@ export default function SalesReport() {
                             {
                                 month.map((item, index) => {
                                     return (
-                                        <option value={item.id}>{item.month}</option>
+                                        <option value={`${item.month_id},${item.month}`}>{item.month}</option>
                                     )
                                 })
                             }
-
                         </select>
                     </div>
                     <div className='sm:min-w-fit'>
@@ -151,7 +175,7 @@ export default function SalesReport() {
                         </div >
                         <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
                             onChange={(e) => {
-                                tahunan2(e.target.value)
+                                getSales(e.target.value, null, 1, null)
                             }}
                             id="tahun"
                             required={true}
@@ -167,65 +191,30 @@ export default function SalesReport() {
                         </select>
                     </div>
                 </div>
-
-                <div className='w-1/2 flex justify-end'>
-                    <div className='sm:min-w-fit'>
-                        <div className="mb-2 block">
-                            <Label
-                                value="Filter"
-                            />
-                        </div >
-                        <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
-                            onChange={(e) => { setFiltah(e.target.value) }}
-
-                            id="tahun"
-                            required={true}
-                        >
-                            <option value="summary">Summary</option>
-                            <option value="category">Product Category</option>
-
-                        </select>
-                    </div>
-                </div>
-
-
             </div>
 
-            <div className='flex justify-end mt-3'>
-                <div className='sm:min-w-fit'>
-                    <div className="mb-2 block">
-                        <Label
-                            value="Filter"
-                        />
-                    </div >
-                    <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
-                        onChange={(e) => { setFiltah(e.target.value) }}
-
-                        id="tahun"
-                        required={true}
-                    >
-                        <option value="summary">Summary</option>
-                        <option value="category">Product Category</option>
-
-                    </select>
-                </div>
+            <div className='flex gap-4 mt-10'>
+                <button onClick={() => getSales(pickY, pickM, 1, pickWH)} disabled={filtah == 1 ? true : false} className={`font-semibold ${filtah == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                    Summary
+                </button>
+                <button onClick={() => getSales(pickY, pickM, 2, pickWH)} disabled={filtah == 2 ? true : false} className={`font-semibold ${filtah == 2 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                    Product Category
+                </button>
+                <button onClick={() => setFiltah(3)} disabled={filtah == 3 ? true : false} className={`font-semibold ${filtah == 3 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-slate-200`}  px-2 `}>
+                    Products
+                </button>
             </div>
 
-            <div className='flex flex-col items-center mt-24 border-1 border-slate-700 shadow-lg p-10'>
-                
+            <div className='flex flex-col items-center h-full mt-4 border-t border-slate-200 shadow-md py-6 px-5'>
                 <Outlet />
                 {
-                    filtah == 'summary' ?
+                    filtah == 1 ?
                         <Summary data={visible} />
                         :
-                        filtah == 'category' ?
-                            <Category />
+                        filtah == 2 ?
+                            <Category data={visible} />
                             : null
                 }
-
-
-
-
             </div>
             <Toaster />
         </div>
