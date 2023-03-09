@@ -58,7 +58,7 @@ export default function MyAccount() {
                         </div>
                     </Link>
 
-                    <button onClick={() => logout()} className="bg-neutral-900 text-white py-2 w-full mt-5 rounded-sm ">
+                    <button onClick={() => logout()} className="text-red-600 font-bold py-2 w-full border-b-2 border-gray-300">
                         Logout
                     </button>
 

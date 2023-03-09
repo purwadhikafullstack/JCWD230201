@@ -260,8 +260,8 @@ module.exports = {
                 role: getDataUser.role,
                 warehouse: getDataUser.location_warehouse_id ?
                     getDataUser.location_warehouse.city : null,
-                photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null
-                role:getDataUser.role,
+                photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null,
+                role: getDataUser.role ? getDataUser.role:null,
                 warehouse:getDataUser.location_warehouse_id?
                 getDataUser.location_warehouse.city:null
             }

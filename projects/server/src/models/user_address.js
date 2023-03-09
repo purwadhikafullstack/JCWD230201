@@ -23,18 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     city:DataTypes.STRING,
     city_id:DataTypes.INTEGER,
     province: DataTypes.STRING,
+    province_id:DataTypes.INTEGER,
     latitude:DataTypes.INTEGER,
     longitude:DataTypes.INTEGER,
     receiver_name:DataTypes.STRING,
-    phone_number:DataTypes.INTEGER,
-    createdAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updatedAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
-    }
+    phone_number:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'user_address',

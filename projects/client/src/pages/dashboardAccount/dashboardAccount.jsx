@@ -34,7 +34,6 @@ export default function DashboardAccount() {
                     <div className="text-xl font-semibold mr-2">Welcome,</div>
                     <div className="text-xl font-bold ">{userProfile.name}</div>
                 </div>
-
             </div>
         </>
     )
