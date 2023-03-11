@@ -1,7 +1,7 @@
 //import dependencies
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react'
-import { Toaster } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
 import { CheckLogin } from './utils/checklogin';
 import axios from 'axios';
 import toast from 'react-hot-toast'
@@ -18,6 +18,8 @@ import ResetPassword from './pages/resetPassword/resetPassword';
 import MyAccount from './pages/my-account/myaccount';
 import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 import MyAccountInfo from './pages/my-account-info/myAccountInfo';
+import MyAccountAddress from './pages/my-account-address/myAccountAddress';
+import Cart from './pages/cart/cart';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -87,7 +89,6 @@ function App() {
       console.log(error)
     }
   }
-
   // let loginKeep = async () => {
   //   try {
   //     let response = await axios.post('http://localhost:8000/users/keep-login', {
@@ -100,7 +101,6 @@ function App() {
 
   //   }
   // }
-
   let notRegister = () => {
     // console.log(localStorage);
     if ((localStorage.getItem("token") == null) || (verifyStatus === "Unverified")) {
@@ -157,12 +157,14 @@ function App() {
               <Route path='/my-account' element={<MyAccount />}>
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
+                <Route path='address' element ={<MyAccountAddress/>}/>
               </Route>
+              <Route path='/cart' element={<Cart/>}/>
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
-              <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
+              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
             </Routes>
             <Toaster />
             <Footer />

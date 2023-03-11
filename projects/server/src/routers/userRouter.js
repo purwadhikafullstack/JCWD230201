@@ -18,6 +18,10 @@ Router.patch('/reset-password/:id', userController.resetPassword)
 Router.get('/keep-login', tokenVerify, userController.keep_login)
 Router.post('/update-photo_profile', upload, tokenVerify, userController.updatePhotoProfile)
 Router.patch('/update-data_profile', tokenVerify, userController.updateDataProfile)
+Router.post('/add-address', userController.addAddressUser)
+Router.post('/update-user_address', userController.updateAddressUser)
+Router.post('/delete-address', userController.deleteAddressUser)
+Router.post('/change-main', userController.changeDefaultAddress)
 
 //
 module.exports = Router
