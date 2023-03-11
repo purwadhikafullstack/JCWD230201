@@ -157,6 +157,8 @@ export default function MyAccountAddress() {
 
             toast.success('Delete Address Success')
 
+            setModalDelete(false)
+
             getAddressUser()
         } catch (error) {
 
@@ -384,8 +386,8 @@ export default function MyAccountAddress() {
                             </>
                             :
                             <>
-                                <div className="border">
-                                    <div className="border-b-2 text-2xl font-bold px-5 py-2">
+                                <div className="border-2">
+                                    <div className="border-b-2 text-2xl font-semibold px-5 py-2">
                                         Main Address
                                     </div>
                                     {
@@ -400,7 +402,7 @@ export default function MyAccountAddress() {
                                                         <button onClick={() => {
                                                             setModalEdit(!modalEdit)
                                                             setChoosenUser(value)
-                                                        }} value={value} className="flex items-center bg-neutral-900 text-white border border-black hover:bg-neutral-100 hover:text-neutral-900 px-4 py-1 mt-1 mr-2 rounded-sm"><MdOutlineEdit className="mr-2" />Edit</button>
+                                                        }} value={value} className="flex items-center bg-gray-400 text-white hover:bg-gray-300 mb-3 px-4 mt-3 mr-2 rounded-sm"><MdOutlineEdit className="mr-2" />Edit</button>
                                                         <Modal
                                                             show={modalEdit}
                                                             size="xl"
@@ -534,11 +536,11 @@ export default function MyAccountAddress() {
                                     }
 
                                 </div>
-                                <div className="border mt-5">
-                                    <div className="border-b-2 text-2xl font-bold px-5 py-2 flex justify-between items-center">
+                                <div className="border-2 mt-5">
+                                    <div className="border-b-2 text-2xl font-semibold px-5 py-2 flex justify-between items-center">
                                         Additional Address
                                         <div>
-                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 py-2 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
+                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
                                                 + Add Address
                                             </button>
                                             <Modal
@@ -681,11 +683,11 @@ export default function MyAccountAddress() {
                                                             <button onClick={() => changeMain(value)} value={value} className="py-2 font-bold px-3">
                                                                 <li>Set as Main Address</li>
                                                             </button>
-                                                            <div className="flex ">
+                                                            <div className="flex mb-3 ">
                                                                 <button onClick={() => {
                                                                     setModalEdit(!modalEdit)
                                                                     setChoosenUser(value)
-                                                                }} value={value} className="flex items-center bg-neutral-900 text-white border border-black hover:bg-neutral-100 hover:text-neutral-900 px-4 py-1 mt-1 mr-2 rounded-sm"><MdOutlineEdit className="mr-2" />Edit</button>
+                                                                }} value={value} className="flex items-center bg-gray-400 text-white hover:bg-gray-300 px-4 mt-3 mr-2 rounded-sm"><MdOutlineEdit className="mr-2" />Edit</button>
                                                                 <Modal
                                                                     show={modalEdit}
                                                                     size="xl"
@@ -814,7 +816,7 @@ export default function MyAccountAddress() {
                                                                 <button onClick={() => {
                                                                     setModalDelete(!modalDelete)
                                                                     setUserToDelete(value)
-                                                                }} value={value.id} className="flex items-center bg-neutral-900 text-white border border-black hover:bg-neutral-100 hover:text-neutral-900 px-4 py-1 mt-1 rounded-sm"><MdOutlineDelete className="mr-2" />Delete</button>
+                                                                }} value={value.id} className="flex items-center bg-gray-400 text-white hover:bg-gray-300 px-4 mt-3 mr-2 rounded-sm"><MdOutlineDelete className="mr-2" />Delete</button>
                                                                 <Modal
                                                                     show={modalDelete}
                                                                     size="md"
