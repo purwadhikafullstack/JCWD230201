@@ -41,24 +41,24 @@ export default function MyAccount() {
                 <div className="col-start-2 col-end-4 w-60">
 
                     <Link to='/my-account/information'>
-                        <div className="border-b-2 border-gray-300 py-2">
+                        <div className="border-b-2 border-gray-300 py-2 px-3">
                             Account Information
                         </div>
                     </Link>
 
                     <Link to='/my-account/address'>
-                        <div className="border-b-2 border-gray-300 py-2">
+                        <div className="border-b-2 border-gray-300 py-2 px-3">
                             Address
                         </div>
                     </Link>
 
                     <Link to='/my-account/history'>
-                        <div className="border-b-2 border-gray-300 py-2">
+                        <div className="border-b-2 border-gray-300 py-2 px-3">
                             Transaction History
                         </div>
                     </Link>
 
-                    <button onClick={() => logout()} className="text-red-600 font-bold py-2 w-full border-b-2 border-gray-300">
+                    <button onClick={() => logout()} className="px-3 text-red-600 text-left font-bold py-2 w-full border-b-2 border-gray-300">
                         Logout
                     </button>
 

@@ -17,6 +17,8 @@ import ResetPassword from './pages/resetPassword/resetPassword';
 import MyAccount from './pages/my-account/myaccount';
 import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 import MyAccountInfo from './pages/my-account-info/myAccountInfo';
+import MyAccountAddress from './pages/my-account-address/myAccountAddress';
+import Cart from './pages/cart/cart';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -37,7 +39,6 @@ import Warehouse from './components/adminContainer/warehouse';
 //import context for global
 import { userData } from './data/userData'
 import { TransactionData } from './data/transactionAdmin'
-import MyAccountAddress from './pages/my-account-address/myAccountAddress';
 
 
 function App() {
@@ -155,6 +156,7 @@ function App() {
                 <Route path='information' element={<MyAccountInfo />} />
                 <Route path='address' element ={<MyAccountAddress/>}/>
               </Route>
+              <Route path='/cart' element={<Cart/>}/>
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
