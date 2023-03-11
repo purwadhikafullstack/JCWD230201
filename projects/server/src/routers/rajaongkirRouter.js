@@ -8,6 +8,4 @@ Router.get('/province', rajaongkirController.getProvince)
 Router.get('/city', rajaongkirController.getCity)
 Router.post('/ongkir', rajaongkirController.postOngkir)
 
-
-
 module.exports = Router

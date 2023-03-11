@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 import { CheckLogin } from './utils/checklogin';
 import axios from 'axios';
+import toast from 'react-hot-toast'
 
 //import pages
 import Login from './pages/login/login';
@@ -35,6 +36,8 @@ import AddAdmin from './components/adminContainer/addadmin';
 import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
 import Shipping from './components/shipping/shipping';
 import Warehouse from './components/adminContainer/warehouse';
+import SalesReport from './components/adminContainer/salesreport';
+
 
 //import context for global
 import { userData } from './data/userData'
@@ -86,20 +89,18 @@ function App() {
       console.log(error)
     }
   }
+  // let loginKeep = async () => {
+  //   try {
+  //     let response = await axios.post('http://localhost:8000/users/keep-login', {
+  //       headers: {
+  //         "token": localStorage.getItem('token')
+  //       }
+  //     })
+  //     setVerifyStatus(response.data.data.status);
+  //   } catch (error) {
 
-  let loginKeep = async () => {
-    try {
-      let response = await axios.post('http://localhost:8000/users/keep-login', {
-        headers: {
-          "token": localStorage.getItem('token')
-        }
-      })
-      setVerifyStatus(response.data.data.status);
-    } catch (error) {
-
-    }
-  }
-
+  //   }
+  // }
   let notRegister = () => {
     // console.log(localStorage);
     if ((localStorage.getItem("token") == null) || (verifyStatus === "Unverified")) {
@@ -117,7 +118,7 @@ function App() {
 
   useEffect(() => {
     keepLogin()
-    loginKeep()
+    // loginKeep()
   }, [])
 
   return (
@@ -127,6 +128,7 @@ function App() {
           <>
             <TransactionData.Provider value={transactionDetail}>
               <Routes>
+                <Route path='/' element={<Home />} />
                 <Route path='/admin' element={<Admin />} >
                   <Route path='' element={<Dashboard />} />
                   <Route path='all-user' element={<GetAllAccount />} />
@@ -135,6 +137,7 @@ function App() {
                   <Route path='profile/:id' element={<AdminSettingProfile />} />
                   <Route path='All-Transaction' element={<AllTransaction />} />
                   <Route path='warehouse' element={<Warehouse />} />
+                  <Route path='sales-report' element={<SalesReport/>}/>
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>

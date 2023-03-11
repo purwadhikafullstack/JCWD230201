@@ -8,6 +8,7 @@ Router.post('/getAllTransaction', transactionController.allTransaction)
 Router.post('/getTransactionWH' , transactionController.transactionWH)
 Router.post('/filter', transactionController.filter)
 Router.post('/FWarehouse', transactionController.filterWH)
+Router.get('/getSales', transactionController.getSales)
 
 
 module.exports = Router

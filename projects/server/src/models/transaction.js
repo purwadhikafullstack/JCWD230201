@@ -43,14 +43,6 @@ module.exports = (sequelize, DataTypes) => {
     exprired:{
       type:DataTypes.DATE,
       defaultValue : moment().add(1, 'hours').toDate()
-    },
-    createdAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updatedAt:{
-      type:DataTypes.DATE,
-      defaultValue:sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,
