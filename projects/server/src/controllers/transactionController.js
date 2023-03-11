@@ -118,10 +118,22 @@ module.exports = {
     },
     getSales: async (req, res) => {
         let { start, end, type, WH } = req.query
+        console.log(`ini warehouse ${WH}`)
 
-        if (type == 1 && WH == 0) {
-            console.log('masuk')
-            var response = await db.transaction.findAll({
+        var total_transactionS = await db.transaction.findAll({
+            where: {
+                order_status_id: 5
+            }
+        })
+
+        var total_transactionC = await db.transaction.findAll({
+            where: {
+                order_status_id: 6
+            }
+        })
+
+        if (type == 1) {
+            var response = WH==0?await db.transaction.findAll({
                 where: {
                     [Op.and]: [
                         {
@@ -133,6 +145,7 @@ module.exports = {
                         {
                             order_status_id: 5
                         }
+                        
                     ]
 
                 },
@@ -141,27 +154,40 @@ module.exports = {
                     { model: db.transaction_detail },
                     { model: db.order_status }
                 ]
+            }):await db.transaction.findAll({
+                where: {
+                    [Op.and]: [
+                        {
+                            updatedAt: {
+                                [Op.gte]: start,
+                                [Op.lt]: end
+                            }
+                        },
+                        {
+                            order_status_id: 5
+                        },
+                        {
+                            location_warehouse_id:WH
+                        }
+                    ]
+                },
+                include: [
+                    { model: db.location_warehouse },
+                    { model: db.transaction_detail },
+                    { model: db.order_status }
+                ]
             })
-            //ini ceritanya nyoba nge sum di BE
-            // var response = await db.transaction.findAll({
-            //     attributes:[
-            //         [sequelize.fn('sum', 'ongkir'), 'sum']
-            //     ],
-            //     where:{
-            //         updatedAt: {
-            //                         [Op.gte]: start,
-            //                         [Op.lt]: end
-            //     }},
-            //     include:[
-            //         {model: db.transaction_detail,
-            //             attributes:[
-            //                 [sequelize.fn('sum', 'price'), 'sum']
-            //             ]
-            //         }
-            //     ]
-            // })
-        } else if (type == 2 && WH == 0) {
-            var response = await db.category.findAll({
+
+            var users = await db.user.findAll()
+            var usersUV = await db.user.findAll({
+                where: {
+                    status: 'Unverified'
+                }
+            })
+            var list_WH =WH==0? await db.location_warehouse.findAll():await db.location_warehouse.findOne({where:{id:WH}})
+            var warehouse = await db.location_warehouse.findAll()
+        } else if (type == 2) {
+            var response =WH==0?await db.category.findAll({
                 include: [
                     {
                         model: db.transaction_detail,
@@ -184,34 +210,86 @@ module.exports = {
                                 }
                             }
                         ]
-                    },
+                    }
+                ]
+            }):
+            await db.category.findAll({
+                include: [
                     {
-                        model: db.product,
-                        include: [{
-                            model: db.product_detail,
-                            include: [{
-                                model: db.transaction_detail,
-                                required:true,
-                                include: [{
-                                    model: db.transaction,
-                                    where: {
-                                        order_status_id: 5
-                                    }
-                                }]
-                            }]
-                        }]
-                    },
+                        model: db.transaction_detail,
+                        include: [
+                            {
+                                model: db.transaction,
+                                where: {
+                                    [Op.and]: [
+                                        {
+                                            updatedAt: {
+                                                [Op.gte]: start,
+                                                [Op.lt]: end
+                                            }
+                                        },
+                                        {
+                                            order_status_id: 5
+                                        },
+                                        {
+                                            location_warehouse_id:WH
+                                        }
+                                    ]
+
+                                }
+                            }
+                        ]
+                    }
                 ]
             })
+        } else if (type == 3) {
+            var response = WH==0?await db.transaction_detail.findAll({
+                include:[{model:db.transaction,
+                    where: {
+                        [Op.and]: [
+                            {
+                                updatedAt: {
+                                    [Op.gte]: start,
+                                    [Op.lt]: end
+                                }
+                            },
+                            {
+                                order_status_id: 5
+                            }
+                        ]
+                    }}]
+            })
+            :
+            await db.transaction_detail.findAll({
+                include:[{model:db.transaction,
+                    where: {
+                        [Op.and]: [
+                            {
+                                updatedAt: {
+                                    [Op.gte]: start,
+                                    [Op.lt]: end
+                                }
+                            },
+                            {
+                                order_status_id: 5
+                            },
+                            {
+                                location_warehouse_id:WH
+                            }
+                        ]
+                    }}]
+            })
+
         }
-
-        // let price = await db.transaction.sum('ongkir')
-
-        // console.log(response[0].dataValues.name)
-        console.log(response)
         res.status(201).send({
             isError: false,
-            data: response
+            data: response,
+            users: users?.length ? users.length : null,
+            userUV: usersUV?.length ? usersUV.length : null,
+            wh: warehouse?.length ? warehouse.length : null,
+            list_wh:list_WH,
+            tr_success: total_transactionS?.length ? total_transactionS.length : null,
+            tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })
     }
 }

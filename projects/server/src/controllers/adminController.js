@@ -45,23 +45,23 @@ module.exports = {
     getAllAdmin: async (req, res) => {
         try {
             let allData = await db.admin.findAll({
-                where:{
-                    role:2
+                where: {
+                    role: 2
                 },
-                include:[{model:db.location_warehouse}]
+                include: [{ model: db.location_warehouse }]
             })
             console.log(allData[4].dataValues.role)
-            let loader = allData.map((item,index)=>{
-                return(
+            let loader = allData.map((item, index) => {
+                return (
                     {
-                        id:item.dataValues.id?item.dataValues.id:null,
-                        name: item.dataValues.name?item.dataValues.name:null,
-                        email:item.dataValues.email?item.dataValues.email:null,
-                        gender:item.dataValues.gender?item.dataValues.gender:null,
-                        phone_number:item.dataValues.phone_number?item.dataValues.phone_number:null,
-                        role:item.dataValues.role?item.dataValues.role:null,
-                        location_warehouse_id:item.dataValues.location_warehouse_id?item.dataValues.location_warehouse_id:null,
-                        location_warehouse:item.dataValues.location_warehouse?item.dataValues.location_warehouse.dataValues.city:null
+                        id: item.dataValues.id ? item.dataValues.id : null,
+                        name: item.dataValues.name ? item.dataValues.name : null,
+                        email: item.dataValues.email ? item.dataValues.email : null,
+                        gender: item.dataValues.gender ? item.dataValues.gender : null,
+                        phone_number: item.dataValues.phone_number ? item.dataValues.phone_number : null,
+                        role: item.dataValues.role ? item.dataValues.role : null,
+                        location_warehouse_id: item.dataValues.location_warehouse_id ? item.dataValues.location_warehouse_id : null,
+                        location_warehouse: item.dataValues.location_warehouse ? item.dataValues.location_warehouse.dataValues.city : null
                     }
                 )
             })
@@ -72,7 +72,7 @@ module.exports = {
                 isError: false,
                 message: 'Get Data Success!',
                 data: {
-                   loader
+                    loader
 
                 }
             })
@@ -100,7 +100,7 @@ module.exports = {
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
             if (!hashMatch(password, dataAdmin.password)) throw { message: 'Password wrong!' }
-          console.log(dataAdmin)
+            console.log(dataAdmin)
             console.log(dataAdmin.location_warehouse)
             let token = await createToken({ id: dataAdmin.id })
 
@@ -113,7 +113,9 @@ module.exports = {
                     'token': token,
                     'role': `${dataAdmin.role}`,
                     'warehouse': dataAdmin.location_warehouse_id ?
-                        dataAdmin.location_warehouse.city : null
+                        dataAdmin.location_warehouse.city : null,
+                    'warehouse_id':dataAdmin.location_warehouse_id ?
+                    dataAdmin.location_warehouse_id:null
                 }
             })
 
@@ -168,9 +170,9 @@ module.exports = {
     update: async (req, res) => {
         try {
 
-            let {id, email,name,gender,phone_number,location_warehouse_id,password} = req.body
-         
-            if(!name || !email ) throw{message:'Name or Email Empty!'}
+            let { id, email, name, gender, phone_number, location_warehouse_id, password } = req.body
+
+            if (!name || !email) throw { message: 'Name or Email Empty!' }
 
             // let matchData = await db.admin.findOne({
             //     where:{
@@ -181,38 +183,38 @@ module.exports = {
             // }) 
             // if(matchData) throw {message:'Email or Name has been used!'} 
 
-            if(password.length==0){
+            if (password.length == 0) {
                 await db.admin.update({
-                email,name,phone_number,location_warehouse_id,gender
-            },
-            {
-                where:{
-                    id
-                }
-            }
-            )
-        }else {
-            await db.admin.update({
-                email,name,phone_number,location_warehouse_id,gender,password: await hashPassword(password)
-            },
-                {
-                    where: {
-                        id
+                    email, name, phone_number, location_warehouse_id, gender
+                },
+                    {
+                        where: {
+                            id
+                        }
                     }
-                }
-            )
-        }
+                )
+            } else {
+                await db.admin.update({
+                    email, name, phone_number, location_warehouse_id, gender, password: await hashPassword(password)
+                },
+                    {
+                        where: {
+                            id
+                        }
+                    }
+                )
+            }
 
             res.status(201).send({
                 isError: false,
                 message: 'update success!'
             })
         } catch (error) {
-          
+
             res.status(404).send({
-                isError:true,
-                message:error.message,
-                data:null
+                isError: true,
+                message: error.message,
+                data: null
             })
         }
     },
@@ -249,6 +251,7 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
         }
+    console.log(getDataUser)
         res.status(201).send({
             isError: false,
             message: 'token still valid',
@@ -258,10 +261,12 @@ module.exports = {
                 role: getDataUser.role,
                 warehouse: getDataUser.location_warehouse_id ?
                     getDataUser.location_warehouse.city : null,
+                warehouse_id: getDataUser.location_warehouse_id ?
+                    getDataUser.location_warehouse_id : null,
                 photo_profile: getDataUser.photo_profile ? getDataUser.photo_profile : null,
-                role:getDataUser.role?getDataUser.role:null,
-                warehouse:getDataUser.location_warehouse_id?
-                getDataUser.location_warehouse.city:null
+                role: getDataUser.role ? getDataUser.role : null,
+                warehouse: getDataUser.location_warehouse_id ?
+                    getDataUser.location_warehouse.city : null
             }
         })
     }

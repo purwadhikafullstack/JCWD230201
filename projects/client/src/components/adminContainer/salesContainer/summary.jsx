@@ -6,7 +6,7 @@ export default function Summary(data) {
         <div className="w-full h-full">
             <div className='flex justify-between w-full'>
                 <div className=' flex flex-col gap-2'>
-                    <div className='text-2xl font-semibold mb-3'>
+                    <div className='text-xl font-semibold mb-3'>
                         Selling
                     </div>
                     <div>
@@ -25,7 +25,7 @@ export default function Summary(data) {
                 </div>
 
                 <div className='flex flex-col items-end gap-2'>
-                    <div className='text-2xl font-semibold mb-5'>
+                    <div className='text-xl font-semibold mb-5'>
                         In IDR
                     </div>
                     <div>
@@ -56,7 +56,7 @@ export default function Summary(data) {
             </div>
             <div className='flex justify-between w-full'>
                 <div className=' flex flex-col gap-2'>
-                    <div className='text-2xl font-semibold mb-3'>
+                    <div className='text-xl font-semibold mb-3'>
                        Properties
                     </div>
                     <div>
@@ -70,7 +70,7 @@ export default function Summary(data) {
                 </div>
 
                 <div className='flex flex-col items-end gap-2'>
-                    <div className='text-2xl font-semibold mb-5'>
+                    <div className='text-xl font-semibold mb-5'>
                         In Items
                     </div>
                    <div>
