@@ -1,10 +1,28 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
+import { MdOutlineDelete } from 'react-icons/md'
+import { HiOutlineExclamationCircle } from 'react-icons/hi'
+
+import { Modal, Button } from 'flowbite-react'
+import { toast, Toaster } from 'react-hot-toast'
+
+
 export default function Cart() {
 
     const [productCart, setProductCart] = useState([])
 
+    const [totalPrice, setTotalPrice] = useState(0)
+
+    const [subtotal, setSubtotal] = useState([])
+
+    const [modalDelete, setModalDelete] = useState(false)
+
+    const [cartToDelete, setCartToDelete] = useState({})
+
+    const [cartToUpdate, setCartToUpdate] = useState({})
+
+    
     let getData = async () => {
         try {
             let response = await axios.get('http://localhost:8000/cart/data-cart', {
@@ -14,10 +32,51 @@ export default function Cart() {
             })
             console.log(response.data.data)
             setProductCart(response.data.data)
+            
+            let sum = 0
+            response.data.data.forEach(e =>
+                sum += e.qty*e.product_detail.price)
+            setTotalPrice(sum)
+
+            // var arrPrice = []
+            // for (let i = 0; i < productCart.length; i++) {
+            //     if (!arrPrice[i]) {
+            //         arrPrice.push((productCart[i].qty * productCart[i].product_detail.price))
+            //     }
+            // }
+            // setSubtotal(arrPrice)
+            // console.log(arrPrice)
+            // console.log(subtotal)
+
         } catch (error) {
             console.log(error)
         }
     }
+
+    let deleteCart = async () => {
+        try {
+            await axios.post('http://localhost:8000/cart/delete-cart', { id: cartToDelete.id })
+
+            toast.success('Delete Product from Cart Success')
+
+            getData()
+        } catch (error) {
+
+        }
+    }
+
+    let updateQty = async (input) => {
+        try {
+            let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+
+            getData()
+        } catch (error) {
+            console.log(error)
+            toast.error(error.response.data.message)
+        }
+    }
+
+
 
     useEffect(() => {
         getData()
@@ -54,17 +113,76 @@ export default function Cart() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex justify-end ">
-                                                    <div className="border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
+                                                <div className="grid grid-cols-2 gap-1">
+                                                    <div className="col-span-2 border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
                                                         {value.qty}
+                                                    </div>
+                                                    <div className='text-lg'>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                updateQty(e.target.value)
+                                                            }}
+                                                            value={`${value.qty},${value.id},-`}
+                                                            className='w-4'>
+                                                            -
+                                                        </button>
+                                                    </div>
+                                                    <div className='text-lg'>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                updateQty(e.target.value)
+                                                            }}
+                                                            value={`${value.qty},${value.id},+`}
+                                                            className='w-4'>
+                                                            +
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div>
-                                            <button className='pl-5 py-3 text-sm text-gray-400 hover:text-gray-800'>
+                                            <button onClick={() => {
+                                                setModalDelete(!modalDelete)
+                                                setCartToDelete(value)
+                                            }}
+                                                value={value.id}
+                                                className='pl-5 py-3 text-sm text-gray-400 hover:text-gray-800'>
                                                 Delete
                                             </button>
+                                            <Modal
+                                                show={modalDelete}
+                                                size="md"
+                                                popup={true}
+                                                onClose={() => setModalDelete(!modalDelete)}
+                                            >
+                                                <Modal.Header />
+                                                <Modal.Body>
+                                                    <div className="text-center">
+                                                        <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                                                        <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                            Are you sure you want to delete this product from cart?
+                                                        </h3>
+                                                        <div className="flex justify-center gap-4">
+                                                            <Button
+                                                                color="failure"
+                                                                onClick={() => {
+                                                                    deleteCart()
+                                                                    setModalDelete(false)
+                                                                }}
+                                                                className="focus:ring-0 focus:ring-transparent"
+                                                            >
+                                                                Yes, I'm sure
+                                                            </Button>
+                                                            <Button
+                                                                color="gray"
+                                                                onClick={() => setModalDelete(false)}
+                                                            >
+                                                                No, cancel
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </Modal.Body>
+                                            </Modal>
                                         </div>
                                     </div>
                                 )
@@ -79,7 +197,7 @@ export default function Cart() {
                                 Summary
                             </div>
                             <div className="py-4 flex justify-between">
-                                Total <span className="font-bold">Rp. 45.000.000</span>
+                                Total<span className="font-bold">Rp. {totalPrice.toLocaleString()}</span>
                             </div>
                             <button className="bg-neutral-900 text-white w-full py-1 rounded-sm">
                                 BUY
@@ -90,6 +208,7 @@ export default function Cart() {
 
                 </div>
             </div>
+            <Toaster />
         </>
     )
 }

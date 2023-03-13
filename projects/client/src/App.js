@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 import { CheckLogin } from './utils/checklogin';
 import axios from 'axios';
-import toast from 'react-hot-toast'
 
 //import pages
 import Login from './pages/login/login';
