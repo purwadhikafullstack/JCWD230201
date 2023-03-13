@@ -6,40 +6,44 @@ const db = require('../models/index')
 const moment = require('moment')
 module.exports = {
     allTransaction: async (req, res) => {
-        let { warehouse } = req.body
+        let { warehouse, order_status_id } = req.body
 
-        let response = warehouse ? await db.transaction.findAll({
-            where: { warehouse_city: warehouse },
-            include: [
-                { model: db.location_warehouse },
-                { model: db.transaction_detail },
-                { model: db.order_status }
-            ]
-        })
-            :
-            await db.transaction.findAll({
+        if (order_status_id==undefined) {
+            var response = warehouse ? await db.transaction.findAll({
+                where: { warehouse_city: warehouse },
                 include: [
                     { model: db.location_warehouse },
                     { model: db.transaction_detail },
                     { model: db.order_status }
                 ]
             })
-
-        // let data = []
-        // response.forEach((item)=>{
-        //     data.push({
-        //         id:item.dataValues.id,
-        //         ongkir:item.dataValues.ongkir,
-        //         receiver:item.dataValues.receiver,
-        //         address:item.dataValues.address,
-        //         warehouse_city:item.dataValues.warehouse_city,
-        //         courier:item.dataValues.courier,
-        //         user_name:item.dataValues.user_name,
-        //         phone_number:item.dataValues.phone_number,
-        //         location_warehouse_
-        //     })
-        // })
-        //    console.log(response[0].dataValues)
+                :
+                await db.transaction.findAll({
+                    include: [
+                        { model: db.location_warehouse },
+                        { model: db.transaction_detail },
+                        { model: db.order_status }
+                    ]
+                })
+        } else {
+            var response = warehouse ? await db.transaction.findAll({
+                where: { warehouse_city: warehouse, order_status_id },
+                include: [
+                    { model: db.location_warehouse },
+                    { model: db.transaction_detail },
+                    { model: db.order_status }
+                ]
+            })
+                :
+                await db.transaction.findAll({
+                    where: { order_status_id },
+                    include: [
+                        { model: db.location_warehouse },
+                        { model: db.transaction_detail },
+                        { model: db.order_status }
+                    ]
+                })
+        }
 
         res.status(201).send({
             isError: false,
@@ -72,9 +76,18 @@ module.exports = {
     filterWH: async (req, res) => {
         try {
 
-            let { warehouse_city } = req.body
+            let { warehouse_city, order_status_id } = req.body
 
-            let getData = await db.transaction.findAll({
+            let getData = order_status_id ? await db.transaction.findAll({
+                where: {
+                    warehouse_city, order_status_id
+                },
+                include: [
+                    { model: db.location_warehouse },
+                    { model: db.transaction_detail },
+                    { model: db.order_status },
+                ]
+            }) : await db.transaction.findAll({
                 where: {
                     warehouse_city
                 },
@@ -133,7 +146,7 @@ module.exports = {
         })
 
         if (type == 1) {
-            var response = WH==0?await db.transaction.findAll({
+            var response = WH == 0 ? await db.transaction.findAll({
                 where: {
                     [Op.and]: [
                         {
@@ -145,7 +158,7 @@ module.exports = {
                         {
                             order_status_id: 5
                         }
-                        
+
                     ]
 
                 },
@@ -154,7 +167,7 @@ module.exports = {
                     { model: db.transaction_detail },
                     { model: db.order_status }
                 ]
-            }):await db.transaction.findAll({
+            }) : await db.transaction.findAll({
                 where: {
                     [Op.and]: [
                         {
@@ -167,7 +180,7 @@ module.exports = {
                             order_status_id: 5
                         },
                         {
-                            location_warehouse_id:WH
+                            location_warehouse_id: WH
                         }
                     ]
                 },
@@ -184,10 +197,10 @@ module.exports = {
                     status: 'Unverified'
                 }
             })
-            var list_WH =WH==0? await db.location_warehouse.findAll():await db.location_warehouse.findOne({where:{id:WH}})
+            var list_WH = WH == 0 ? await db.location_warehouse.findAll() : await db.location_warehouse.findOne({ where: { id: WH } })
             var warehouse = await db.location_warehouse.findAll()
         } else if (type == 2) {
-            var response =WH==0?await db.category.findAll({
+            var response = WH == 0 ? await db.category.findAll({
                 include: [
                     {
                         model: db.transaction_detail,
@@ -212,39 +225,40 @@ module.exports = {
                         ]
                     }
                 ]
-            }):
-            await db.category.findAll({
-                include: [
-                    {
-                        model: db.transaction_detail,
-                        include: [
-                            {
-                                model: db.transaction,
-                                where: {
-                                    [Op.and]: [
-                                        {
-                                            updatedAt: {
-                                                [Op.gte]: start,
-                                                [Op.lt]: end
+            }) :
+                await db.category.findAll({
+                    include: [
+                        {
+                            model: db.transaction_detail,
+                            include: [
+                                {
+                                    model: db.transaction,
+                                    where: {
+                                        [Op.and]: [
+                                            {
+                                                updatedAt: {
+                                                    [Op.gte]: start,
+                                                    [Op.lt]: end
+                                                }
+                                            },
+                                            {
+                                                order_status_id: 5
+                                            },
+                                            {
+                                                location_warehouse_id: WH
                                             }
-                                        },
-                                        {
-                                            order_status_id: 5
-                                        },
-                                        {
-                                            location_warehouse_id:WH
-                                        }
-                                    ]
+                                        ]
 
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                ]
-            })
+                            ]
+                        }
+                    ]
+                })
         } else if (type == 3) {
-            var response = WH==0?await db.transaction_detail.findAll({
-                include:[{model:db.transaction,
+            var response = WH == 0 ? await db.transaction_detail.findAll({
+                include: [{
+                    model: db.transaction,
                     where: {
                         [Op.and]: [
                             {
@@ -257,28 +271,31 @@ module.exports = {
                                 order_status_id: 5
                             }
                         ]
-                    }}]
+                    }
+                }]
             })
-            :
-            await db.transaction_detail.findAll({
-                include:[{model:db.transaction,
-                    where: {
-                        [Op.and]: [
-                            {
-                                updatedAt: {
-                                    [Op.gte]: start,
-                                    [Op.lt]: end
+                :
+                await db.transaction_detail.findAll({
+                    include: [{
+                        model: db.transaction,
+                        where: {
+                            [Op.and]: [
+                                {
+                                    updatedAt: {
+                                        [Op.gte]: start,
+                                        [Op.lt]: end
+                                    }
+                                },
+                                {
+                                    order_status_id: 5
+                                },
+                                {
+                                    location_warehouse_id: WH
                                 }
-                            },
-                            {
-                                order_status_id: 5
-                            },
-                            {
-                                location_warehouse_id:WH
-                            }
-                        ]
-                    }}]
-            })
+                            ]
+                        }
+                    }]
+                })
 
         }
         res.status(201).send({
@@ -287,7 +304,7 @@ module.exports = {
             users: users?.length ? users.length : null,
             userUV: usersUV?.length ? usersUV.length : null,
             wh: warehouse?.length ? warehouse.length : null,
-            list_wh:list_WH,
+            list_wh: list_WH,
             tr_success: total_transactionS?.length ? total_transactionS.length : null,
             tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })

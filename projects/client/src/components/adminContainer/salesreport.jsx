@@ -62,7 +62,7 @@ export default function SalesReport() {
 
     let depault = async () => {
         console.log(user.warehouse_id)
-        setPickWH(user.warehouse_id)
+        setPickWH(user.warehouse_id?user.warehouse.id:0)
         try {
             toast('Welcome to sales report Sir!', {
                 style: {

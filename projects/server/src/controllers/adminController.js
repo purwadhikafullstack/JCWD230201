@@ -12,34 +12,34 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 //import jwt
 const { createToken } = require('../lib/jwt');
 
+
 module.exports = {
     register: async (req, res) => {
+        const t = await sequelize.transaction()
         try {
-            let { email, password, role } = req.body
-            console.log(email)
+            let { email, password, name, location_warehouse_id,phone_number,gender } = req.body
 
-            let newSuper = await db.admin.create({ id: uuidv4(), password: await hashPassword(password), email, role })
-            console.log(role)
-            console.log(newSuper)
+            let matchdata = await db.admin.findOne({
+                where:{
+                    [Op.or]:[{email},{name}]
+                }
+            })
 
-            // let { email, role } = req.body
-            // let newSuper = await db.admin.update({
-            //     role
-            // },
-            //     {
-            //         where: {
-            //             email
-            //         }
-            //     }
-            // )
+            if(matchdata) throw{message:'Email or Name has been used'}
 
-            console.log(newSuper)
+            let newSuper = await db.admin.create({ id: uuidv4(), password: await hashPassword(password), email, name,phone_number,gender,location_warehouse_id,role:2 },{ transaction: t })
+           
+            await t.commit()
             res.status(201).send({
-                message: 'Login Success',
+                message: 'Register Success',
                 data: newSuper
             })
         } catch (error) {
-
+            await t.rollback()
+            res.status(404).send({
+                message: error.message,
+                data:null
+            })
         }
     },
     getAllAdmin: async (req, res) => {
@@ -115,7 +115,8 @@ module.exports = {
                     'warehouse': dataAdmin.location_warehouse_id ?
                         dataAdmin.location_warehouse.city : null,
                     'warehouse_id':dataAdmin.location_warehouse_id ?
-                    dataAdmin.location_warehouse_id:null
+                    dataAdmin.location_warehouse_id:null,
+                    'photo_profile':dataAdmin.photo_profile?dataAdmin.photo_profile:null
                 }
             })
 
@@ -177,7 +178,7 @@ module.exports = {
             // let matchData = await db.admin.findOne({
             //     where:{
             //         [Op.and]:[
-            //             {id},{email},{name}
+            //             {email},{name}
             //         ]
             //     }
             // }) 
