@@ -1,6 +1,6 @@
 
-import { useContext, useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { useContext, useEffect, useState} from 'react'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { BsGearFill } from 'react-icons/bs'
 import { BiUser } from 'react-icons/bi'
 import toast, { Toaster } from 'react-hot-toast'
@@ -15,9 +15,13 @@ import Loading from '../../components/loading/loading'
 import TransactionDetail from '../../components/adminContainer/transactionContainer/transactiondetail'
 
 export default function Admin() {
+    const location = useLocation()
     const { user, setUser } = useContext(userData)
+    console.log(user)
     const { transaction, setTransaction } = useContext(TransactionData)
     let navigate = useNavigate()
+
+    let [openProfile, setOpenProfile] = useState(false)
 
     let logout = () => {
         toast('Logout..', {
@@ -39,28 +43,40 @@ export default function Admin() {
     return (
         user ?
             user.role ?
-                <div>
+                <div onClick={()=>setOpenProfile(false)}>
                     {
                         transaction == null ?
                             null : <TransactionDetail />
                     }
 
                     <SidebarAdmin />
-                    <div className='text-black border pl-60 flex flex-col'>
+                    <div className='text-black pl-60 flex flex-col'>
                         {user.username ?
-                            <div className='flex justify-end gap-4 p-4 border shadow-lg border-b-gray-300'>
-
-
-                                <button onClick={() => logout()}>
-                                    <BsGearFill className='animate-spin' />
-                                </button>
-
+                            <div className='flex justify-between p-4'>
+                                <div className='flex'>
+                                    <button className='italic hover:underline'>
+                                        Admin
+                                    </button>
+                                    {/* {
+                                        location.pathname.split('/')[2]==undefined || location.pathname.split('/')[2]==''?null:
+                                        location.pathname.split('/')
+                                    } */}
+                                </div>
+                                <div className='flex gap-4'>
+                            
                                 <button className='flex items-center gap-3 '>
-                                    <BiUser size={'20px'} />
+                                <img src={require('../../Assets/maxi_2.png')} className="w-10 h-10 object-cover rounded-full" />
                                     <div>
                                         {user.username}
                                     </div>
                                 </button>
+                                <button className='border-b border-stone-300 py-2 px-3' onClick={() => logout()}>
+                                    Logout
+                                </button>
+                                </div>
+                                
+                              
+                             
                                 {/* top bar */}
                             </div>
                             :

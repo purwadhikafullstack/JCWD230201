@@ -16,6 +16,7 @@ export const LoginAccount = async (inputEmail, inputPassword, toogle) => {
                 id:response.data.data.token,
                 username:response.data.data.username,
                 role:response.data.data.role,
+                photo_profile:response.data.data.photo_profile,
                 warehouse_id:response.data.data.warehouse_id,
                 warehouse:response.data.data.warehouse
                 

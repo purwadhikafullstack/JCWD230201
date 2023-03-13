@@ -8,7 +8,7 @@ import { userData } from '../../../data/userData'
 
 import Loading from '../../loading/loading'
 
-export default function AllTransaction() {
+export default function OrderC() {
     const { transaction, setTransaction } = useContext(TransactionData)
     const { user, setUser } = useContext(userData)
     console.log(user)
@@ -42,13 +42,13 @@ export default function AllTransaction() {
 
     let searchFilter = async (input) => {
         if (input == "All Transaction") return getAllTr()
-        let response = await axios.post('http://localhost:8000/transaction/FWarehouse', { warehouse_city: input })
+        let response = await axios.post('http://localhost:8000/transaction/FWarehouse', { warehouse_city: input, order_status_id:5 })
         setDataTR(response.data.data)
     }
 
 
     let getAllTr = async () => {
-        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse ? { warehouse: user.warehouse } : null)
+        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse ? { warehouse: user.warehouse, order_status_id:1 } : {order_status_id:5})
         setDataTR(response.data.data)
 
         let loaderPrice = [], loaderDate = []
