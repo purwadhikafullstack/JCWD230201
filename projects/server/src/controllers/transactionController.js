@@ -8,7 +8,7 @@ module.exports = {
     allTransaction: async (req, res) => {
         let { warehouse, order_status_id } = req.body
 
-        if (order_status_id==undefined) {
+        if (order_status_id == undefined) {
             var response = warehouse ? await db.transaction.findAll({
                 where: { warehouse_city: warehouse },
                 include: [
@@ -308,5 +308,42 @@ module.exports = {
             tr_success: total_transactionS?.length ? total_transactionS.length : null,
             tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })
+    },
+    CreateOrder: async (req, res) => {
+        try {
+            // let getToken = req.dataToken
+            let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart } = req.body
+
+            let findData = await db.user.findOne({
+                where: {
+                    id: user_id
+                }
+            })
+
+            let dataWH = await db.location_warehouse.findAll()
+            console.log(dataWH)
+
+            var kreat = await db.transaction.create({
+                user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+            })
+
+            cart.forEach(async (item, index) => {
+                await db.transaction_detail.create({
+                    transaction_id: kreat.dataValues.id, qty: item.qty, price: item.product_detail.price,
+                    product_name: item.product.name, weight: item.product_detail.weight, memory_storage: item.product_detail.memory_storage,
+                    color: item.product_detail.color, product_img: item.product.product_images[0].img, category_id: item.product.category_id, product_detail_id: item.product_detail.id,
+
+                })
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data: kreat
+            })
+        } catch (error) {
+            console.log(error)
+        }
     }
+
 }

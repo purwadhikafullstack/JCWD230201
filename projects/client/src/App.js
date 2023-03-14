@@ -46,6 +46,7 @@ import Canceled from './components/adminContainer/transactionContainer/canceled'
 //import context for global
 import { userData } from './data/userData'
 import { TransactionData } from './data/transactionAdmin'
+import ShippingSuccess from './pages/shippingSuccess/shippingSuccess';
 
 
 function App() {
@@ -144,9 +145,9 @@ function App() {
                   <Route path='Processing' element={<Processing />} />
                   <Route path='Shipped' element={<Shipped />} />
                   <Route path='Canceled' element={<Canceled />} />
-                  <Route path='Order-Confirmed' element={<OrderC/>} />
+                  <Route path='Order-Confirmed' element={<OrderC />} />
                   <Route path='warehouse' element={<Warehouse />} />
-                  <Route path='sales-report' element={<SalesReport/>}/>
+                  <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -166,14 +167,15 @@ function App() {
               <Route path='/my-account' element={<MyAccount />}>
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
-                <Route path='address' element ={<MyAccountAddress/>}/>
+                <Route path='address' element={<MyAccountAddress />} />
               </Route>
-              <Route path='/cart' element={<Cart/>}/>
+              <Route path='/cart' element={<Cart />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
-              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
+              <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
+              <Route path='/shipping/success' element={<ShippingSuccess />} />
             </Routes>
             <Toaster />
             <Footer />
