@@ -22,7 +22,7 @@ export default function Cart() {
 
     const [cartToUpdate, setCartToUpdate] = useState({})
 
-    
+
     let getData = async () => {
         try {
             let response = await axios.get('http://localhost:8000/cart/data-cart', {
@@ -32,10 +32,10 @@ export default function Cart() {
             })
             console.log(response.data.data)
             setProductCart(response.data.data)
-            
+
             let sum = 0
             response.data.data.forEach(e =>
-                sum += e.qty*e.product_detail.price)
+                sum += e.qty * e.product_detail.price)
             setTotalPrice(sum)
 
             // var arrPrice = []
@@ -67,9 +67,15 @@ export default function Cart() {
 
     let updateQty = async (input) => {
         try {
-            let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+            toast('Loading...',{
+                duration:2000
+            })
+            setTimeout(async () => {
+                let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+                toast.success('Update Success')
+                getData()
+            }, 2000);
 
-            getData()
         } catch (error) {
             console.log(error)
             toast.error(error.response.data.message)
@@ -113,11 +119,8 @@ export default function Cart() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-1">
-                                                    <div className="col-span-2 border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
-                                                        {value.qty}
-                                                    </div>
-                                                    <div className='text-lg'>
+                                                <div className="flex gap-3">
+                                                    <div className='text-xl'>
                                                         <button
                                                             onClick={(e) => {
                                                                 updateQty(e.target.value)
@@ -127,7 +130,10 @@ export default function Cart() {
                                                             -
                                                         </button>
                                                     </div>
-                                                    <div className='text-lg'>
+                                                    <div className="col-span-2 border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
+                                                        {value.qty}
+                                                    </div>
+                                                    <div className='text-xl'>
                                                         <button
                                                             onClick={(e) => {
                                                                 updateQty(e.target.value)
@@ -193,7 +199,7 @@ export default function Cart() {
 
                     <div className="col-start-9 col-end-11 relative">
                         <div className="px-5 sticky">
-                            <div className="font-bold py-4 border-b-2">
+                            <div className="font-bold text-xl py-4 border-b-2">
                                 Summary
                             </div>
                             <div className="py-4 flex justify-between">
