@@ -312,19 +312,65 @@ module.exports = {
     CreateOrder: async (req, res) => {
         try {
             // let getToken = req.dataToken
-            let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart } = req.body
+            let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
 
-            let findData = await db.user.findOne({
+            let findData = await db.user_address.findOne({
                 where: {
-                    id: user_id
+                    id: user_address_id
                 }
             })
+            // console.log(findData)
 
             let dataWH = await db.location_warehouse.findAll()
-            console.log(dataWH)
+            // console.log(dataWH)
+
+            
+            let distanceWH = []
+            for (let i = 0; i < dataWH.length; i++) {
+                let latlongWH = []
+
+                const R = 6371e3; // metres
+                const φ1 = parseFloat(findData.dataValues.latitude) * Math.PI / 180; // φ, λ in radians
+                const φ2 = parseFloat(dataWH[i].dataValues.latitude) * Math.PI / 180;
+                const Δφ = (parseFloat(dataWH[i].dataValues.latitude) - (parseFloat(findData.dataValues.latitude))) * Math.PI / 180;
+                const Δλ = (parseFloat(dataWH[i].dataValues.longitude) - parseFloat(findData.dataValues.longitude)) * Math.PI / 180;
+
+                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+                const d = R * c;
+
+                latlongWH.push(dataWH[i].dataValues.city)
+                latlongWH.push(d/1000)
+                distanceWH.push(latlongWH)
+            }
+            console.log(distanceWH)
+
+            let closestWH =distanceWH[0][1]
+            let cityWH
+
+            for(let i=0;i<distanceWH.length;i++){
+                if(distanceWH[i][1]<closestWH){
+                    closestWH = distanceWH[i][1]
+                    cityWH = distanceWH[i][0]
+                }
+            }
+            // console.log(cityWH,closestWH)
+
+            let findWH = await db.location_warehouse.findOne({
+                where:{
+                    city:cityWH
+                }
+            })
+            // console.log(findWH)
+            
+            // console.log(Math.min(...closestWH))
+
 
             var kreat = await db.transaction.create({
-                user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+                user_id, ongkir, receiver, address, warehouse_city:findWH.dataValues.city, location_warehouse_id:findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
             })
 
             cart.forEach(async (item, index) => {

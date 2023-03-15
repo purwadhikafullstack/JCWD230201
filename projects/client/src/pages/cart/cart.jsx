@@ -6,6 +6,7 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi'
 
 import { Modal, Button } from 'flowbite-react'
 import { toast, Toaster } from 'react-hot-toast'
+import { Link } from 'react-router-dom'
 
 
 export default function Cart() {
@@ -199,9 +200,11 @@ export default function Cart() {
                             <div className="py-4 flex justify-between">
                                 Total<span className="font-bold">Rp. {totalPrice.toLocaleString()}</span>
                             </div>
-                            <button className="bg-neutral-900 text-white w-full py-1 rounded-sm">
-                                BUY
-                            </button>
+                            <Link to='/shipping'>
+                                <button className="bg-neutral-900 text-white w-full py-1 rounded-sm">
+                                    BUY
+                                </button>
+                            </Link>
                         </div>
 
                     </div>

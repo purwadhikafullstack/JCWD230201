@@ -29,6 +29,7 @@ export default function Shipping(props) {
     const [arrCity, setArrCity] = useState([])
     const [arrInitial, setArrInitial] = useState([])
     const [arrInitialCity, setArrInitialCity] = useState(0)
+
     const [selectedCity, setSelectedCity] = useState("")
     const [selectedCityId, setSelectedCityId] = useState(0)
     const [selectedName, setSelectedName] = useState("")
@@ -37,12 +38,15 @@ export default function Shipping(props) {
     const [selectedProvince, setSelectedProvince] = useState("")
     const [selectedSubdistrict, setSelectedSubdistrict] = useState("")
     const [checkValue, setCheckValue] = useState("")
+    const [selectedID, setSelectedID] = useState(0)
+
     const [initialCity, setInitialCity] = useState("")
     const [initialName, setInitialName] = useState("")
     const [initialUserAddress, setInitialUserAddress] = useState("")
     const [initialProvince, setInitialProvince] = useState("")
     const [initialSubdistrict, setInitialSubdistrict] = useState("")
     const [initialNumber, setInitialNumber] = useState("")
+
     const [costShipping, setCostShipping] = useState([])
     const [priceShipping, setPriceShipping] = useState(0)
     const [disable, setDisable] = useState(true)
@@ -151,6 +155,7 @@ export default function Shipping(props) {
             setSelectedProvince(value.province);
             setSelectedSubdistrict(value.subdistrict);
             setShowAddress(false)
+            setSelectedID(value.id)
             console.log(value);
 
 
@@ -208,7 +213,7 @@ export default function Shipping(props) {
 
     let newOrder = async () => {
         try {
-            let response = await axios.post('http://localhost:8000/transaction/createOrder', { ongkir: priceShipping, receiver: selectedName, address: selectedUserAddress, subdistrict: selectedSubdistrict, city: selectedCity, province: selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: selectedNumber, user_name: selectedName, cart: dataCart }, {
+            let response = await axios.post('http://localhost:8000/transaction/createOrder', { ongkir: priceShipping, receiver: selectedName, address: selectedUserAddress, subdistrict: selectedSubdistrict, city: selectedCity, province: selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
