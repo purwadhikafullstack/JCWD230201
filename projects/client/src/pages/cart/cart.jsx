@@ -26,7 +26,7 @@ export default function Cart() {
                     token: localStorage.getItem('token')
                 }
             })
-            console.log(response.data.data)
+            // console.log(response.data.data)
             setProductCart(response.data.data)
 
             let sum = 0
@@ -63,15 +63,12 @@ export default function Cart() {
 
     let updateQty = async (input) => {
         try {
-            toast('Loading...', {
-                duration: 2000
-            })
+            console.log(input.split(','[0])+1)
             
-            setTimeout(async () => {
-                let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
-                toast.success('Update Success')
-                getData()
-            }, 2000);
+            // setTimeout(async () => {
+            //     let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+            //     getData()
+            // }, 2000);
 
         } catch (error) {
             console.log(error)
