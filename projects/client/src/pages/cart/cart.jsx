@@ -87,7 +87,7 @@ export default function Cart() {
 
     return (
         <>
-            <div className={productCart.length > 3 ? "pt-24 h-max" : "pt-24 h-screen"}>
+            <div className="pt-24 h-max">
 
                 {/* grid */}
                 <div className="grid grid-cols-12">
