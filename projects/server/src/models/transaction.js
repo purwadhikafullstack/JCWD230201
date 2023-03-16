@@ -36,13 +36,20 @@ module.exports = (sequelize, DataTypes) => {
     ongkir: DataTypes.INTEGER,
     receiver:DataTypes.STRING,
     address:DataTypes.STRING,
+    subdistrict:DataTypes.STRING,
+    city:DataTypes.STRING,
+    province:DataTypes.STRING,
     warehouse_city:DataTypes.STRING,
     courier:DataTypes.STRING,
     user_name:DataTypes.STRING,
     phone_number:DataTypes.STRING,
+    upload_payment:DataTypes.STRING,
     exprired:{
       type:DataTypes.DATE,
-      defaultValue : moment().add(1, 'hours').toDate()
+      defaultValue : moment().add(1, 'minutes').toDate()
+    },
+    updatedAt:{
+      type:DataTypes.DATEONLY
     }
   }, {
     sequelize,

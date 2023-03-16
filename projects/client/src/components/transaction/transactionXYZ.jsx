@@ -1,20 +1,37 @@
-import { useState, useEffect, useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
+import { TransactionData } from '../../data/transactionAdmin'
+import { userData } from '../../data/userData'
+import noData from '../../Assets/data_not_found2.jpg'
+
 import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
 import { MdOutlineDescription } from 'react-icons/md'
-import noData from '../../../Assets/data_not_found2.jpg'
-import { TransactionData } from '../../../data/transactionAdmin'
-import { userData } from '../../../data/userData'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
 
-import Loading from '../../loading/loading'
+import Loading from '../loading/loading'
 
-export default function OrderC() {
+export default function TransactionXYZ() {
     const { transaction, setTransaction } = useContext(TransactionData)
     const { user, setUser } = useContext(userData)
-    console.log(user)
 
-    let [select, setSelect] = useState(null), [toogle, setToogle] = useState(false), [dataFilter, setDataFilter] = useState([])
-    let [dataTR, setDataTR] = useState([]), [totalPrice, setTotalPrice] = useState(0), [date, setDate] = useState([])
+    let [pickWH, setPickWH] = useState(0), [pickStatus, setPickStatus] = useState(0)
+    let [select, setSelect] = useState(null), [dataFilter, setDataFilter] = useState([]), [page, setPage] = useState(0)
+    let [dataTR, setDataTR] = useState([]), [totalPrice, setTotalPrice] = useState(0), [loadDate, setLoadDate] = useState([])
+
+    const [date, setDate] = useState({
+        from: "",
+        to: "",
+    });
+    console.log(date)
+    const [selectedDate, setSelectedDate] = useState({
+        from: "",
+        to: "",
+    });
+    let [shotgun, setShotgun] = useState([
+        'Transaction', 'Payment', 'Confirmation', 'Processing', 'Shipped', 'Done', 'Canceled'
+    ])
+
 
     let shotgunStatus = [
         'bg-yellow-100 text-yellow-400 text-sm font-bold p-1',
@@ -42,13 +59,7 @@ export default function OrderC() {
 
     let searchFilter = async (input) => {
         if (input == "All Transaction") return getAllTr()
-        let response = await axios.post('http://localhost:8000/transaction/FWarehouse', { warehouse_city: input, order_status_id:5 })
-        setDataTR(response.data.data)
-    }
-
-
-    let getAllTr = async () => {
-        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse ? { warehouse: user.warehouse, order_status_id:1 } : {order_status_id:5})
+        let response = await axios.post('http://localhost:8000/transaction/FWarehouse', { warehouse_city: input })
         setDataTR(response.data.data)
 
         let loaderPrice = [], loaderDate = []
@@ -65,7 +76,57 @@ export default function OrderC() {
         }
         // console.log(loaderPrice)
         setTotalPrice(loaderPrice)
-        setDate(loaderDate)
+        setLoadDate(loaderDate)
+    }
+
+    let getAllTr = async () => {
+        setPickWH(user.warehouse_id ? user.warehouse_id : 0)
+        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0 } : { order_status_id: 0 })
+        setDataTR(response.data.data)
+
+        let loaderPrice = [], loaderDate = []
+        console.log(response.data.data)
+        for (let i = 0; i < response.data.data.length; i++) {
+            let TP = 0
+            // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
+            loaderDate.push(response.data.data[i].updatedAt.split('T')[0])
+            TP += response.data.data[i].ongkir
+            response.data.data[i].transaction_details.forEach((item) => {
+                TP += (item.qty * item.price)
+            })
+            loaderPrice.push(TP)
+        }
+        // console.log(loaderPrice)
+        setTotalPrice(loaderPrice)
+        setLoadDate(loaderDate)
+    }
+
+    let getTr = async (wh, status, from, to) => {
+        try {
+            setPickWH(wh)
+            setPickStatus(status)
+            var response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null })
+
+            setDataTR(response.data.data)
+
+            let loaderPrice = [], loaderDate = []
+            console.log(response.data.data)
+            for (let i = 0; i < response.data.data.length; i++) {
+                let TP = 0
+                // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
+                loaderDate.push(response.data.data[i].updatedAt.split('T')[0])
+                TP += response.data.data[i].ongkir
+                response.data.data[i].transaction_details.forEach((item) => {
+                    TP += (item.qty * item.price)
+                })
+                loaderPrice.push(TP)
+            }
+            // console.log(loaderPrice)
+            setTotalPrice(loaderPrice)
+            setLoadDate(loaderDate)
+        } catch (error) {
+            setDataTR([])
+        }
     }
 
     let description = (index, type) => {
@@ -74,35 +135,67 @@ export default function OrderC() {
 
     useEffect(() => {
         getAllTr()
-        setDataFilter([])
     }, [])
-
     return (
-    
+
         dataTR ?
             <div className="p-5">
-                <div className="text-3xl font-semibold mb-10">
-                    Transactions
+                <div className="text-2xl font-bold">
+                    Transaction
                 </div>
-                {
-                    !user.warehouse ?
-                        <div>
-                            <div className='flex justify-end gap-3 '>
-                                {
-                                    dataFilter.length > 0 ?
-                                        <div>
-                                            <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-300 shadow-sm rounded-md" placeholder="Select Warehouse">
-                                                <option value="All Transaction">All Transaction</option>
-                                                {
-                                                    dataFilter.map((item, index) => {
-                                                        return (
-                                                            <option value={item.city}>{item.city}</option>
-                                                        )
-                                                    })
-                                                }
-                                            </select>
-                                        </div> : null
-                                }
+                <div className='text-gray-500 font-semibold mb-6'>
+                    {dataTR.length} transactions found
+                </div>
+                <div>
+
+                </div>
+                <div>
+                    <div className='flex justify-between gap-3 '>
+                        <div className='flex gap-5 items-center'>
+                            <DatePicker
+                                showMonthDropdown={true}
+                                showYearDropdown={true}
+                                scrollableYearDropdown={true}
+                                selected={selectedDate.from === "" ? null : selectedDate.from}
+                                className="bg-gray-100 border border-gray-100 text-gray-900 text-xs rounded-md"
+                                onChange={(date) => {
+                                    setDate({ ...date, from: date.toISOString().split("T")[0] });
+                                    setSelectedDate({ ...selectedDate, from: date });
+                                    getTr(pickWH, pickStatus, date, selectedDate.to)
+                                }}
+                            />
+                            to
+                            <DatePicker
+                                showMonthDropdown={true}
+                                showYearDropdown={true}
+                                scrollableYearDropdown={true}
+                                selected={selectedDate.to === "" ? null : selectedDate.to}
+                                className="bg-gray-100 border border-gray-100 text-gray-900 text-xs rounded-md"
+                                onChange={(date) => {
+                                    setDate({ ...date, to: date.toISOString().split("T")[0] });
+                                    setSelectedDate({ ...selectedDate, to: date });
+                                    getTr(pickWH, pickStatus, selectedDate.from, date)
+                                }}
+                            />
+                        </div>
+
+                        {
+                            dataFilter.length > 0 ?
+                                <div>
+                                    <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-300 shadow-sm rounded-md" placeholder="Select Warehouse">
+                                        <option value="All Transaction">All Transaction</option>
+                                        {
+                                            dataFilter.map((item, index) => {
+                                                return (
+                                                    <option value={item.city}>{item.city}</option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                </div> : null
+                        }
+                        {
+                            !user.warehouse ?
                                 <div className="relative">
 
                                     <select onChange={(e) => filter(e.target.value)}
@@ -116,20 +209,34 @@ export default function OrderC() {
                                             })
                                         }
                                     </select>
-                                </div>
+                                </div> : null
+                        }
 
-                            </div>
 
-                            <div className='flex justify-start items-center mt-5'>
-                                <div className='flex'>
-                                    transaction per page
-                                </div>
 
-                            </div>
+
+                    </div>
+
+                    <div className='flex justify-start items-center mt-5'>
+                        <div className='flex gap-5 ml-5'>
+                            {
+                                shotgun.map((item, index) => {
+                                    return (
+                                        <button
+                                            disabled={page == index ? true : false}
+                                            onClick={() => {
+                                                setPage(index)
+                                                getTr(pickWH, index)
+                                            }} className={`font-semibold hover:text-black ${page == index ? 'underline-offset-4 underline text-black' : 'text-gray-300'}  `}>
+                                            {item}
+                                        </button>
+                                    )
+                                })
+                            }
                         </div>
-                        :
-                        null
-                }
+
+                    </div>
+                </div>
 
 
                 <div className='h-full flex flex-col gap-7 mt-5'>
@@ -150,7 +257,7 @@ export default function OrderC() {
 
                                                 <div className='flex items-center opacity-50 gap-3'>
                                                     <BsClock />
-                                                    {(date[index])}
+                                                    {(loadDate[index])}
                                                 </div>
                                             </div>
 
@@ -165,7 +272,7 @@ export default function OrderC() {
                                         <div className='flex px-5 justify-between'>
                                             <div className='w-4/5 flex flex-col'>
                                                 <div className='flex'>
-                                                    <img src={require(`../../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                    <img src={require(`../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
                                                     <div className='mt-4 font-bold flex flex-col items-start'>
                                                         <button>
                                                             {item.transaction_details[0].product_name}

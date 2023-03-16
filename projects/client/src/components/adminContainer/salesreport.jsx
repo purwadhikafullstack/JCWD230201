@@ -236,7 +236,7 @@ export default function SalesReport() {
                                         value="Period"
                                     />
                                 </div >
-                                <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
+                                <select className='w-full text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
                                     onChange={(e) => e.target.value == '2' ? setVisible({ ...visible, month: true }) : setVisible({ ...visible, month: false })}
                                     id="periode"
                                     required={true}
@@ -253,7 +253,7 @@ export default function SalesReport() {
                                         value="Month"
                                     />
                                 </div >
-                                <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
+                                <select className='w-full text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
                                     onChange={(e) => getSales(pickY, e.target.value, pickT, pickWH)}
                                     id="bulan"
                                     required={true}
@@ -274,7 +274,7 @@ export default function SalesReport() {
                                         value="Year"
                                     />
                                 </div >
-                                <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
+                                <select className='w-full text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
                                     onChange={(e) => {
                                         getSales(e.target.value, pickM, pickT, pickWH)
                                     }}
@@ -295,13 +295,13 @@ export default function SalesReport() {
 
                         {
                             user.warehouse_id>0? 
-                            <p className='text-xl font-semibold flex items-end'>Sales Reports : Warehouse {user.warehouse}</p> : <div className='sm:min-w-fit'>
+                            <p className='text-xl flex items-end'>Sales Reports : Warehouse {user.warehouse}</p> : <div className='sm:min-w-fit'>
                                 <div className="mb-2">
                                     <Label
                                         value="Warehouse List :"
                                     />
                                 </div >
-                                <select className='w-full font-semibold text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
+                                <select className='w-full text-gray-600 px-3 py-1 border rounded-md border-[#DBDBDB] focus:ring-transparent focus:border-black'
                                     onChange={(e) => {
                                         getSales(pickY, pickM, pickT, e.target.value)
                                     }}

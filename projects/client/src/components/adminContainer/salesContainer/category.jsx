@@ -19,13 +19,13 @@ export default function Category(data) {
                     <div className="flex flex-col  w-full min-h-fit px-9 pt-5 bg-stone-800 text-white rounded-md">
                         <div className="w-full flex flex-col mb-5 pb-2">
                             <div className="flex items-center border-b pb-3 border-white ">
-                                <div className="w-1/4 font-semibold flex flex-col gap-1 text-start text-xl ">
+                                <div className="w-1/4  flex flex-col gap-1 text-start text-xl ">
                                     Category
                                 </div>
-                                <div className="w-1/4 text-xl font-semibold">
+                                <div className="w-1/4 text-xl ">
                                     Profit
                                 </div>
-                                <div className="w-2/4 text-start text-xl font-semibold">
+                                <div className="w-2/4 text-start text-xl ">
                                     Sold in percentage
                                 </div>
                             </div>
@@ -35,7 +35,7 @@ export default function Category(data) {
                                 return (
                                     <div className="w-full flex flex-col mb-5 group pb-2">
                                         <div className="flex items-center">
-                                            <div className="w-1/4 font-semibold flex flex-col gap-1 text-start text-xl ">
+                                            <div className="w-1/4  flex flex-col gap-1 text-start text-xl ">
                                                 {item.category}
                                                 <hr className="w-0 group-hover:w-full group-hover:duration-500 h-0.5 bg-slate-300" />
                                             </div>

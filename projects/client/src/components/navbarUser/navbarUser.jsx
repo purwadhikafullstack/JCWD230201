@@ -31,11 +31,15 @@ export default function NavbarUser(props) {
 
     return (
         <>
-            <div className="flex justify-around items-center bg-neutral-900 text-white font-semibold fixed w-full z-10 h-20">
+            <div className="flex justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
                 <div className="flex items-center gap-10">
                     <Link to='/'>
-                        <button className="text-3xl">
-                            iFrit
+                        <button className="w-12 object-contain flex items-end">
+                            <div className="absolute text-3xl">I</div>
+                            <img src={require('../../Assets/logo black.jpg')} alt="" />
+                            <div className="absolute ml-6 text-3xl">
+                                     rit
+                            </div>
                         </button>
                     </Link>
                     {category.map((value, index) => {
