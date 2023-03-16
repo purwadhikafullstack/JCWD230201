@@ -11,6 +11,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.11",
     "@heroicons/react": "^2.0.16",
+    "@lottiefiles/lottie-player": "^1.7.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@heroicons/react": "^2.0.16",
     "@testing-library/react": "^13.3.0",
@@ -20,6 +21,7 @@
     "flowbite-react": "^0.3.8",
     "moment": "^2.29.4",
     "react": "^18.2.0",
+    "react-datepicker": "^4.10.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
