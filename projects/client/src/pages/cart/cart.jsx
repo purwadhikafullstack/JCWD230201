@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { MdOutlineDelete } from 'react-icons/md'
 import { HiOutlineExclamationCircle } from 'react-icons/hi'
 
-import { Modal, Button } from 'flowbite-react'
+import { Modal, Button, Spinner } from 'flowbite-react'
 import { toast, Toaster } from 'react-hot-toast'
 
 
@@ -18,6 +18,9 @@ export default function Cart() {
 
     const [cartToDelete, setCartToDelete] = useState({})
 
+    const [loading, setLoading] = useState(false)
+
+    const [loadingIndex, setLoadingIndex] = useState(0)
 
     let getData = async () => {
         try {
@@ -34,15 +37,7 @@ export default function Cart() {
                 sum += e.qty * e.product_detail.price)
             setTotalPrice(sum)
 
-            // var arrPrice = []
-            // for (let i = 0; i < productCart.length; i++) {
-            //     if (!arrPrice[i]) {
-            //         arrPrice.push((productCart[i].qty * productCart[i].product_detail.price))
-            //     }
-            // }
-            // setSubtotal(arrPrice)
-            // console.log(arrPrice)
-            // console.log(subtotal)
+            setLoading(false)
 
         } catch (error) {
             console.log(error)
@@ -61,14 +56,17 @@ export default function Cart() {
         }
     }
 
+    let getQty = () => {
+
+    }
+
     let updateQty = async (input) => {
         try {
-            console.log(input.split(','[0])+1)
-            
-            // setTimeout(async () => {
-            //     let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
-            //     getData()
-            // }, 2000);
+
+            let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+
+            getData()
+
 
         } catch (error) {
             console.log(error)
@@ -114,29 +112,40 @@ export default function Cart() {
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-3">
-                                                    <div className='text-xl'>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                updateQty(e.target.value)
-                                                            }}
-                                                            value={`${value.qty},${value.id},-`}
-                                                            className='w-4'>
-                                                            -
-                                                        </button>
-                                                    </div>
-                                                    <div className="col-span-2 border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
-                                                        {value.qty}
-                                                    </div>
-                                                    <div className='text-xl'>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                updateQty(e.target.value)
-                                                            }}
-                                                            value={`${value.qty},${value.id},+`}
-                                                            className='w-4'>
-                                                            +
-                                                        </button>
-                                                    </div>
+                                                    {loading && loadingIndex == index ?
+                                                        <>
+                                                            <Spinner aria-label="Default status example" />
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <div className='text-xl'>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        setLoading(true)
+                                                                        setLoadingIndex(index)
+                                                                        updateQty(e.target.value)
+                                                                    }}
+                                                                    value={`${value.qty},${value.id},-,${index}`}
+                                                                    className='w-4'>
+                                                                    -
+                                                                </button>
+                                                            </div>
+                                                            <div className="col-span-2 border w-8 h-8 text-xs flex justify-center items-center bg-slate-200 border-neutral-300 rounded-sm">
+                                                                {value.qty}
+                                                            </div>
+                                                            <div className='text-xl'>
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        setLoading(true)
+                                                                        setLoadingIndex(index)
+                                                                        updateQty(e.target.value)
+                                                                    }}
+                                                                    value={`${value.qty},${value.id},+,${index}`}
+                                                                    className='w-4'>
+                                                                    +
+                                                                </button>
+                                                            </div>
+                                                        </>}
                                                 </div>
                                             </div>
                                         </div>
