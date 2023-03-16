@@ -14,13 +14,9 @@ export default function Cart() {
 
     const [totalPrice, setTotalPrice] = useState(0)
 
-    const [subtotal, setSubtotal] = useState([])
-
     const [modalDelete, setModalDelete] = useState(false)
 
     const [cartToDelete, setCartToDelete] = useState({})
-
-    const [cartToUpdate, setCartToUpdate] = useState({})
 
 
     let getData = async () => {
@@ -67,9 +63,10 @@ export default function Cart() {
 
     let updateQty = async (input) => {
         try {
-            toast('Loading...',{
-                duration:2000
+            toast('Loading...', {
+                duration: 2000
             })
+            
             setTimeout(async () => {
                 let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
                 toast.success('Update Success')
