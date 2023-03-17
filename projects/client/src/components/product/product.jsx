@@ -11,20 +11,16 @@ export default function Product(props){
     },[])
     return(
         <div className="pt-28">
-            {/* {console.log(props.data.show[0].product_images[0].img)} */}
-            {/* {console.log(props.data.show[0].product_images[0].img)} */}
-            {/* imgSrc={`${value.product_images[0].img}`.default} */}
-            {console.log(props.data.show)}
             <div className="flex justify-start pl-16 text-3xl font-bold">
                 All Products
             </div>
             <div className="flex justify-center p-10">
-                <div className="grid grid-cols-4 gap-10 p-5">
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-10 p-5">
                     {props.data.show? props.data.show.map((value, index)=>{
                         return(
                             <Link to={`/product/productdetail/${value.id}`}>
                                 <button className=" ">
-                                    <Card className="h-[450px]">
+                                    <div className="">
                                     {/* imgSrc={require(`../../Assets/${value.product_images[0].img}`)} */}
                                         <div className=''>
                                             <div className='min-h-[5px]' >
@@ -44,9 +40,16 @@ export default function Product(props){
                                                         Rp {value.product_details[0].price.toLocaleString()}
                                                     </div>
                                                 </div>
+                                                <div className='flex p-5 justify-center gap-3'>
+                                                    {props.data.arrColor[index].map((val, idx)=>{
+                                                        return(
+                                                            <div style={{backgroundColor: `${val}`}} className={`w-4 h-4 border rounded-full`}></div>
+                                                        )
+                                                    })}
+                                                </div>
                                             </div>
                                         </div>
-                                    </Card>
+                                    </div>
                                 </button>
                             </Link>
                         )
