@@ -59,6 +59,7 @@ function App() {
   const [detail, setDetail] = useState([])
   const [detailProduct, setDetailProduct] = useState([])
   const [verifyStatus, setVerifyStatus] = useState('')
+  const [itemCart, setItemCart] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
@@ -120,6 +121,21 @@ function App() {
     }
   }
 
+  let getCart = async () => {
+    try {
+      let response = await axios.get('http://localhost:8000/cart/data-cart', {
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      // console.log(response.data.data)
+      setItemCart(response.data.data)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     keepLogin()
     // loginKeep()
@@ -144,9 +160,9 @@ function App() {
                   <Route path='Processing' element={<Processing />} />
                   <Route path='Shipped' element={<Shipped />} />
                   <Route path='Canceled' element={<Canceled />} />
-                  <Route path='Order-Confirmed' element={<OrderC/>} />
+                  <Route path='Order-Confirmed' element={<OrderC />} />
                   <Route path='warehouse' element={<Warehouse />} />
-                  <Route path='sales-report' element={<SalesReport/>}/>
+                  <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -155,7 +171,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail, getProduct, notRegister }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart }} data={{ show, itemCart }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -166,13 +182,13 @@ function App() {
               <Route path='/my-account' element={<MyAccount />}>
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
-                <Route path='address' element ={<MyAccountAddress/>}/>
+                <Route path='address' element={<MyAccountAddress />} />
               </Route>
-              <Route path='/cart' element={<Cart/>}/>
+              <Route path='/cart' element={<Cart func={{getCart}} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
               <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
             </Routes>
             <Toaster />

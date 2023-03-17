@@ -8,7 +8,7 @@ import { Modal, Button, Spinner } from 'flowbite-react'
 import { toast, Toaster } from 'react-hot-toast'
 
 
-export default function Cart() {
+export default function Cart(props) {
 
     const [productCart, setProductCart] = useState([])
 
@@ -51,6 +51,8 @@ export default function Cart() {
             toast.success('Delete Product from Cart Success')
 
             getData()
+
+            props.func.getCart()
         } catch (error) {
 
         }

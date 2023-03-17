@@ -27,6 +27,8 @@ export default function NavbarUser(props) {
 
     useEffect(() => {
         getCategory()
+        props.func.getCart()
+        props.data.itemCart
     }, [])
 
     return (
@@ -83,14 +85,22 @@ export default function NavbarUser(props) {
                             <MdFavorite />
                         </Tooltip>
                     </button>
-                    <button onClick={()=>props.func.notRegister()}>
+                    <button onClick={() => props.func.notRegister()}>
                         <Link to='/cart'>
                             <Tooltip
                                 content="Cart"
                                 placement="bottom"
                                 className=" mt-6"
                             >
-                                <MdShoppingBag />
+                                <div className="relative px-3 py-3">
+                                    <MdShoppingBag />
+                                    {
+                                        props.data.itemCart.length === 0 ?
+                                            null
+                                            :
+                                            <div className="bg-orange-500 w-5 h-5 rounded-full absolute top-1 right-0 text-xs justify-center flex items-center">{props.data.itemCart.length}</div>
+                                    }
+                                </div>
                             </Tooltip>
                         </Link>
                     </button>

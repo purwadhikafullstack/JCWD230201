@@ -43,6 +43,8 @@ export default function ProductDetail(props) {
             })
 
             toast.success('Add to cart')
+
+            props.func.getCart()
         } catch (error) {
             console.log(error)
             toast.error(error.response.data.message)
@@ -160,7 +162,10 @@ export default function ProductDetail(props) {
                             +
                         </button>
                     </div>
-                    <button onClick={() => addToCart()} className="bg-[#113F90] text-white font-semibold px-3 py-1 mt-3 rounded" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                    <button onClick={() => {
+                        addToCart()
+                        }}
+                        className="bg-[#113F90] text-white font-semibold px-3 py-1 mt-3 rounded" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
                         Add to cart
                     </button>
                 </div>
