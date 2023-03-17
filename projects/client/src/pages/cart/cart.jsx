@@ -9,6 +9,8 @@ import { Modal, Button } from 'flowbite-react'
 import { toast, Toaster } from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 
+import EmptyCart from './../../Assets/empty-cart.png'
+
 
 export default function Cart() {
 
@@ -93,9 +95,9 @@ export default function Cart() {
                 {
                     productCart.length !== 0 ?
                         // {/* grid */}
-                        <div className="grid grid-cols-12">
+                        <div className="grid md:grid-cols-6 lg:grid-cols-12">
                             {/* Card Start */}
-                            <div className="col-start-3 col-end-9 mr-3">
+                            <div className=" md:col-start-1 md:col-end-6 lg:col-start-3 lg:col-end-9 mr-3">
                                 {
                                     productCart.map((value, index) => {
                                         return (
@@ -197,7 +199,7 @@ export default function Cart() {
                             </div>
                             {/* Card End */}
 
-                            <div className="col-start-9 col-end-11 relative">
+                            <div className=" lg:col-start-9 lg:col-end-11 relative">
                                 <div className="px-5 sticky">
                                     <div className="font-bold py-4 border-b-2">
                                         Summary
@@ -218,8 +220,8 @@ export default function Cart() {
                         :
                         <div className='w-full flex flex-col items-center'>
                             <div className='flex flex-col items-center my-14'>
-                                <IoCartOutline className='text-9xl text-neutral-400' />
-                                <p className='text-xl font-semibold text-neutral-500 my-4'>
+                                <img src={EmptyCart} />
+                                <p className='text-xl font-semibold text-neutral-700 my-4'>
                                     You dont have any items in cart.
                                 </p>
                                 <button

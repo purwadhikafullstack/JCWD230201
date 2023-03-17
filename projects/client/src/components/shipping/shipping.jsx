@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Modal, Button, TextInput, Label } from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
 import iPhone14pro from './../../Assets/iphone_14_pro.jpg'
@@ -8,6 +8,8 @@ import iPhone14pro from './../../Assets/iphone_14_pro.jpg'
 import LogoBCA from './../../Assets/bca.png'
 
 export default function Shipping(props) {
+
+    let navigate = useNavigate()
 
     // const {id} = useParams()
 
@@ -712,7 +714,12 @@ export default function Shipping(props) {
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <button onClick={() => newOrder()} className='bg-black text-white px-7 py-2'>
+                                                            <button
+                                                                onClick={() => {
+                                                                    newOrder()
+                                                                    navigate('/shipping/success')
+                                                                }}
+                                                                className='bg-black text-white px-7 py-2'>
                                                                 Payment
                                                             </button>
                                                         </div>

@@ -1,4 +1,37 @@
+import { useEffect, useState } from "react"
+import axios from 'axios'
+
 export default function ShippingSuccess() {
+
+    const [status, setStatus] = useState('')
+    const [orderNumber, setOrderNumber] = useState('')
+    const [totalPrice, setTotalPrice] = useState(0)
+
+    let getData = async () => {
+        try {
+            let response = await axios.get('http://localhost:8000/transaction/getDataTransaction', {
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+            console.log(response)
+            setStatus(response.data.data.order_status.status)
+            setOrderNumber(response.data.data.id)
+
+            let sum = 0
+            response.data.data.transaction_details.forEach(e =>
+                sum += e.qty * e.price)
+
+            setTotalPrice(sum + response.data.data.ongkir)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
+
     return (
         <>
             <div className="pt-28 grid grid-cols-6">
@@ -23,25 +56,19 @@ export default function ShippingSuccess() {
                             <p>
                                 Payment Method
                             </p>
-                            <p>
-                                Payment Status
-                            </p>
                         </div>
                         <div className="font-bold text-right pb-6">
                             <p>
-                                Waiting
+                                {status}
                             </p>
                             <p>
-                                123123123
+                                {orderNumber}
                             </p>
                             <p>
-                                Rp. 43,000,000
+                                Rp. {totalPrice.toLocaleString()}
                             </p>
                             <p>
                                 BCA Virtual Account
-                            </p>
-                            <p>
-                                Pending
                             </p>
                         </div>
                     </div>

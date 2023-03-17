@@ -373,6 +373,10 @@ module.exports = {
                 user_id, ongkir, receiver, address, warehouse_city:findWH.dataValues.city, location_warehouse_id:findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
             })
 
+            await db.status_transaction_log.create({
+                transaction_id: kreat.dataValues.id, order_status_id: 1
+            })
+
             cart.forEach(async (item, index) => {
                 await db.transaction_detail.create({
                     transaction_id: kreat.dataValues.id, qty: item.qty, price: item.product_detail.price,
@@ -390,6 +394,30 @@ module.exports = {
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+    getDataTransaction:async(req,res)=>{
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
 
+            let data = await db.transaction.findOne({
+                where:{
+                    user_id: getToken.id
+                },
+                include:[
+                    {model:db.order_status},
+                    {model:db.transaction_detail}    
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data
+            })
+        } catch (error) {
+            
+        }
+    }
 }
