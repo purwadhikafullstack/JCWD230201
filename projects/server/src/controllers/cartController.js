@@ -94,5 +94,93 @@ module.exports = {
                 data: null
             })
         }
+    },
+    deleteCart: async (req, res) => {
+        try {
+            let { id } = req.body
+
+            await db.cart.destroy({
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Delete Cart Success',
+                data: null
+            })
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    updateQty: async (req, res) => {
+        try {
+            let { id, qtyx, type } = req.body
+
+            // let getData=await db.cart.findOne({
+            //     where: {
+            //         id
+            //     }
+            // })
+            console.log(id)
+            console.log(parseInt(qtyx) + 1)
+            console.log(type)
+
+            let checkQty = await db.cart.findOne({
+                where: {
+                    id
+                },
+                include: { model: db.product_detail }
+            })
+            console.log(checkQty)
+
+
+            if (type === "+") {
+                if (parseInt(qtyx) + 1 > checkQty.dataValues.product_detail.dataValues.qty) throw { message: 'Items Exceed of Stock' }
+                let getData = await db.cart.update({
+                    qty: parseInt(qtyx) + 1
+                }, {
+                    where: {
+                        id
+                    }
+                })
+            } else {
+                if (parseInt(qtyx) - 1 === 0) {
+                    await db.cart.destroy({
+                        where: {
+                            id
+                        }
+                    })
+                } else {
+                    await db.cart.update({
+                        qty: parseInt(qtyx) - 1
+                    }, {
+                        where: {
+                            id
+                        }
+                    })
+                }
+            }
+
+
+
+            res.status(201).send({
+                isError: false,
+                message: 'Update Cart Success',
+                data: null
+            })
+
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
     }
 }
