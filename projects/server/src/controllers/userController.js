@@ -384,11 +384,11 @@ module.exports = {
                 }
             })
 
-            let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
-            console.log(jalan)
+                let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
+                console.log(jalan)
 
-            let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
-            console.log(response.data.results[0].geometry.lat)
+                let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
+                console.log(response.data.results[0].geometry.lat)
 
             if (!checkData) {
                 await db.user_address.create({

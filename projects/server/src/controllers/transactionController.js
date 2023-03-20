@@ -8,7 +8,7 @@ module.exports = {
     allTransaction: async (req, res) => {
         let { warehouse, order_status_id } = req.body
 
-        if (order_status_id==undefined) {
+        if (order_status_id == undefined) {
             var response = warehouse ? await db.transaction.findAll({
                 where: { warehouse_city: warehouse },
                 include: [
@@ -308,5 +308,183 @@ module.exports = {
             tr_success: total_transactionS?.length ? total_transactionS.length : null,
             tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })
+    },
+    CreateOrder: async (req, res) => {
+        try {
+            // let getToken = req.dataToken
+            let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
+
+            let findData = await db.user_address.findOne({
+                where: {
+                    id: user_address_id
+                }
+            })
+            // console.log(findData)
+
+            let dataWH = await db.location_warehouse.findAll()
+            // console.log(dataWH)
+
+
+            let distanceWH = []
+            for (let i = 0; i < dataWH.length; i++) {
+                let latlongWH = []
+
+                const R = 6371e3; // metres
+                const φ1 = parseFloat(findData.dataValues.latitude) * Math.PI / 180; // φ, λ in radians
+                const φ2 = parseFloat(dataWH[i].dataValues.latitude) * Math.PI / 180;
+                const Δφ = (parseFloat(dataWH[i].dataValues.latitude) - (parseFloat(findData.dataValues.latitude))) * Math.PI / 180;
+                const Δλ = (parseFloat(dataWH[i].dataValues.longitude) - parseFloat(findData.dataValues.longitude)) * Math.PI / 180;
+
+                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+                const d = R * c;
+
+                latlongWH.push(dataWH[i].dataValues.city)
+                latlongWH.push(d / 1000)
+                distanceWH.push(latlongWH)
+            }
+            console.log(distanceWH)
+
+            let closestWH = distanceWH[0][1]
+            let cityWH
+
+            for (let i = 0; i < distanceWH.length; i++) {
+                if (distanceWH[i][1] < closestWH) {
+                    closestWH = distanceWH[i][1]
+                    cityWH = distanceWH[i][0]
+                }
+            }
+            // console.log(cityWH,closestWH)
+
+            let findWH = await db.location_warehouse.findOne({
+                where: {
+                    city: cityWH
+                }
+            })
+            // console.log(findWH)
+
+            // console.log(Math.min(...closestWH))
+
+
+            var kreat = await db.transaction.create({
+                user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+            })
+
+            await db.status_transaction_log.create({
+                transaction_id: kreat.dataValues.id, order_status_id: 1
+            })
+
+            cart.forEach(async (item, index) => {
+                await db.transaction_detail.create({
+                    transaction_id: kreat.dataValues.id, qty: item.qty, price: item.product_detail.price,
+                    product_name: item.product.name, weight: item.product_detail.weight, memory_storage: item.product_detail.memory_storage,
+                    color: item.product_detail.color, product_img: item.product.product_images[0].img, category_id: item.product.category_id, product_detail_id: item.product_detail.id,
+
+                })
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data: kreat
+            })
+        } catch (error) {
+            console.log(error)
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    getDataTransaction: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let data = await db.transaction.findOne({
+                where: {
+                    user_id: getToken.id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    allTransactionUser: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let data = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    detailTransactionUser: async (req, res) => {
+        try {
+            let { id } = req.params
+
+            let data = await db.transaction.findOne({
+                where: {
+                    id: id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'Get Detail Transaction Success',
+                data:data
+            })
+            
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
     }
 }

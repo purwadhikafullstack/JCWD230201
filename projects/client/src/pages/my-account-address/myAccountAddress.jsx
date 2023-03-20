@@ -252,7 +252,7 @@ export default function MyAccountAddress() {
                                     </div>
                                     <div className="px-5 py-2">
                                         <div className="flex justify-center">
-                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 py-2 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
+                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
                                                 + Add Address
                                             </button>
                                             <Modal
@@ -318,7 +318,7 @@ export default function MyAccountAddress() {
                                                                 <select
                                                                     id="province"
                                                                     className="w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black rounded-sm"
-                                                                    ref={province}
+                                                                    ref={provinceAdd}
                                                                     onChange={(e) => getCity(e.target.value)}
                                                                 >
                                                                     <option>---Select Province---</option>
@@ -372,7 +372,7 @@ export default function MyAccountAddress() {
                                                             <Button
                                                                 className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-96 focus:ring-0 focus:ring-transparent'
                                                                 onClick={() => onSubmit()}
-                                                                disabled={profile.disable}
+                                                                disabled={disable}
                                                             >
                                                                 Submit
                                                             </Button>

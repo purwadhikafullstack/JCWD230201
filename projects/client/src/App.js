@@ -19,6 +19,7 @@ import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 import MyAccountInfo from './pages/my-account-info/myAccountInfo';
 import MyAccountAddress from './pages/my-account-address/myAccountAddress';
 import Cart from './pages/cart/cart';
+import ShippingSuccess from './pages/shippingSuccess/shippingSuccess';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -41,14 +42,14 @@ import Processing from './components/adminContainer/transactionContainer/process
 import Shipped from './components/adminContainer/transactionContainer/shipped';
 import OrderC from './components/adminContainer/transactionContainer/orderconfirmed';
 import Canceled from './components/adminContainer/transactionContainer/canceled';
-
+import TransactionHistory from './components/transactionHistoryUser/transactionHistoryUser';
+import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
+import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
+import AdminProducts from './components/adminContainer/adminProducts';
 
 //import context for global
 import { userData } from './data/userData'
 import { TransactionData } from './data/transactionAdmin'
-import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
-import AdminProducts from './components/adminContainer/adminProducts';
-
 
 function App() {
   let [user, setUser] = useState(null)
@@ -180,7 +181,7 @@ function App() {
                   <Route path='products' element={<AdminCategoryProducts />} >
                     <Route path=':id' element={<AdminProducts />} />
                   </Route>
-                  <Route path='sales-report' element={<SalesReport/>}/>
+                  <Route path='sales-report' element={<SalesReport/>}/
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -201,14 +202,16 @@ function App() {
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
                 <Route path='address' element={<MyAccountAddress />} />
+                <Route path='history' element={<TransactionHistory />} />
+                <Route path='history/:id' element={<DetailTransaction />} />
               </Route>
               <Route path='/cart' element={<Cart func={{getCart}} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
-              <Route path='/shipping/:id' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
-
+               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
+              <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
+              <Route path='/shipping/success' element={<ShippingSuccess />} />
             </Routes>
             <Toaster />
             <Footer />
