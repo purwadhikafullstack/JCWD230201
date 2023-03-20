@@ -12,6 +12,8 @@ Router.post('/FWarehouse', transactionController.filterWH)
 Router.get('/getSales', transactionController.getSales)
 Router.post('/createOrder', transactionController.CreateOrder)
 Router.get('/getDataTransaction', tokenVerify, transactionController.getDataTransaction)
+Router.get('/allTransactionUser', tokenVerify, transactionController.allTransactionUser)
+Router.get('/detailTransaction/:id',transactionController.detailTransactionUser)
 
 
 module.exports = Router

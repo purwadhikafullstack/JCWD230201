@@ -19,6 +19,7 @@ import DashboardAccount from './pages/dashboardAccount/dashboardAccount';
 import MyAccountInfo from './pages/my-account-info/myAccountInfo';
 import MyAccountAddress from './pages/my-account-address/myAccountAddress';
 import Cart from './pages/cart/cart';
+import ShippingSuccess from './pages/shippingSuccess/shippingSuccess';
 
 //import component
 import NavbarUser from './components/navbarUser/navbarUser';
@@ -41,12 +42,13 @@ import Processing from './components/adminContainer/transactionContainer/process
 import Shipped from './components/adminContainer/transactionContainer/shipped';
 import OrderC from './components/adminContainer/transactionContainer/orderconfirmed';
 import Canceled from './components/adminContainer/transactionContainer/canceled';
+import TransactionHistory from './components/transactionHistoryUser/transactionHistoryUser';
 
 
 //import context for global
 import { userData } from './data/userData'
 import { TransactionData } from './data/transactionAdmin'
-import ShippingSuccess from './pages/shippingSuccess/shippingSuccess';
+import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
 
 
 function App() {
@@ -168,6 +170,8 @@ function App() {
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
                 <Route path='address' element={<MyAccountAddress />} />
+                <Route path='history' element={<TransactionHistory />} />
+                <Route path='history/:id' element={<DetailTransaction />} />
               </Route>
               <Route path='/cart' element={<Cart />} />
               <Route path='/login-admin' element={<AdminLogin />} />

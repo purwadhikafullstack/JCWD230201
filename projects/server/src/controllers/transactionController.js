@@ -324,7 +324,7 @@ module.exports = {
             let dataWH = await db.location_warehouse.findAll()
             // console.log(dataWH)
 
-            
+
             let distanceWH = []
             for (let i = 0; i < dataWH.length; i++) {
                 let latlongWH = []
@@ -343,16 +343,16 @@ module.exports = {
                 const d = R * c;
 
                 latlongWH.push(dataWH[i].dataValues.city)
-                latlongWH.push(d/1000)
+                latlongWH.push(d / 1000)
                 distanceWH.push(latlongWH)
             }
             console.log(distanceWH)
 
-            let closestWH =distanceWH[0][1]
+            let closestWH = distanceWH[0][1]
             let cityWH
 
-            for(let i=0;i<distanceWH.length;i++){
-                if(distanceWH[i][1]<closestWH){
+            for (let i = 0; i < distanceWH.length; i++) {
+                if (distanceWH[i][1] < closestWH) {
                     closestWH = distanceWH[i][1]
                     cityWH = distanceWH[i][0]
                 }
@@ -360,17 +360,17 @@ module.exports = {
             // console.log(cityWH,closestWH)
 
             let findWH = await db.location_warehouse.findOne({
-                where:{
-                    city:cityWH
+                where: {
+                    city: cityWH
                 }
             })
             // console.log(findWH)
-            
+
             // console.log(Math.min(...closestWH))
 
 
             var kreat = await db.transaction.create({
-                user_id, ongkir, receiver, address, warehouse_city:findWH.dataValues.city, location_warehouse_id:findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+                user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
             })
 
             await db.status_transaction_log.create({
@@ -393,20 +393,25 @@ module.exports = {
             })
         } catch (error) {
             console.log(error)
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
         }
     },
-    getDataTransaction:async(req,res)=>{
+    getDataTransaction: async (req, res) => {
         try {
             let getToken = req.dataToken
             // console.log(getToken)
 
             let data = await db.transaction.findOne({
-                where:{
+                where: {
                     user_id: getToken.id
                 },
-                include:[
-                    {model:db.order_status},
-                    {model:db.transaction_detail}    
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
                 ]
             })
 
@@ -417,7 +422,69 @@ module.exports = {
                 data
             })
         } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    allTransactionUser: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let data = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'data success',
+                data
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    detailTransactionUser: async (req, res) => {
+        try {
+            let { id } = req.params
+
+            let data = await db.transaction.findOne({
+                where: {
+                    id: id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ]
+            })
+
+            // console.log(data)
+            res.status(201).send({
+                isError: false,
+                message: 'Get Detail Transaction Success',
+                data:data
+            })
             
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
         }
     }
 }

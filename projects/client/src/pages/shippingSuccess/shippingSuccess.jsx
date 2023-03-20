@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import axios from 'axios'
+import { useNavigate, useParams } from "react-router-dom"
 
 export default function ShippingSuccess() {
+    const { id } = useParams()
 
     const [status, setStatus] = useState('')
     const [orderNumber, setOrderNumber] = useState('')
     const [totalPrice, setTotalPrice] = useState(0)
+
+    let navigate = useNavigate()
 
     let getData = async () => {
         try {
@@ -14,7 +18,7 @@ export default function ShippingSuccess() {
                     token: localStorage.getItem('token')
                 }
             })
-            console.log(response)
+            // console.log(response)
             setStatus(response.data.data.order_status.status)
             setOrderNumber(response.data.data.id)
 
@@ -92,7 +96,7 @@ export default function ShippingSuccess() {
                     </div>
 
                     <div className="flex justify-center my-6">
-                        <button className="bg-black text-white px-3 py-2 font-bold">
+                        <button onClick={() => navigate(`/my-account/history/${orderNumber}`)} className="bg-black text-white px-3 py-2 font-bold">
                             Order Detail
                         </button>
                     </div>
