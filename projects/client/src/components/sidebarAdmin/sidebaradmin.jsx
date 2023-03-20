@@ -10,24 +10,27 @@ import ManageAccount from '../manageAccount/manageaccount'
 import Transaction from '../transaction/transaction';
 
 export default function SidebarAdmin() {
-    let [visible,setVisible] = useState({
-        sidebar:false
+    let [visible, setVisible] = useState({
+        sidebar: false
     })
 
     let location = useLocation()
-    console.log(location.pathname.split('/'))
+    // console.log(location.pathname.split('/'))
     let { user, setUser } = useContext(userData)
 
     let navigate = useNavigate()
     return (
-        <div className="fixed px-5 py-5 w-60 h-screen text-black z-0">
+        <div className="fixed px-5 py-5 w-60 h-screen text-white bg-black z-0">
             <div className='flex flex-col h-full'>
-                <button onClick={()=> navigate('/')} className='mb-10 text-center text-3xl font-semibold'>
-                    iFrit
+                <button onClick={() => navigate('/')} className="w-12 ml-3 mb-10 object-contain relative flex items-end">
+                    <div className="absolute text-3xl">I</div>
+                    <img src={require('../../Assets/logo black.jpg')} alt="" />
+                    <div className="absolute ml-6 text-3xl">
+                        rit
+                    </div>
                 </button>
-
                 <div className='flex flex-col gap-8'>
-                    <button onClick={() => navigate('/admin')} className={`flex items-center gap-3 ${location.pathname.split('/')[2]==undefined || location.pathname.split('/')[2]=='' ?'':'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
+                    <button onClick={() => navigate('/admin')} className={`flex items-center gap-3 ${location.pathname.split('/')[2] == undefined || location.pathname.split('/')[2] == '' ? '' : 'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
                         <MdOutlineSpaceDashboard size={'20px'} />
                         Dashboard
                     </button>
@@ -35,7 +38,7 @@ export default function SidebarAdmin() {
                         user.role == 1 ?
                             <div className='flex flex-col gap-8'>
                                 <ManageAccount />
-                                <button onClick={(() => navigate('warehouse'))} className={`flex items-center gap-3 ${location.pathname.split('/')[2]=='warehouse'?'':'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
+                                <button onClick={(() => navigate('warehouse'))} className={`flex items-center gap-3 ${location.pathname.split('/')[2] == 'warehouse' ? '' : 'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
                                     <TbBuildingWarehouse size={'20px'} />
                                     Warehouse
                                 </button>
@@ -45,7 +48,7 @@ export default function SidebarAdmin() {
                     }
                     <Transaction />
 
-                    <button onClick={()=> navigate('sales-report')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                    <button onClick={() => navigate('sales-report')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
                         <MdAssignment size={'20px'} />
                         Sales Reports
                     </button>
@@ -56,9 +59,9 @@ export default function SidebarAdmin() {
                 </div>
 
                 <div className='flex flex-col items-center justify-end h-full'>
-                        <div>
-                            Copyrights tito sambo
-                        </div>
+                    <div>
+                        Copyrights tito sambo
+                    </div>
                 </div>
                 {/* sidebar */}
             </div>

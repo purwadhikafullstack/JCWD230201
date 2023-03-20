@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
     exprired:{
       type:DataTypes.DATE,
       defaultValue : moment().add(1, 'minutes').toDate()
+    },
+    updatedAt:{
+      type:DataTypes.DATEONLY
     }
   }, {
     sequelize,

@@ -6,50 +6,168 @@ const db = require('../models/index')
 const moment = require('moment')
 module.exports = {
     allTransaction: async (req, res) => {
-        let { warehouse, order_status_id } = req.body
-
-        if (order_status_id == undefined) {
-            var response = warehouse ? await db.transaction.findAll({
-                where: { warehouse_city: warehouse },
-                include: [
-                    { model: db.location_warehouse },
-                    { model: db.transaction_detail },
-                    { model: db.order_status }
-                ]
+        try {
+            let { warehouse, order_status_id, from, to } = req.body
+            console.log(`ini from ya ${moment(from).add(1, 'days').format().split("T")[0]}`)
+            console.log(`ini to ya ${to}`)
+            if (!from && !to) {
+                if (order_status_id == 0) {
+                    console.log('masuk 1')
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: { location_warehouse_id: warehouse },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                } else {
+                    console.log('masuk 2')
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: { location_warehouse_id: warehouse, order_status_id },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            where: { order_status_id },
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                }
+            } else if (!to) {
+                console.log('masuk 3')
+                if (order_status_id == 0) {
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: { location_warehouse_id: warehouse, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            where: {
+                                updatedAt: moment(from).add(1, 'days').format().split("T")[0]
+                            },
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                } else {
+                    console.log('masuk 4')
+                    console.log(order_status_id)
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            where: { order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                }
+            } else {
+                console.log('masuk 5')
+                if (order_status_id == 0) {
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: {
+                            location_warehouse_id: warehouse,
+                            updatedAt: {
+                                [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
+                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                            }
+                        },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            where: {
+                                updatedAt: {
+                                    [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
+                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                }
+                            },
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                } else {
+                    console.log('masuk 6')
+                    var response = warehouse ? await db.transaction.findAll({
+                        where: {
+                            location_warehouse_id: warehouse, order_status_id,
+                            updatedAt: {
+                                [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
+                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                            }
+                        },
+                        include: [
+                            { model: db.location_warehouse },
+                            { model: db.transaction_detail },
+                            { model: db.order_status }
+                        ]
+                    })
+                        :
+                        await db.transaction.findAll({
+                            where: {
+                                order_status_id, updatedAt: {
+                                    [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
+                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                }
+                            },
+                            include: [
+                                { model: db.location_warehouse },
+                                { model: db.transaction_detail },
+                                { model: db.order_status }
+                            ]
+                        })
+                }
+            }
+            if (!response) throw { message: 'data not found!' }
+            res.status(201).send({
+                isError: false,
+                message: 'get data transaction success!',
+                data: response
             })
-                :
-                await db.transaction.findAll({
-                    include: [
-                        { model: db.location_warehouse },
-                        { model: db.transaction_detail },
-                        { model: db.order_status }
-                    ]
-                })
-        } else {
-            var response = warehouse ? await db.transaction.findAll({
-                where: { warehouse_city: warehouse, order_status_id },
-                include: [
-                    { model: db.location_warehouse },
-                    { model: db.transaction_detail },
-                    { model: db.order_status }
-                ]
+        } catch (error) {
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
             })
-                :
-                await db.transaction.findAll({
-                    where: { order_status_id },
-                    include: [
-                        { model: db.location_warehouse },
-                        { model: db.transaction_detail },
-                        { model: db.order_status }
-                    ]
-                })
         }
-
-        res.status(201).send({
-            isError: false,
-            message: 'get data transaction success!',
-            data: response
-        })
     },
     transactionWH: async (req, res) => {
         //     let {city} = req.body
@@ -308,8 +426,8 @@ module.exports = {
             tr_success: total_transactionS?.length ? total_transactionS.length : null,
             tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })
-    },
-    CreateOrder: async (req, res) => {
+
+    }, CreateOrder: async (req, res) => {
         try {
             // let getToken = req.dataToken
             let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
@@ -400,6 +518,159 @@ module.exports = {
             })
         }
     },
+    updateOrder: async (req, res) => {
+        let { transaction_id, code, load, warehouse_id } = req.query
+
+        if(code==3){
+        //dibawah ini apabila kondisi qty barang di warehouse yg bersangkutan tidak memenuhi jumlahnya
+
+        //getting the transaction data
+        let transaction_detail = JSON.parse(load)
+
+        // //modify rumus dari rapi
+        //nyari data WH yang bersangkutan
+        
+
+        transaction_detail.forEach(async (item, index) => {
+            var findData = await db.location_warehouse.findOne({
+                where: {
+                    id: warehouse_id
+                },
+                include:{model:db.location_product,where:{
+                    product_detail_id:item.product_detail_id
+                }}
+            })
+             // console.log(findData.dataValues.location_products[0].dataValues.qty)
+            let dataWH = await db.location_warehouse.findAll({
+                where: {
+                    id: { [Op.ne]: warehouse_id }
+                },
+                include: {
+                    model: db.location_product,
+                    where: {
+                        product_detail_id: item.product_detail_id,
+                        qty: { [Op.gt]: 0 }
+                    }
+                }
+            })
+            // console.log(dataWH[0].dataValues.location_products[0].dataValues)
+            var distanceWH = []
+            for (let i = 0; i < dataWH.length; i++) {
+                let latlongWH = []
+
+                const R = 6371e3; // metres
+                const φ1 = parseFloat(findData.dataValues.latitude) * Math.PI / 180; // φ, λ in radians
+                const φ2 = parseFloat(dataWH[i].dataValues.latitude) * Math.PI / 180;
+                const Δφ = (parseFloat(dataWH[i].dataValues.latitude) - (parseFloat(findData.dataValues.latitude))) * Math.PI / 180;
+                const Δλ = (parseFloat(dataWH[i].dataValues.longitude) - parseFloat(findData.dataValues.longitude)) * Math.PI / 180;
+
+                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+                const d = R * c;
+                latlongWH.push(d / 1000)
+                latlongWH.push(dataWH[i].dataValues.id)
+
+                latlongWH.push(dataWH[i].dataValues.location_products[0].dataValues.qty)
+
+                distanceWH.push(latlongWH)
+            }
+            //fcking sort the things
+            distanceWH.sort((a, b) => a[0] - b[0])
+            console.log(distanceWH)
+
+            //get qty item in origin warehouse
+            let dataCompare = await db.location_product.findOne({
+                where: {
+                    location_warehouse_id: warehouse_id,
+                    product_detail_id: item.product_detail_id
+                }
+            })
+
+            let initialQty = dataCompare.dataValues.qty
+            for(let i = 0; i < distanceWH.length; i++) {
+                let x = item.qty - initialQty
+                if (distanceWH[i][2] - x > 0) {
+                    await db.location_product.update({
+                        qty: distanceWH[i][2] - x
+                    },
+                        {
+                            where: {
+                                location_warehouse_id: distanceWH[i][1],
+                                product_detail_id: item.product_detail_id
+                            }
+                        })
+
+                        await db.location_product.update({
+                            qty:item.qty
+                        },
+                        {
+                            where: {
+                                location_warehouse_id: warehouse_id,
+                                product_detail_id: item.product_detail_id
+                            }
+                        })
+    
+
+                    await db.log_request.create({
+                        location_product_id_origin: distanceWH[i][1],
+                        location_product_id_target: warehouse_id,
+                        qty: x,
+                        order_status_id: 8
+                    })
+                    
+                    break
+                } else {
+                    await db.location_product.update({
+                        qty: 0
+                    },
+                        {
+                            where: {
+                                location_warehouse_id: distanceWH[i][1],
+                                product_detail_id: item.product_detail_id
+                            }
+                        })
+
+                    await db.log_request.create({
+                        location_product_id_origin: distanceWH[i][1],
+                        location_product_id_target: warehouse_id,
+                        qty: distanceWH[i][2],
+                        order_status_id: 8
+                    })
+
+                    initialQty += distanceWH[i][2]
+                }
+            }
+        })
+        
+        db.status_transaction_log.create({
+            transaction_id, order_status_id: code
+        })
+
+        db.transaction.update({order_status_id:code},{
+            where:{
+                id:transaction_id
+            }
+        })
+}else if(code==1){
+    db.transaction.update({order_status_id:code, upload_payment:null},{
+        where:{
+            id:transaction_id
+        }
+    })
+
+    db.status_transaction_log.create({
+        transaction_id, order_status_id: code
+    })
+}
+       
+        res.status(201).send({
+            isError: false,
+            message: code == 3 ? 'Order Confirmed' : 'Order Canceled'
+        })
+    },
     getDataTransaction: async (req, res) => {
         try {
             let getToken = req.dataToken
@@ -487,4 +758,5 @@ module.exports = {
             })
         }
     }
+
 }

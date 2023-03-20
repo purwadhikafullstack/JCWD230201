@@ -32,20 +32,15 @@ import Error from './components/error404/error';
 import ErrorAdmin from './components/error404/erroradmin';
 import Product from './components/product/product';
 import ProductDetail from './components/product_detail/product_detail';
-import AllTransaction from './components/adminContainer/transactionContainer/alltransaction';
 import Shipping from './components/shipping/shipping';
 import Warehouse from './components/adminContainer/warehouse';
 import SalesReport from './components/adminContainer/salesreport';
-import WaitingFP from './components/adminContainer/transactionContainer/waitingforpayment';
-import WaitingC from './components/adminContainer/transactionContainer/waitingforconfirmation';
-import Processing from './components/adminContainer/transactionContainer/processing';
-import Shipped from './components/adminContainer/transactionContainer/shipped';
-import OrderC from './components/adminContainer/transactionContainer/orderconfirmed';
-import Canceled from './components/adminContainer/transactionContainer/canceled';
+import TransactionXYZ from './components/transaction/transactionXYZ';
 import TransactionHistory from './components/transactionHistoryUser/transactionHistoryUser';
 import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
 import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
 import AdminProducts from './components/adminContainer/adminProducts';
+
 
 //import context for global
 import { userData } from './data/userData'
@@ -170,18 +165,12 @@ function App() {
                   <Route path='all-user' element={<GetAllAccount />} />
                   <Route path='setting' element={<AdminSetting />} />
                   <Route path='profile/:id' element={<AdminSettingProfile />} />
-                  <Route path='All-Transaction' element={<AllTransaction />} />
-                  <Route path='Waiting-For-Payment' element={<WaitingFP />} />
-                  <Route path='Waiting-For-Confirmation' element={<WaitingC />} />
-                  <Route path='Processing' element={<Processing />} />
-                  <Route path='Shipped' element={<Shipped />} />
-                  <Route path='Canceled' element={<Canceled />} />
-                  <Route path='Order-Confirmed' element={<OrderC />} />
+                  <Route path='Transaction' element={<TransactionXYZ />} />
                   <Route path='warehouse' element={<Warehouse />} />
                   <Route path='products' element={<AdminCategoryProducts />} >
                     <Route path=':id' element={<AdminProducts />} />
                   </Route>
-                  <Route path='sales-report' element={<SalesReport/>}/
+                  <Route path='sales-report' element={<SalesReport/>}/>
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
