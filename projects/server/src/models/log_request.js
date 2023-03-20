@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       this.belongsTo(models.order_status,{
         foreignKey:'order_status_id'
+      }),
+      this.belongsTo(models.product_detail,{
+        foreignKey:'product_detail_id'
       })
     }
   }

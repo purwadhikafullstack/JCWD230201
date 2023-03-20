@@ -23,7 +23,6 @@ export default function TransactionXYZ() {
         from: "",
         to: "",
     });
-    console.log(date)
     const [selectedDate, setSelectedDate] = useState({
         from: "",
         to: "",
@@ -63,7 +62,6 @@ export default function TransactionXYZ() {
         setDataTR(response.data.data)
 
         let loaderPrice = [], loaderDate = []
-        console.log(response.data.data)
         for (let i = 0; i < response.data.data.length; i++) {
             let TP = 0
             // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
@@ -73,11 +71,11 @@ export default function TransactionXYZ() {
                 TP += (item.qty * item.price)
             })
             loaderPrice.push(TP)
-        }
-        // console.log(loaderPrice)
+        
         setTotalPrice(loaderPrice)
         setLoadDate(loaderDate)
     }
+}
 
     let getAllTr = async () => {
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
@@ -85,7 +83,6 @@ export default function TransactionXYZ() {
         setDataTR(response.data.data)
 
         let loaderPrice = [], loaderDate = []
-        console.log(response.data.data)
         for (let i = 0; i < response.data.data.length; i++) {
             let TP = 0
             // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
@@ -96,7 +93,6 @@ export default function TransactionXYZ() {
             })
             loaderPrice.push(TP)
         }
-        // console.log(loaderPrice)
         setTotalPrice(loaderPrice)
         setLoadDate(loaderDate)
     }
@@ -110,7 +106,6 @@ export default function TransactionXYZ() {
             setDataTR(response.data.data)
 
             let loaderPrice = [], loaderDate = []
-            console.log(response.data.data)
             for (let i = 0; i < response.data.data.length; i++) {
                 let TP = 0
                 // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
@@ -121,7 +116,6 @@ export default function TransactionXYZ() {
                 })
                 loaderPrice.push(TP)
             }
-            // console.log(loaderPrice)
             setTotalPrice(loaderPrice)
             setLoadDate(loaderDate)
         } catch (error) {
@@ -157,7 +151,7 @@ export default function TransactionXYZ() {
                                 showYearDropdown={true}
                                 scrollableYearDropdown={true}
                                 selected={selectedDate.from === "" ? null : selectedDate.from}
-                                className="bg-gray-100 border border-gray-100 text-gray-900 text-xs rounded-md"
+                                className="bg-gray-100 border w-fit border-gray-100 text-gray-900 text-xs rounded-md"
                                 onChange={(date) => {
                                     setDate({ ...date, from: date.toISOString().split("T")[0] });
                                     setSelectedDate({ ...selectedDate, from: date });
@@ -169,8 +163,8 @@ export default function TransactionXYZ() {
                                 showMonthDropdown={true}
                                 showYearDropdown={true}
                                 scrollableYearDropdown={true}
-                                selected={selectedDate.to === "" ? null : selectedDate.to}
-                                className="bg-gray-100 border border-gray-100 text-gray-900 text-xs rounded-md"
+                                selected={selectedDate.to === "" ? null  : selectedDate.to}
+                                className="bg-gray-100 border w-fit border-gray-100 text-gray-900 text-xs rounded-md"
                                 onChange={(date) => {
                                     setDate({ ...date, to: date.toISOString().split("T")[0] });
                                     setSelectedDate({ ...selectedDate, to: date });
@@ -178,42 +172,41 @@ export default function TransactionXYZ() {
                                 }}
                             />
                         </div>
+                        <div className='flex gap-3'>
+                            {
+                                dataFilter.length > 0 ?
+                                    <div>
+                                        <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
+                                            <option value="All Transaction">All Transaction</option>
+                                            {
+                                                dataFilter.map((item, index) => {
+                                                    return (
+                                                        <option value={item.city}>{item.city}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                    </div> : null
+                            }
+                            {
+                                !user.warehouse ?
+                                    <div className="relative">
 
-                        {
-                            dataFilter.length > 0 ?
-                                <div>
-                                    <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-300 shadow-sm rounded-md" placeholder="Select Warehouse">
-                                        <option value="All Transaction">All Transaction</option>
-                                        {
-                                            dataFilter.map((item, index) => {
-                                                return (
-                                                    <option value={item.city}>{item.city}</option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div> : null
-                        }
-                        {
-                            !user.warehouse ?
-                                <div className="relative">
+                                        <select onChange={(e) => filter(e.target.value)}
+                                            className="rounded-md border border-gray-200 focus:ring-0 focus:border-gray-200 focus:outline-none" placeholder="Filter"
+                                        >
+                                            {
+                                                option.map((item, index) => {
+                                                    return (
+                                                        <option value={item} >{item}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                    </div> : null
+                            }
 
-                                    <select onChange={(e) => filter(e.target.value)}
-                                        className="rounded-md border border-gray-300 shadow-sm" placeholder="Filter"
-                                    >
-                                        {
-                                            option.map((item, index) => {
-                                                return (
-                                                    <option value={item} >{item}</option>
-                                                )
-                                            })
-                                        }
-                                    </select>
-                                </div> : null
-                        }
-
-
-
+                        </div>
 
                     </div>
 
@@ -251,7 +244,7 @@ export default function TransactionXYZ() {
                                                     {item.id}
                                                 </div>
 
-                                                <div className={`${shotgunStatus[item.order_status_id - 1]}`}>
+                                                <div className={`${shotgunStatus[item.order_status_id - 1]} px-2 rounded-xl py-1`}>
                                                     {item.order_status.status}
                                                 </div>
 

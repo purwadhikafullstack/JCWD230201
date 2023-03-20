@@ -1,12 +1,14 @@
 import { AiOutlineClose } from 'react-icons/ai'
 import { useContext, useState } from 'react'
+import toast, {Toaster} from 'react-hot-toast'
+import axios from 'axios'
 
 import { TransactionData } from '../../data/transactionAdmin'
 
 export default function TransactionDetail() {
     const { transaction, setTransaction } = useContext(TransactionData)
     const [maxpayment, setMaxpayment] = useState(false)
-    console.log(transaction)
+    console.log(transaction.transaction_details)
 
     let total_price = 0
     let total_weight = 0
@@ -21,17 +23,29 @@ export default function TransactionDetail() {
         total: total_price + transaction?.ongkir
     })
 
+    let updateOrder = async(id,code,load,wh_id)=>{
+        try {
+            console.log(id)
+            console.log(code)
+            console.log(load)
+            let response = await axios.patch(`http://localhost:8000/transaction/update?transaction_id=${id}&code=${code}&load=${JSON.stringify(load)}&warehouse_id=${wh_id}`)
+            toast(response.data.message)
+        } catch (error) {
+            
+        }
+    }
+
     return (
         <div className="fixed z-30 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 ">
             {
-                transaction.upload_payment?
-                maxpayment ?
-                    <div className='fixed z-50 p-10 w-screen h-screen flex flex-col items-center'>
-                        <div className='p-5 bg-white lg:w-1/3 w-1/2 h-1/2 xl:h-full'>
-                            <button onClick={() => setMaxpayment(false)}><AiOutlineClose size={'20px'} /></button>
-                            <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
-                        </div>
-                    </div> : null:null
+                transaction.upload_payment ?
+                    maxpayment ?
+                        <div className='fixed z-50 p-10 w-screen h-screen flex flex-col items-center'>
+                            <div className='p-5 bg-white lg:w-1/3 w-1/2 h-1/2 xl:h-full'>
+                                <button onClick={() => setMaxpayment(false)}><AiOutlineClose size={'20px'} /></button>
+                                <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
+                            </div>
+                        </div> : null : null
             }
             <div className="w-3/5 h-3/4 border shadow-lg bg-white flex flex-col relative">
 
@@ -51,7 +65,7 @@ export default function TransactionDetail() {
                     <div className='w-full border-r px-7'>
                         <div className='flex justify-between py-3'>
                             <div className='font-semibold'>
-                                Done
+                                {transaction.order_status.status}
                             </div>
 
                             <button className='flex font-semibold text-sm gap-3'>
@@ -66,7 +80,7 @@ export default function TransactionDetail() {
                                 No. Invoice
                             </div>
                             <div className='font-bold text-emerald-600 text-xs'>
-                                INV/20220408/MPL/2209737188
+                                INV/20220408/MPL/22097371{transaction.id}
                             </div>
                         </div>
 
@@ -82,18 +96,18 @@ export default function TransactionDetail() {
                         <hr className='h-2 bg-gray-100 my-4' />
 
 
-                        <div className='flex'>
-                            <div className='w-2/3 flex flex-col'>
+                        <div className='flex '>
+                            <div className={`${transaction.upload_payment ? 'w-3/4' : 'w-full'} flex flex-col`}>
                                 <div className='font-semibold'>
                                     Detailed Products
                                 </div>
 
-                                <div className='flex '>
-                                    <div>
+                                <div className='flex'>
+                                    <div className='w-full'>
                                         {
                                             transaction.transaction_details.map((item, index) => {
                                                 return (
-                                                    <div className='flex justify-between gap-8'>
+                                                    <div className='flex justify-between'>
                                                         <div className='flex'>
                                                             <img className='w-20 h-20 object-contain' src={require(`../../Assets/${item.product_img}`)} alt="" />
                                                             <div className='flex flex-col justify-start py-2'>
@@ -140,23 +154,37 @@ export default function TransactionDetail() {
 
                                 </div>
                             </div>
-                            <div className='w-1/3 flex flex-col pl-5 gap-2'>
-                                <div className='font-semibold'>
-                                    Payment Proof :
-                                </div>
-                                {
+                            {
                                 transaction.upload_payment ?
-                                    <button className='m-4' onClick={() => setMaxpayment(true)}>
+                                    <div className='w-1/4 flex flex-col pl-5 gap-2'>
+                                        <div className='font-semibold'>
+                                            Payment Proof :
+                                        </div>
+                                                <button className='m-4' onClick={() => setMaxpayment(true)}>
 
-                                        {/* <img src={`http://localhost:8000/Public/images/${transaction.upload_payment}`} className='w-12 h-20' alt="" /> */}
-                                        <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-14 h-20' alt="" />
-                                    </button> :
-                                    <div>
-                                        -no picture yet-
-                                    </div>
-                                }
+                                                    {/* <img src={`http://localhost:8000/Public/images/${transaction.upload_payment}`} className='w-12 h-20' alt="" /> */}
+                                                    <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-14 h-20' alt="" />
+                                                </button>
 
-                            </div>
+                                        {
+                                            transaction.order_status_id == 2 ?
+                                                <div className='flex gap-4 mt-4'>
+                                                    <button onClick={()=>{
+                                                        updateOrder(transaction.id,3,transaction.transaction_details,transaction.location_warehouse_id)}
+                                                    } className='bg-emerald-500'>
+                                                        Submit
+                                                    </button>
+                                                    <button onClick={()=>{
+                                                        updateOrder(transaction.id,1)}
+                                                    } className='bg-red-500'>
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                                : null
+                                        }
+
+                                    </div> : null
+                            }
                         </div>
 
                         <hr className='h-2 my-4 bg-gray-200' />
@@ -278,6 +306,7 @@ export default function TransactionDetail() {
                     </div>
                 </div>
             </div>
+            <Toaster/>
         </div>
     )
 }
