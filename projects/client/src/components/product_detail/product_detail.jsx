@@ -43,6 +43,8 @@ export default function ProductDetail(props) {
             })
 
             toast.success('Add to cart')
+
+            props.func.getCart()
         } catch (error) {
             console.log(error)
             toast.error(error.response.data.message)
@@ -50,12 +52,12 @@ export default function ProductDetail(props) {
     }
 
 
-    let arrColor = []
-    for (let i = 0; i < props.data.detailProduct.length; i++) {
-        if (!arrColor.includes(props.data.detailProduct[i].color)) {
-            arrColor.push(props.data.detailProduct[i].color)
-        }
-    }
+    var arrColor=[]
+    var arrColorHex=[]
+    props.data.detailProduct.forEach((item, index) => {
+        if(!arrColor.includes(item.color)) arrColor.push(item.color)
+        if(!arrColorHex.includes(item.colorhex)) arrColorHex.push(item.colorhex)
+    });
     // console.log(arrColor);
 
     let arrMemory = []
@@ -101,13 +103,13 @@ export default function ProductDetail(props) {
                             COLOR :
                         </div>
                         <div className="grid grid-cols-4 gap-2">
-                            {arrColor.map((value, index) => {
-                                return (
+                            {arrColor.map((value, index)=>{
+                                return(
                                     <div>
-                                        {value ?
-                                            <button onClick={() => setColors(value)} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
-                                                {value}
-                                            </button> : null
+                                        {value?
+                                            <button onClick={()=>setColors(value)} style={{backgroundColor: colors==value? "#113F90":"white", color: colors==value?"white":"black"}} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
+                                            <div style={{backgroundColor: `${arrColorHex[index]}`}} className={`w-4 h-4 border rounded-full`}></div> {value}
+                                            </button>:null
                                         }
                                     </div>
                                 )
@@ -160,7 +162,10 @@ export default function ProductDetail(props) {
                             +
                         </button>
                     </div>
-                    <button onClick={() => addToCart()} className="bg-[#113F90] text-white font-semibold px-3 py-1 mt-3 rounded" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                    <button onClick={() => {
+                        addToCart()
+                        }}
+                        className="bg-[#113F90] text-white font-semibold px-3 py-1 mt-3 rounded" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
                         Add to cart
                     </button>
                 </div>

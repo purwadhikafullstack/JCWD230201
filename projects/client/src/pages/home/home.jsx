@@ -1,10 +1,14 @@
 import { Carousel } from "flowbite-react"
-import iphone from './../../Assets/iphone14pro.jpg'
-import titleiphone from './../../Assets/14pro.jpg'
-import iwatch from './../../Assets/iwatch.jpg'
-import titleiwatch from './../../Assets/titleiwatch.png'
-import macbook from './../../Assets/macbook.jpg'
-import airpodsmax from './../../Assets/airpodsmax.png'
+import Carousel1 from './../../Assets/carousel1.jpg'
+import Carousel2 from './../../Assets/carousel2.jpg'
+import Carousel3 from './../../Assets/carousel3.jpg'
+import Carousel4 from './../../Assets/carousel4.jpg'
+import Carousel5 from './../../Assets/carousel5.jpg'
+import Carousel6 from './../../Assets/carousel6.jpg'
+
+import Banner1 from './../../Assets/banner1.jpg'
+import Banner2 from './../../Assets/banner2.jpg'
+import Banner3 from './../../Assets/banner3.jpg'
 
 import Discount from "../../components/homeUser/discount/discount"
 
@@ -12,24 +16,29 @@ export default function Home() {
     return (
         <>
             <div className="flex justify-center content-center pt-20">
-                <div className="h-[900px] w-full bg-black">
+                <div className="h-[900px] w-full">
                     <Carousel leftControl=" "
                         rightControl=" ">
-                        <div className="flex  flex-col items-center bg-black">
-                            <img src={titleiphone} alt="..." className="w-1/5 mt-20 mb-5" />
-                            <img src={iphone} alt="..." className="w-1/2" />
-                        </div>
-                        <div className="flex flex-col items-center bg-black">
-                            <img src={titleiwatch} alt="..." className="my-5" />
-                            <img src={iwatch} alt="..." className="w-1/2" />
-                        </div>
-                        <div className="flex flex-col items-center bg-black">
-                            <img src={macbook} alt="..." className="" />
-                        </div>
-                        <div className="flex flex-col items-center bg-black">
-                            <img src={airpodsmax} alt="..." className="w-1/3" />
-                        </div>
+                        <img src={Carousel1} alt='...' />
+                        <img src={Carousel6} alt='...' />
+                        <img src={Carousel2} alt='...' />
+                        <img src={Carousel3} alt='...' />
+                        <img src={Carousel4} alt='...' />
+                        <img src={Carousel5} alt='...' />
                     </Carousel>
+                </div>
+            </div>
+            <div className="mt-10">
+                <div className="grid grid-cols-3 px-80 gap-10">
+                    <button>
+                        <img src={Banner1} alt='...' />
+                    </button>
+                    <button>
+                        <img src={Banner3} alt='...' />
+                    </button>
+                    <button>
+                        <img src={Banner2} alt='...' />
+                    </button>
                 </div>
             </div>
             <div className="flex justify-center mt-10">

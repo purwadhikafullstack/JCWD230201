@@ -1,5 +1,6 @@
 import { TbBuildingWarehouse } from 'react-icons/tb'
 import { MdOutlineSpaceDashboard, MdAssignment } from 'react-icons/md'
+import { BsBox } from 'react-icons/bs'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { userData } from "../../data/userData";
@@ -50,6 +51,10 @@ export default function SidebarAdmin() {
                     <button onClick={() => navigate('sales-report')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
                         <MdAssignment size={'20px'} />
                         Sales Reports
+                    </button>
+                    <button onClick={() => navigate('products')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                        <BsBox size={'20px'} />
+                        Products
                     </button>
                 </div>
 
