@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     weight: DataTypes.INTEGER,
     memory_storage: DataTypes.INTEGER,
     color:DataTypes.STRING,
+    colorhex:DataTypes.STRING,
     connectivity:DataTypes.STRING,
     screen_size:DataTypes.STRING,
     processor:DataTypes.STRING,

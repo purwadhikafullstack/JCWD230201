@@ -27,6 +27,8 @@ export default function NavbarUser(props) {
 
     useEffect(() => {
         getCategory()
+        props.func.getCart()
+        props.data.itemCart
     }, [])
 
     return (
@@ -40,27 +42,29 @@ export default function NavbarUser(props) {
                     </Link>
                     {category.map((value, index) => {
                         return (
-                            <Link to={`/product/${value.id}`}>
-                                <div className="group relative dropdown px-4 py-7 text-white hover:bg-neutral-500 hover:text-neutral-900 cursor-pointer tracking-wide">
-                                    <button onClick={() => props.func.getProduct(value.id)}>{value.name}</button>
-                                    <div className="group-hover:block dropdown-menu absolute hidden h-auto">
-                                        <ul className="mt-7 w-48 -ml-4 bg-white shadow py-5 px-3 bg-opacity-80 rounded-b">
-                                            {value.products ? value.products.map((val) => {
-                                                return (
-                                                    <Link to={`/product/productdetail/${val.id}`}>
-                                                        <li onClick={() => props.func.getProductDetail(val.id)} className="py-3">
-                                                            <div className="block text-neutral-800 text-base hover:text-neutral-500 cursor-pointer">
-                                                                {val.name}
-                                                            </div>
-                                                        </li>
-                                                    </Link>
-                                                )
-                                            })
-                                                : null}
-                                        </ul>
+                            <button className="px-3 hover:bg-neutral-500" onClick={() => props.func.getProduct(value.id)}>
+                                <Link to={`/product/${value.id}`}>
+                                    <div className="group relative dropdown px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
+                                        <div>{value.name}</div>
+                                        <div className="group-hover:block dropdown-menu absolute hidden h-auto">
+                                            <ul className="mt-7 w-48 -ml-7 bg-white shadow py-5 px-3 bg-opacity-80 rounded-b">
+                                                {value.products ? value.products.map((val) => {
+                                                    return (
+                                                        <Link to={`/product/productdetail/${val.id}`}>
+                                                            <li onClick={() => props.func.getProductDetail(val.id)} className="py-3">
+                                                                <div className="block text-neutral-800 text-base text-left hover:text-neutral-500 cursor-pointer">
+                                                                    {val.name}
+                                                                </div>
+                                                            </li>
+                                                        </Link>
+                                                    )
+                                                })
+                                                    : null}
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
+                                </Link>
+                            </button>
                         )
                     })}
                 </div>
@@ -83,14 +87,22 @@ export default function NavbarUser(props) {
                             <MdFavorite />
                         </Tooltip>
                     </button>
-                    <button onClick={()=>props.func.notRegister()}>
+                    <button onClick={() => props.func.notRegister()}>
                         <Link to='/cart'>
                             <Tooltip
                                 content="Cart"
                                 placement="bottom"
                                 className=" mt-6"
                             >
-                                <MdShoppingBag />
+                                <div className="relative px-3 py-3">
+                                    <MdShoppingBag />
+                                    {
+                                        props.data.itemCart.length === 0 ?
+                                            null
+                                            :
+                                            <div className="bg-orange-500 w-5 h-5 rounded-full absolute top-1 right-0 text-xs justify-center flex items-center">{props.data.itemCart.length}</div>
+                                    }
+                                </div>
                             </Tooltip>
                         </Link>
                     </button>

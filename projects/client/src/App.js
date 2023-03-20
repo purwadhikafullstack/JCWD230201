@@ -43,13 +43,13 @@ import Shipped from './components/adminContainer/transactionContainer/shipped';
 import OrderC from './components/adminContainer/transactionContainer/orderconfirmed';
 import Canceled from './components/adminContainer/transactionContainer/canceled';
 import TransactionHistory from './components/transactionHistoryUser/transactionHistoryUser';
-
+import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
+import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
+import AdminProducts from './components/adminContainer/adminProducts';
 
 //import context for global
 import { userData } from './data/userData'
 import { TransactionData } from './data/transactionAdmin'
-import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
-
 
 function App() {
   let [user, setUser] = useState(null)
@@ -62,6 +62,8 @@ function App() {
   const [detail, setDetail] = useState([])
   const [detailProduct, setDetailProduct] = useState([])
   const [verifyStatus, setVerifyStatus] = useState('')
+  const [itemCart, setItemCart] = useState([])
+  const [arrColor, setArrColor] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
@@ -88,12 +90,24 @@ function App() {
     }
   }
 
-  let getProduct = async (id) => {
+  let getProduct = async(id)=>{
     try {
-      let { data } = await axios.get(`http://localhost:8000/product/${id}`)
-      setShow(data.data)
+        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
+        setShow(data.data)
+        console.log(show);
+        var arrColor = []
+        var arrColor2 = []
+        data.data.forEach((item, index) => {
+          item.product_details.forEach((item, index)=>{
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          })
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+        
     } catch (error) {
-      console.log(error)
+        console.log(error)
     }
   }
   // let loginKeep = async () => {
@@ -123,6 +137,21 @@ function App() {
     }
   }
 
+  let getCart = async () => {
+    try {
+      let response = await axios.get('http://localhost:8000/cart/data-cart', {
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      // console.log(response.data.data)
+      setItemCart(response.data.data)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     keepLogin()
     // loginKeep()
@@ -149,7 +178,10 @@ function App() {
                   <Route path='Canceled' element={<Canceled />} />
                   <Route path='Order-Confirmed' element={<OrderC />} />
                   <Route path='warehouse' element={<Warehouse />} />
-                  <Route path='sales-report' element={<SalesReport />} />
+                  <Route path='products' element={<AdminCategoryProducts />} >
+                    <Route path=':id' element={<AdminProducts />} />
+                  </Route>
+                  <Route path='sales-report' element={<SalesReport/>}/
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -158,7 +190,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail, getProduct, notRegister }} data={{ show }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart }} data={{ show, itemCart }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -173,11 +205,11 @@ function App() {
                 <Route path='history' element={<TransactionHistory />} />
                 <Route path='history/:id' element={<DetailTransaction />} />
               </Route>
-              <Route path='/cart' element={<Cart />} />
+              <Route path='/cart' element={<Cart func={{getCart}} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail }} data={{ showDetail, show, detail, detailProduct }} />} />
+               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess />} />
             </Routes>
