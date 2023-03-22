@@ -5,6 +5,7 @@ import { Tooltip } from "flowbite-react";
 import axios from "axios";
 import { userData } from "../../data/userData";
 import { toast, Toaster } from "react-hot-toast";
+import Loading from "../loading/loading";
 
 export default function NavbarUser(props) {
 
@@ -28,8 +29,17 @@ export default function NavbarUser(props) {
     useEffect(() => {
         getCategory()
         props.func.getCart()
-        props.data.itemCart
+        // props.data.itemCart
     }, [])
+
+    if(!props.data.itemCart){
+        return(
+            <>
+            <Loading/>
+            </>
+        )
+    }
+    
 
     return (
         <>

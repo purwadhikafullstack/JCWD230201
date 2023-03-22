@@ -3,12 +3,12 @@ import axios from 'axios'
 import { TransactionData } from '../../data/transactionAdmin'
 import { userData } from '../../data/userData'
 import noData from '../../Assets/data_not_found2.jpg'
-
+import React from 'react';
+import Moment from 'react-moment';
 import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
 import { MdOutlineDescription } from 'react-icons/md'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
-
 import Loading from '../loading/loading'
 
 export default function TransactionXYZ() {
@@ -71,11 +71,11 @@ export default function TransactionXYZ() {
                 TP += (item.qty * item.price)
             })
             loaderPrice.push(TP)
-        
-        setTotalPrice(loaderPrice)
-        setLoadDate(loaderDate)
+
+            setTotalPrice(loaderPrice)
+            setLoadDate(loaderDate)
+        }
     }
-}
 
     let getAllTr = async () => {
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
@@ -86,7 +86,7 @@ export default function TransactionXYZ() {
         for (let i = 0; i < response.data.data.length; i++) {
             let TP = 0
             // loaderDate.push(new Date(response.data.data[i].updatedAt).toGMTString().replace('GMT', 'WIB'))
-            loaderDate.push(response.data.data[i].updatedAt.split('T')[0])
+            loaderDate.push(response.data.data[i].createdAt.split('T')[0])
             TP += response.data.data[i].ongkir
             response.data.data[i].transaction_details.forEach((item) => {
                 TP += (item.qty * item.price)
@@ -102,7 +102,7 @@ export default function TransactionXYZ() {
             setPickWH(wh)
             setPickStatus(status)
             var response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null })
-
+            console.log(response.data.data)
             setDataTR(response.data.data)
 
             let loaderPrice = [], loaderDate = []
@@ -163,7 +163,7 @@ export default function TransactionXYZ() {
                                 showMonthDropdown={true}
                                 showYearDropdown={true}
                                 scrollableYearDropdown={true}
-                                selected={selectedDate.to === "" ? null  : selectedDate.to}
+                                selected={selectedDate.to === "" ? null : selectedDate.to}
                                 className="bg-gray-100 border w-fit border-gray-100 text-gray-900 text-xs rounded-md"
                                 onChange={(date) => {
                                     setDate({ ...date, to: date.toISOString().split("T")[0] });
@@ -176,12 +176,12 @@ export default function TransactionXYZ() {
                             {
                                 dataFilter.length > 0 ?
                                     <div>
-                                        <select onChange={(e) => searchFilter(e.target.value)} className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
+                                        <select onChange={(e) => getTr(e.target.value, pickStatus, selectedDate.from, selectedDate.to)} className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
                                             <option value="All Transaction">All Transaction</option>
                                             {
                                                 dataFilter.map((item, index) => {
                                                     return (
-                                                        <option value={item.city}>{item.city}</option>
+                                                        <option value={item.id}>{item.city}</option>
                                                     )
                                                 })
                                             }
@@ -220,8 +220,15 @@ export default function TransactionXYZ() {
                                             onClick={() => {
                                                 setPage(index)
                                                 getTr(pickWH, index)
-                                            }} className={`font-semibold hover:text-black ${page == index ? 'underline-offset-4 underline text-black' : 'text-gray-300'}  `}>
+                                            }} className={`font-semibold relative hover:text-black ${page == index ? 'underline-offset-4 underline text-black' : 'text-gray-300'}  `}>
                                             {item}
+                                            {/* {
+                                                index==1 || index==4?
+                                                <div className='absolute w-4 -top-1.5 text-xs -right-3 rounded-full bg-green-700 text-white'>
+                                                1
+                                            </div>:null
+                                            } */}
+
                                         </button>
                                     )
                                 })
@@ -239,7 +246,7 @@ export default function TransactionXYZ() {
                                 return (
                                     <div className='flex flex-col rounded-md border border-slate-200 shadow-sm z-0'>
                                         <div className='flex font-semibold gap-3 p-3'>
-                                            <div className='flex w-1/2 gap-3'>
+                                            <div className='flex w-3/4 gap-3'>
                                                 <div className='font-semibold'>
                                                     {item.id}
                                                 </div>
@@ -248,13 +255,31 @@ export default function TransactionXYZ() {
                                                     {item.order_status.status}
                                                 </div>
 
-                                                <div className='flex items-center opacity-50 gap-3'>
-                                                    <BsClock />
-                                                    {(loadDate[index])}
+
+                                                <div className='flex items-center text-gray-500 opacity-70 text-sm gap-2'>
+                                                    <BsClock size={'12px'} />
+
+                                                    <Moment format="DD MMMM YYYY">
+                                                        {(loadDate[index])}
+                                                    </Moment>
+
                                                 </div>
+                                                {
+                                                    page == 1 || page == 2 ?
+                                                        Date.now() < item.expired ?
+                                                            <div className='flex gap-3'>
+                                                                expired at
+                                                                <Moment date={item.exprired}
+                                                                    durationFromNow
+                                                                    interval={1000}
+                                                                />
+                                                            </div>
+                                                            : null
+                                                        : null
+                                                }
                                             </div>
 
-                                            <div className='flex w-1/2 justify-end items-center gap-3'>
+                                            <div className='flex w-1/4 justify-start items-center gap-3'>
                                                 <div className='opacity-60 text-sm font-medium'>
                                                     Deliver from :
                                                 </div>
@@ -266,6 +291,7 @@ export default function TransactionXYZ() {
                                             <div className='w-4/5 flex flex-col'>
                                                 <div className='flex'>
                                                     <img src={require(`../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                    {/* <img src={`http://localhost:8000/Public/images/${item.transaction_details[0].product_img}`} className='w-20 h-20 object-contain' alt="" /> */}
                                                     <div className='mt-4 font-bold flex flex-col items-start'>
                                                         <button>
                                                             {item.transaction_details[0].product_name}

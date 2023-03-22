@@ -197,7 +197,7 @@ function App() {
               <Route path='/cart' element={<Cart func={{getCart}} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
+              <Route path='/product/:id' element={<Product data={{ arrColor, show , detail, detailProduct }} func={{getProduct}} />} />
                <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess />} />

@@ -17,4 +17,7 @@ Router.get('/allTransactionUser', tokenVerify, transactionController.allTransact
 Router.get('/detailTransaction/:id',transactionController.detailTransactionUser)
 
 
+Router.post('/tester', transactionController.test)
+
+
 module.exports = Router

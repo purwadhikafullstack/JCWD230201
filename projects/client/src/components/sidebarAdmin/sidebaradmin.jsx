@@ -1,5 +1,5 @@
-import { TbBuildingWarehouse } from 'react-icons/tb'
-import { MdOutlineSpaceDashboard, MdAssignment } from 'react-icons/md'
+import { TbBuildingWarehouse, TbReportAnalytics } from 'react-icons/tb'
+import { MdOutlineSpaceDashboard } from 'react-icons/md'
 import { BsBox } from 'react-icons/bs'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext, useState } from 'react'
@@ -48,11 +48,11 @@ export default function SidebarAdmin() {
                     }
                     <Transaction />
 
-                    <button onClick={() => navigate('sales-report')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                        <MdAssignment size={'20px'} />
+                    <button onClick={() => navigate('sales-report')} className={`flex items-center ${location.pathname.split('/')[2] == 'sales-report' ? '':'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}  gap-3 `}>
+                        <TbReportAnalytics size={'20px'} />
                         Sales Reports
                     </button>
-                    <button onClick={() => navigate('products')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                    <button onClick={() => navigate('products')} className={`flex items-center ${location.pathname.split('/')[2] == 'products' ? '':'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'} gap-3`}>
                         <BsBox size={'20px'} />
                         Products
                     </button>
@@ -60,7 +60,7 @@ export default function SidebarAdmin() {
 
                 <div className='flex flex-col items-center justify-end h-full'>
                     <div>
-                        Copyrights tito sambo
+                        Copyrights JCWD2301
                     </div>
                 </div>
                 {/* sidebar */}
