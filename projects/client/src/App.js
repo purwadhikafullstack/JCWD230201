@@ -40,6 +40,8 @@ import TransactionHistory from './components/transactionHistoryUser/transactionH
 import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
 import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
 import AdminProducts from './components/adminContainer/adminProducts';
+import AdminProductLocation from './components/adminContainer/adminProductLocation';
+import AdminProductListLocation from './components/adminContainer/adminProductListLocation';
 
 
 //import context for global
@@ -169,6 +171,9 @@ function App() {
                   <Route path='warehouse' element={<Warehouse />} />
                   <Route path='products' element={<AdminCategoryProducts />} >
                     <Route path=':id' element={<AdminProducts />} />
+                  </Route>
+                  <Route path='products-location' element={<AdminProductLocation />} >
+                    <Route path=':id' element={<AdminProductListLocation />} />
                   </Route>
                   <Route path='sales-report' element={<SalesReport/>}/>
                   <Route path='*' element={<ErrorAdmin />} />

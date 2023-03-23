@@ -8,6 +8,7 @@ import { userData } from "../../data/userData";
 //import components
 import ManageAccount from '../manageAccount/manageaccount'
 import Transaction from '../transaction/transaction';
+import ManageProduct from '../manageProduct/manageProduct'
 
 export default function SidebarAdmin() {
     let [visible, setVisible] = useState({
@@ -52,10 +53,7 @@ export default function SidebarAdmin() {
                         <TbReportAnalytics size={'20px'} />
                         Sales Reports
                     </button>
-                    <button onClick={() => navigate('products')} className={`flex items-center ${location.pathname.split('/')[2] == 'products' ? '':'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'} gap-3`}>
-                        <BsBox size={'20px'} />
-                        Products
-                    </button>
+                    <ManageProduct/>
                 </div>
 
                 <div className='flex flex-col items-center justify-end h-full'>
