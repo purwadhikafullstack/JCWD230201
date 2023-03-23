@@ -79,9 +79,17 @@ export default function AdminSetting() {
         user ?
             user.role == 1 ?
                 <div className="p-5 flex flex-col gap-2">
-                    <div className="text-2xl font-semibold">
+                    <div className='flex flex-col gap-1 mb-8'>
+                       
+                        <div className="text-2xl font-semibold">
                         Active Admin Registered
+                        </div>
+                        <div className='text-gray-500 text-sm opacity-60'>
+                                {dataAdmin.length} Admin Found
+                        </div>
                     </div>
+
+
                     <div className='flex justify-between mb-5'>
                         <div>
                             Welcome to Admin Settings! here all the active admin!
@@ -89,7 +97,7 @@ export default function AdminSetting() {
                         <button onClick={() => {
                             getEmptyWH()
                             setAdd(!add)
-                        }} className='p-1 overflow-hidden gap-4 flex items-center duration-300 hover:w-48 w-8 h-8 rounded-xl hover:text-black justify-center hover:bg-emerald-400 text-black'>
+                        }} className='p-1 overflow-hidden gap-4 flex items-center duration-300 hover:w-48 w-8 h-8 rounded-xl hover:text-white justify-center hover:bg-emerald-600 font-semibold text-black'>
                             <div><AiOutlinePlus size={'22px'} /></div>
                             <div className='overflow-hidden h-full flex gap-1'>
                                 <div>Add</div> <div> New</div> <div> Admin</div>

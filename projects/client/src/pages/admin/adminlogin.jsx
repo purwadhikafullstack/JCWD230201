@@ -70,7 +70,7 @@ export default function AdminLogin() {
                         setDisable(!disable)
                         let data = await LoginAccount(email.current.value, password.current.value, true)
                         confirmation(data)
-                    }} className="bg-gray-700 hover:bg-gray-600 text-center px-5 py-2 text-white font-semibold text-lg mt-5 rounded w-full">
+                    }} className="bg-neutral-900 hover:bg-neutral-800 text-center px-5 py-2 text-white font-semibold text-lg mt-5 rounded w-full">
                         {
                             disable?
                             <div className="flex justify-center items-center gap-3">

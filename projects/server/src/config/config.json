@@ -5,6 +5,9 @@
     "database": "warehouse",
     "host": "localhost",
     "dialect": "mysql",
+    "dialectOptions":{
+			"useUTC": false
+		},
     "timezone": "+07:00"
 },
   "test": {

@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { QueryTypes } = require('sequelize');
 
 const db = require('./../models/index')
-
+const axios = require('axios')
 module.exports = {
     getAllAddress: async (req, res) => {
         try {
