@@ -5,6 +5,7 @@ const userController = require('./userController')
 const addressController = require('./addressController')
 const rajaongkirController = require('./rajaongkirController')
 const cartController = require('./cartController')
+const locationProductController = require('./locationProductController')
 
 //export it
 
@@ -16,5 +17,6 @@ module.exports={
     addressController,
     rajaongkirController,
     warehouseController,
-    cartController
+    cartController,
+    locationProductController
 }

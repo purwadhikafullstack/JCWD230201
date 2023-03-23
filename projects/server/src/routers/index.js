@@ -6,6 +6,7 @@ const addressRouter = require('./addressRouter')
 const rajaongkirRouter = require('./rajaongkirRouter')
 const warehouseRouter = require('./warehouseRouter')
 const cartRouter = require("./cartRouter")
+const locationProductRouter = require("./locationProductRouter")
 
 //export it
 
@@ -17,5 +18,6 @@ module.exports={
     addressRouter,
     rajaongkirRouter,
     warehouseRouter,
-    cartRouter
+    cartRouter,
+    locationProductRouter
 }

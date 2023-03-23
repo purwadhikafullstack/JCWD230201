@@ -13,7 +13,7 @@ app.use(express.json());
 app.use('/Public',express.static('Public'))
 
 //#region API ROUTES
-const {adminRouter,userRouter,productRouter,transactionRouter,addressRouter,rajaongkirRouter,warehouseRouter, cartRouter} = require('./routers')
+const {adminRouter,userRouter,productRouter,transactionRouter,addressRouter,rajaongkirRouter,warehouseRouter, cartRouter, locationProductRouter} = require('./routers')
 
 // ===========================
 // NOTE : Add your routes here
@@ -25,6 +25,7 @@ app.use('/shipping', addressRouter)
 app.use('/rajaongkir', rajaongkirRouter)
 app.use('/warehouse', warehouseRouter)
 app.use('/cart', cartRouter)
+app.use('/location', locationProductRouter)
 
 // ### Sequelize Synchronous
 // const Sequelize = require('sequelize');
