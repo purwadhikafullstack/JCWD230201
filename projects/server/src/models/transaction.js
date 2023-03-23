@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     upload_payment:DataTypes.STRING,
     exprired:{
       type:DataTypes.DATE,
-      defaultValue : moment().add(1, 'hour').toDate()
+      defaultValue : moment().add(2, 'hour').toDate()
     }
   }, {
     sequelize,

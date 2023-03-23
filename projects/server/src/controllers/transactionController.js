@@ -4,6 +4,8 @@ const { Op } = require('sequelize')
 
 const db = require('../models/index')
 const moment = require('moment')
+
+const deleteFiles = require('./../helpers/deleteFiles')
 module.exports = {
     allTransaction: async (req, res) => {
         try {
@@ -427,20 +429,24 @@ module.exports = {
             tr_cancel: total_transactionC?.length ? total_transactionC.length : null
         })
 
-    }, CreateOrder: async (req, res) => {
+    },
+    CreateOrder: async (req, res) => {
+        const t = await sequelize.transaction()
         try {
             // let getToken = req.dataToken
-            let { user_id, ongkir, receiver, address, warehouse_city, location_warehouse_id, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
+            // console.log(getToken)
+            let { user_id, ongkir, receiver, address, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
 
             let findData = await db.user_address.findOne({
                 where: {
                     id: user_address_id
                 }
-            })
-            console.log(findData)
+            }, { transaction: t })
+            // console.log(findData)
 
             let dataWH = await db.location_warehouse.findAll()
             // console.log(dataWH)
+
 
 
             let distanceWH = []
@@ -481,7 +487,7 @@ module.exports = {
                 where: {
                     city: cityWH
                 }
-            })
+            }, { transaction: t })
             // console.log(findWH)
 
             // console.log(Math.min(...closestWH))
@@ -489,13 +495,14 @@ module.exports = {
 
             var kreat = await db.transaction.create({
                 user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
-            })
-            console.log(kreat)
+            }, { transaction: t })
+
             await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id}) AND upload_payment IS NULL;`)
+
 
             await db.status_transaction_log.create({
                 transaction_id: kreat.dataValues.id, order_status_id: 1
-            })
+            }, { transaction: t })
 
             cart.forEach(async (item, index) => {
                 await db.transaction_detail.create({
@@ -504,15 +511,17 @@ module.exports = {
                     color: item.product_detail.color, product_img: item.product.product_images[0].img, category_id: item.product.category_id, product_detail_id: item.product_detail.id,
 
                 })
-            })
+            }, { transaction: t })
 
+            await t.commit()
             res.status(201).send({
                 isError: false,
                 message: 'data success',
                 data: kreat
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
+            await t.rollback()
             res.status(401).send({
                 isError: true,
                 message: error,
@@ -528,7 +537,6 @@ module.exports = {
         if (code == 3) {
             //dibawah ini apabila kondisi qty barang di warehouse yg bersangkutan tidak memenuhi jumlahnya
             transaction_detail.forEach(async (item, index) => {
-
                 var findData = await db.location_warehouse.findOne({
                     where: {
                         id: warehouse_id
@@ -713,10 +721,13 @@ module.exports = {
         try {
             let getToken = req.dataToken
             // console.log(getToken)
+            let { id } = req.query
+            // console.log(id)
 
             let data = await db.transaction.findOne({
                 where: {
-                    user_id: getToken.id
+                    user_id: getToken.id,
+                    id
                 },
                 include: [
                     { model: db.order_status },
@@ -796,7 +807,61 @@ module.exports = {
             })
         }
     },
-    test: async (req, res) => {
+    uploadPayment: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let { id } = req.body
+            let paymentProof = await db.transaction.update({ upload_payment: req.files.images[0].path, order_status_id: 2 }, {
+                where: {
+                    id: id
+                }
+            }, { transaction: t })
+
+            await t.commit()
+            res.status(201).send({
+                isError: false,
+                message: 'Upload Payment Proof Success!',
+                data: paymentProof
+            })
+
+        } catch (error) {
+            await t.rollback()
+            deleteFiles(req.files)
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    cancelTransactions: async (req, res) => {
+        try {
+            let { id } = req.body
+            // console.log(id)
+
+            await db.transaction.update({
+                order_status_id: 6
+            }, {
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Cancel Transaction Success!',
+                data: null
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+      test: async (req, res) => {
         let { date } = req.body
 
         let response = await db.transaction.findOne({
@@ -808,5 +873,4 @@ module.exports = {
             response
         })
     }
-
 }

@@ -215,11 +215,16 @@ export default function Shipping(props) {
 
     let newOrder = async () => {
         try {
-            let response = await axios.post('http://localhost:8000/transaction/createOrder', { ongkir: priceShipping, receiver: selectedName, address: selectedUserAddress, subdistrict: selectedSubdistrict, city: selectedCity, province: selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
+            let response = await axios.post('http://localhost:8000/transaction/createOrder', { ongkir: priceShipping, receiver: !selectedName ? initialName : selectedName, address: !selectedUserAddress ? initialUserAddress : selectedUserAddress, subdistrict: !selectedSubdistrict ? initialSubdistrict : selectedSubdistrict, city: !selectedCity?initialCity:selectedCity, province: !selectedProvince?initialProvince:selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !selectedNumber?initialNumber:selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
             })
+            console.log(response)
+
+            navigate(`/shipping/success/${response.data.data.id}`)
+            props.func.setItemCart([])
+            // setDataCart([])
         } catch (error) {
 
         }
@@ -717,7 +722,6 @@ export default function Shipping(props) {
                                                             <button
                                                                 onClick={() => {
                                                                     newOrder()
-                                                                    navigate('/shipping/success')
                                                                 }}
                                                                 className='bg-black text-white px-7 py-2'>
                                                                 Payment

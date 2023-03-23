@@ -50,7 +50,7 @@ export default function NavbarUser(props) {
                             <div className="absolute text-3xl">I</div>
                             <img src={require('../../Assets/logo black.jpg')} alt="" />
                             <div className="absolute ml-6 text-3xl">
-                                     rit
+                                rit
                             </div>
                         </button>
                     </Link>
@@ -111,7 +111,7 @@ export default function NavbarUser(props) {
                                 <div className="relative px-3 py-3">
                                     <MdShoppingBag />
                                     {
-                                        props.data.itemCart.length === 0 ?
+                                        props.data.itemCart.length === 0 && !localStorage.getItem('token') ?
                                             null
                                             :
                                             <div className="bg-orange-500 w-5 h-5 rounded-full absolute top-1 right-0 text-xs justify-center flex items-center">{props.data.itemCart.length}</div>

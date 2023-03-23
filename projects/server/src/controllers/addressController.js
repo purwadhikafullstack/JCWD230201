@@ -6,6 +6,7 @@ const { QueryTypes } = require('sequelize');
 
 const db = require('./../models/index')
 const axios = require('axios')
+
 module.exports = {
     getAllAddress: async (req, res) => {
         try {
