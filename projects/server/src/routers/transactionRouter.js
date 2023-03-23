@@ -19,4 +19,7 @@ Router.get('/detailTransaction/:id', transactionController.detailTransactionUser
 Router.post('/payment-proof', upload, transactionController.uploadPayment)
 Router.post('/cancel-transaction',transactionController.cancelTransactions)
 
+Router.post('/tester', transactionController.test)
+
+
 module.exports = Router

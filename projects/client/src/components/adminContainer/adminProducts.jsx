@@ -705,6 +705,9 @@ export default function AdminProducts(props){
                                 <button className='border font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white' onClick={()=> {getEveryProducts(showPage.page, "prev");console.log(showPage)}}>
                                     Previous
                                 </button>
+                                <div>
+                                   Page {showPage.page}
+                                </div>
                                 <button className='border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white' onClick={()=> {getEveryProducts(showPage.page, "next");console.log(showPage)}}>
                                     Next
                                 </button>

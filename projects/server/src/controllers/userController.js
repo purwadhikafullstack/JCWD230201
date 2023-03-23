@@ -28,7 +28,6 @@ const fs = require('fs').promises
 
 const handlebars = require('handlebars');
 const { match } = require('assert');
-
 module.exports = {
     register: async (req, res) => {
         const t = await sequelize.transaction()
@@ -46,7 +45,7 @@ module.exports = {
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
             console.log(resCreateUsers)
 
-            const template = await fs.readFile('./template/confirmation.html', 'utf-8')
+            const template = await fs.readFile('./src/template/confirmation.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `http://localhost:3000/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
@@ -411,8 +410,8 @@ module.exports = {
             })
 
         } catch (error) {
-            // await t.rollback()
             console.log(error)
+            // await t.rollback()
             res.status(404).send({
                 isError: true,
                 message: error.message,

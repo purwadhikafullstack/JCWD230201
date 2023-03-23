@@ -6,7 +6,7 @@ import Loading from '../loading/loading'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { Modal, Button, Label } from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { AiOutlineLoading3Quarters,AiOutlineSearch } from 'react-icons/ai'
 
 
 export default function Warehouse() {
@@ -169,11 +169,14 @@ export default function Warehouse() {
                         <div className="text-2xl font-semibold">
                             Warehouse List
                         </div>
-                        <div className='border border-slate-200 bg-slate-100 p-10 h-full rounded-md shadow-indigo-300 shadow-lg'>
-                            <div className='flex justify-between mb-5'>
-                                <div>
-                                    Search
+                        <div className='border border-slate-200 bg-slate-100 px-8 py-5 h-full rounded-md shadow-indigo-300 shadow-lg'>
+                            <div className='flex justify-between mb-5 items-center'>
+                                <div className='relative flex items-center'>
+                                <button className='absolute'>
+                                    <AiOutlineSearch/>
+                                </button>
                                 </div>
+                               
                                 <button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-black'>
                                     <div><AiOutlinePlus size={'22px'} /></div>
                                     <div className='overflow-hidden flex gap-3 ml-3 h-full'>
