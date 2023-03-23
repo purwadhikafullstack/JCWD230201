@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     latitude:DataTypes.STRING,
     longitude:DataTypes.STRING,
     receiver_name:DataTypes.STRING,
-    phone_number:DataTypes.INTEGER
+    phone_number:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'user_address',

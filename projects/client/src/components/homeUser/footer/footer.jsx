@@ -58,7 +58,11 @@ export default function Footer() {
             <div className="grid grid-cols-4 px-80 gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
                 <div className="">
                     <div className="text-lg font-semibold">
-                        gambar ifrit
+                        <div className="absolute text-3xl">I</div>
+                        <img src={require('../../../Assets/logo black.jpg')} alt="" className='w-20' />
+                        <div className="absolute ml-6 text-3xl">
+                            rit
+                        </div>
                     </div>
                     <div className="text-neutral-800 text-sm">
                         <p className="leading-loose">

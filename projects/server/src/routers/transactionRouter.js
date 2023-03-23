@@ -4,17 +4,19 @@ const Router = express.Router()
 // Import All Controller
 const { transactionController } = require('../controllers') // Akan otomatis mengambil file index.js nya
 const { tokenVerify } = require('../middleware/verifyToken')
+const upload = require('../middleware/upload')
 
 Router.post('/getAllTransaction', transactionController.allTransaction)
 Router.post('/getTransactionWH', transactionController.transactionWH)
 Router.post('/filter', transactionController.filter)
 Router.post('/FWarehouse', transactionController.filterWH)
 Router.get('/getSales', transactionController.getSales)
-Router.post('/createOrder', transactionController.CreateOrder)
+Router.post('/createOrder',tokenVerify, transactionController.CreateOrder)
 Router.patch('/update', transactionController.updateOrder)
 Router.get('/getDataTransaction', tokenVerify, transactionController.getDataTransaction)
 Router.get('/allTransactionUser', tokenVerify, transactionController.allTransactionUser)
-Router.get('/detailTransaction/:id',transactionController.detailTransactionUser)
-
+Router.get('/detailTransaction/:id', transactionController.detailTransactionUser)
+Router.post('/payment-proof', upload, transactionController.uploadPayment)
+Router.post('/cancel-transaction',transactionController.cancelTransactions)
 
 module.exports = Router

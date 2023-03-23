@@ -59,6 +59,10 @@ function App() {
   const [verifyStatus, setVerifyStatus] = useState('')
   const [itemCart, setItemCart] = useState([])
   const [arrColor, setArrColor] = useState([])
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const [loadingIndex, setLoadingIndex] = useState(0)
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
@@ -85,24 +89,24 @@ function App() {
     }
   }
 
-  let getProduct = async(id)=>{
+  let getProduct = async (id) => {
     try {
-        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
-        setShow(data.data)
-        console.log(show);
-        var arrColor = []
-        var arrColor2 = []
-        data.data.forEach((item, index) => {
-          item.product_details.forEach((item, index)=>{
-            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
-          })
-          arrColor2.push(arrColor)
-          arrColor=[]
-        });
-        setArrColor(arrColor2);
-        
+      let { data } = await axios.get(`http://localhost:8000/product/${id}`)
+      setShow(data.data)
+      console.log(data);
+      var arrColor = []
+      var arrColor2 = []
+      data.data.forEach((item, index) => {
+        item.product_details.forEach((item, index) => {
+          if (!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+        })
+        arrColor2.push(arrColor)
+        arrColor = []
+      });
+      setArrColor(arrColor2);
+
     } catch (error) {
-        console.log(error)
+      console.log(error)
     }
   }
   // let loginKeep = async () => {
@@ -142,6 +146,12 @@ function App() {
       // console.log(response.data.data)
       setItemCart(response.data.data)
 
+      let sum = 0
+      response.data.data.forEach(e =>
+        sum += e.qty * e.product_detail.price)
+      setTotalPrice(sum)
+      setLoading(false)
+
     } catch (error) {
       console.log(error)
     }
@@ -170,7 +180,7 @@ function App() {
                   <Route path='products' element={<AdminCategoryProducts />} >
                     <Route path=':id' element={<AdminProducts />} />
                   </Route>
-                  <Route path='sales-report' element={<SalesReport/>}/>
+                  <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -194,13 +204,13 @@ function App() {
                 <Route path='history' element={<TransactionHistory />} />
                 <Route path='history/:id' element={<DetailTransaction />} />
               </Route>
-              <Route path='/cart' element={<Cart func={{getCart}} />} />
+              <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, totalPrice,loading,setLoading,setLoadingIndex,loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ show }} func={{ getProduct }} />} />
-               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
-              <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister }} />} />
-              <Route path='/shipping/success' element={<ShippingSuccess />} />
+              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct }} func={{ getProduct }} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
+              <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
+              <Route path='/shipping/success/:id' element={<ShippingSuccess />} />
             </Routes>
             <Toaster />
             <Footer />

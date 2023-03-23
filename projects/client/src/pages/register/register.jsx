@@ -27,7 +27,7 @@ export default function Register() {
             setDisabledButton(true)
 
             let result = await axios.post(`http://localhost:8000/users/register`, { name: inputName, email: inputEmail, phone_number: inputPhoneNumber })
-            console.log(result)
+            // console.log(result)
 
             toast.success(`Register success, please check your email`)
 
@@ -38,9 +38,6 @@ export default function Register() {
         } catch (error) {
             console.log(error)
             toast.error(error.message)
-            fullName.current.value = ''
-            email.current.value = ''
-            phoneNumber.current.value = ''
             setDisabledButton(false)
         } finally {
             setDisabledButton(false)

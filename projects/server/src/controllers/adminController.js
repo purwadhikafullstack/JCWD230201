@@ -235,7 +235,7 @@ module.exports = {
 
         let getToken = req.dataToken
 
-        console.log(getToken)
+        // console.log(getToken)
 
 
         let getDataUser = await db.user.findOne({
@@ -243,7 +243,7 @@ module.exports = {
                 id: getToken.id
             }
         })
-        console.log(getDataUser)
+        // console.log(getDataUser)
         if (!getDataUser) {
             getDataUser = await db.admin.findOne({
                 where: {
@@ -252,7 +252,7 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
         }
-    console.log(getDataUser)
+    // console.log(getDataUser)
         res.status(201).send({
             isError: false,
             message: 'token still valid',
