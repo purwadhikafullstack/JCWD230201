@@ -33,6 +33,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   transaction.init({
+    id:{
+      allowNull:false,
+      autoIncrement:false,
+      primaryKey:true,
+      type: DataTypes.STRING
+    },
     ongkir: DataTypes.INTEGER,
     receiver:DataTypes.STRING,
     address:DataTypes.STRING,
@@ -45,8 +51,8 @@ module.exports = (sequelize, DataTypes) => {
     phone_number:DataTypes.STRING,
     upload_payment:DataTypes.STRING,
     exprired:{
-      type:DataTypes.DATE,
-      defaultValue : moment().add(2, 'hour').toDate()
+      type:DataTypes.DATE
+      // defaultValue : moment().add(2, 'hour').toDate()
     }
   }, {
     sequelize,
