@@ -4,13 +4,13 @@ import iphonedisc from './../../../Assets/iphonedisc.jpg'
 export default function Discount() {
     return (
         <div>
-            <div className="grid grid-cols-5 gap-5 pl-36 pr-36 mt-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 px-5 md:px-10 lg:px-36 mt-10">
                 <button className="">
                     <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start font-bold">
+                        <div className="flex justify-start text-2xl">
                             iPhone 14 Pro
                         </div>
-                        <div className="gap-1 flex justify-start text-sm">
+                        <div className="gap-1 flex justify-start text-lg">
                             <div>
                                 <s>
                                     Rp. 17.999.000

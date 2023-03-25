@@ -45,7 +45,7 @@ export default function Cart(props) {
 
             setLoading(false)
 
-            props.func.getCart()
+            // props.func.getCart()
             
 
         } catch (error) {
@@ -61,7 +61,7 @@ export default function Cart(props) {
 
             getData()
 
-            props.func.getCart()
+            // props.func.getCart()
         } catch (error) {
             console.log(error)
         }
@@ -75,7 +75,7 @@ export default function Cart(props) {
             getData()
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast.error(error.response.data.message)
         }
     }
@@ -93,9 +93,9 @@ export default function Cart(props) {
                 {
                     productCart.length !== 0 ?
                         // {/* grid */}
-                        <div className="grid grid-cols-12">
+                        <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 md:justify-center px-5">
                             {/* Card Start */}
-                            <div className="col-start-3 col-end-9 mr-3">
+                            <div className="col-start-1 col-end-5 md:col-start-2 md:col-end-6 lg:col-start-3 lg:col-end-9 lg:mr-3">
                                 {
                                     productCart.map((value, index) => {
                                         return (
@@ -185,6 +185,7 @@ export default function Cart(props) {
                                                                         onClick={() => {
                                                                             deleteCart()
                                                                             setModalDelete(false)
+                                                                            props.data.setItemCart([])
                                                                         }}
                                                                         className="focus:ring-0 focus:ring-transparent"
                                                                     >
@@ -208,7 +209,7 @@ export default function Cart(props) {
                             </div>
                             {/* Card End */}
 
-                            <div className="col-start-9 col-end-11 relative">
+                            <div className="col-start-1 col-end-5 md:col-start-2 md:col-end-6 lg:col-start-9 lg:col-end-11 relative">
                                 <div className="px-5 sticky">
                                     <div className="font-bold text-xl py-4 border-b-2">
                                         Summary

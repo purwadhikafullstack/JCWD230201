@@ -28,7 +28,7 @@ export default function ConfirmEmail() {
         } catch (error) {
             console.log(error)
             toast.error(error.response.data.message)
-        } finally{
+        } finally {
             setDisabledButton(false)
         }
     }
@@ -40,8 +40,8 @@ export default function ConfirmEmail() {
     return (
         <>
             <div className="pt-28 flex justify-center items-center h-screen">
-                <div className="flex flex-col h-max w-max px-5 py-3 border border-gray-500 shadow-xl rounded">
-                    <div className="flex justify-start font-bold text-3xl py-2 border-b-2 border-gray-300">
+                <div className="flex flex-col h-max mx-5 md:w-max px-5 py-3 border-2 border-gray-200 rounded-sm">
+                    <div className="flex justify-start font-bold text-xl md:text-3xl pb-3 border-b-2 border-gray-300">
                         Reset Password
                     </div>
 
@@ -53,18 +53,18 @@ export default function ConfirmEmail() {
                         Email
                     </div>
                     <div className="flex items-center">
-                        <input ref={email} type='text' placeholder="Input your email" className="focus:border-black focus:ring-transparent w-96" />
+                        <input ref={email} type='text' placeholder="Input your email" className="focus:border-black focus:ring-transparent w-full md:w-96" />
                     </div>
                     <button disabled={disabledButton} onClick={() => onConfirmEmail()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
                         {disabledButton ? <Spinner
                             aria-label="Medium sized spinner example"
                             size="md"
-                        /> :'Submit'}
+                        /> : 'Submit'}
                     </button>
 
                 </div>
-                <Toaster />
             </div>
+            <Toaster />
         </>
     )
 }

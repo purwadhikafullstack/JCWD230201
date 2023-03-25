@@ -24,6 +24,8 @@ export default function Register() {
 
             if (isNaN(inputPhoneNumber)) throw { message: 'Please input a number' }
 
+            if(inputPhoneNumber.length<8 && inputPhoneNumber>13) throw {message:'Please input your valid phone number'}
+
             setDisabledButton(true)
 
             let result = await axios.post(`http://localhost:8000/users/register`, { name: inputName, email: inputEmail, phone_number: inputPhoneNumber })
@@ -51,25 +53,25 @@ export default function Register() {
             <div className="flex justify-center items-center h-screen">
 
                 {/* Card */}
-                <div className="border-2 border-gray-200 w-max p-5 rounded-lg shadow-lg">
+                <div className="border-2 border-gray-200 w-max p-5 rounded-sm">
 
                     <div className="border-b-2 w-full pb-3">
-                        <h1 className="font-bold text-xl">Create an Account</h1>
+                        <h1 className="font-bold text-lg md:text-xl">Create an Account</h1>
                     </div>
 
                     <div className="my-5">
                         <p className="font-semibold">Full Name</p>
-                        <input ref={fullName} required type='text' placeholder="Input your full name" className="py-1 px-2 w-96 mt-2 focus:ring-transparent focus:border-black" />
+                        <input ref={fullName} required type='text' placeholder="Input your full name" className="py-1 px-2 w-full md:w-96 mt-2 focus:ring-transparent focus:border-black" />
                     </div>
 
                     <div className="my-5">
                         <p className="font-semibold">Email</p>
-                        <input ref={email} required type='email' placeholder="Input your email" className="py-1 px-2 w-96 mt-2 focus:ring-transparent focus:border-black" />
+                        <input ref={email} required type='email' placeholder="Input your email" className="py-1 px-2 w-full md:w-96 mt-2 focus:ring-transparent focus:border-black" />
                     </div>
 
                     <div className="my-5">
                         <p className="font-semibold">Phone Number</p>
-                        <input ref={phoneNumber} required type='text' placeholder="Input your phone number" className="py-1 px-2 w-96 mt-2 focus:ring-transparent focus:border-black" />
+                        <input ref={phoneNumber} required type='text' placeholder="Input your phone number" className="py-1 px-2 w-full md:w-96 mt-2 focus:ring-transparent focus:border-black" />
                     </div>
 
                     {disabledButton ? <button disabled={disabledButton} onClick={onSubmit} className="bg-neutral-900 px-5 py-3 mt-3 text-white w-full">
@@ -87,6 +89,7 @@ export default function Register() {
                     </div>
 
                 </div>
+            </div>
                 <Toaster
                     toastOptions={{
                         success: {
@@ -97,7 +100,6 @@ export default function Register() {
                         }
                     }}
                 />
-            </div>
         </>
     )
 }

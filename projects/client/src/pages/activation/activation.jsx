@@ -106,8 +106,8 @@ export default function Activation(props) {
     return (
         <>
             <div className="pt-28 flex justify-center items-center h-screen">
-                <div className="flex flex-col h-max w-max px-5 py-3 border border-gray-500 shadow-xl rounded">
-                    <div className="flex justify-center font-bold text-3xl py-2 border-b-2 border-gray-500">
+                <div className="flex flex-col h-max mx-5 md:w-max px-5 py-3 border border-gray-200 rounded-sm">
+                    <div className="flex justify-center font-bold text-xl md:text-3xl py-2 border-b-2 border-gray-500">
                         Welcome to iFrit
                     </div>
 
@@ -115,14 +115,14 @@ export default function Activation(props) {
                         Password
                     </div>
                     <div className="flex items-center relative">
-                        <input onChange={(e) => setInputPassword(e.target.value)} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                        <input onChange={(e) => setInputPassword(e.target.value)} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
                         <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                     </div>
                     <div className="py-3 font-semibold">
                         Confirm Password
                     </div>
                     <div className="flex items-center relative">
-                        <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                        <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
                         <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                     </div>
                     <div className="text-gray-400 font-semibold py-3">
@@ -138,8 +138,8 @@ export default function Activation(props) {
                     </button>
 
                 </div>
-                <Toaster />
             </div>
+            <Toaster />
         </>
     )
 }

@@ -1,9 +1,9 @@
 import { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import toast,{ Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { userData } from "../../data/userData";
 import { LoginAccount } from "../../utils/login";
-import { AiOutlineEye,AiOutlineEyeInvisible } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
 
@@ -13,11 +13,11 @@ export default function Login() {
 
     let navigate = useNavigate()
 
-    const {user,setUser} = useContext(userData)
-    
+    const { user, setUser } = useContext(userData)
+
     let email = useRef()
     let password = useRef()
-    
+
     let confirmation = (data) => {
         if (data.id == undefined) {
             toast.error(data.response)
@@ -63,17 +63,17 @@ export default function Login() {
             {/* Main */}
             <div className="flex justify-center items-center h-screen">
                 {/* Card */}
-                <div className="border-2 border-gray-200 w-max px-5 py-3 rounded-lg shadow-lg">
+                <div className="border-2 border-gray-200 w-max px-5 py-3 rounded-sm">
 
                     <div className="border-b-2 pb-3">
-                        <h1 className="font-bold text-2xl">Login</h1>
+                        <h1 className="font-bold text-lg md:text-2xl">Login</h1>
                     </div>
 
                     <div>
                         <div className="py-3 font-semibold">
                             Email
                         </div>
-                        <input disabled={disable} ref={email} type='text' placeholder="Input your email" className="focus:border-black focus:ring-transparent w-96" />
+                        <input disabled={disable} ref={email} type='text' placeholder="Input your email" className="focus:border-black focus:ring-transparent w-full md:w-96 rounded-sm" />
                     </div>
 
                     <div>
@@ -81,7 +81,7 @@ export default function Login() {
                             Password
                         </div>
                         <div className="flex items-center relative">
-                            <input disabled={disable} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                            <input disabled={disable} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:96 rounded-sm" />
                             <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                         </div>
                     </div>
@@ -100,7 +100,7 @@ export default function Login() {
                             Register here
                         </Link>
                     </div>
-                    
+
                     <div className="mt-3 flex justify-center">
                         <Link to='/confirm-email' className="font-bold ml-2 hover:text-gray-700">
                             Forgot Password
@@ -108,8 +108,8 @@ export default function Login() {
                     </div>
 
                 </div>
-                <Toaster/>
             </div>
+            <Toaster />
         </>
     )
 }

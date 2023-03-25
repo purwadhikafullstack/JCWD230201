@@ -42,10 +42,12 @@ module.exports = {
 
             if (dataEmail) throw { message: 'Email already register' }
 
+            if(isNaN(phone_number)) throw {message:"Please input a number"}
+
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
             console.log(resCreateUsers)
 
-            const template = await fs.readFile('./src/template/confirmation.html', 'utf-8')
+            const template = await fs.readFile('./template/confirmation.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `http://localhost:3000/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
@@ -146,13 +148,13 @@ module.exports = {
                 }
             })
             // console.log(dataUser.dataValues)
-            if (!dataUser) throw { message: 'Account not found!' }
+            if (!dataUser) throw { message: 'Account Not Found!' }
 
             let matchPassword = await hashMatch(password, dataUser.dataValues.password)
 
             if (matchPassword === false) return res.status(404).send({
                 isError: true,
-                message: 'Password doesnt exist',
+                message: 'Wrong Password',
                 data: null
             })
 

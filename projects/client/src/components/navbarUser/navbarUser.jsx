@@ -32,14 +32,22 @@ export default function NavbarUser(props) {
         // props.data.itemCart
     }, [])
 
-    if(!props.data.itemCart){
-        return(
+    if (!props.data.itemCart) {
+        return (
             <>
-            <Loading/>
+                <Loading />
             </>
         )
     }
-    
+
+    if (!user) {
+        return (
+            <>
+                <Loading />
+            </>
+        )
+    }
+
 
     return (
         <>
@@ -111,7 +119,7 @@ export default function NavbarUser(props) {
                                 <div className="relative px-3 py-3">
                                     <MdShoppingBag />
                                     {
-                                        props.data.itemCart.length === 0 && !localStorage.getItem('token') ?
+                                        props.data.itemCart.length === 0 || !localStorage.getItem('token') ?
                                             null
                                             :
                                             <div className="bg-orange-500 w-5 h-5 rounded-full absolute top-1 right-0 text-xs justify-center flex items-center">{props.data.itemCart.length}</div>
@@ -121,38 +129,36 @@ export default function NavbarUser(props) {
                         </Link>
                     </button>
                     {!localStorage.getItem('token') ?
-                        <Link to='/login'>
+                        <button onClick={() => navigate('/login')}>
                             <Tooltip
                                 content="Login or Register"
                                 placement="bottom"
                                 className=" mt-6"
                             >
-                                <button>
+                                <div>
                                     <MdPerson />
-                                </button>
+                                </div>
                             </Tooltip>
-                        </Link>
+                        </button>
                         :
-                        <>
-                            <Link to='/my-account'>
-                                <Tooltip
-                                    content="My Account"
-                                    placement="bottom"
-                                    className=" mt-6"
-                                >
-                                    <button>
-                                        <div className="flex items-center">
-                                            <MdPerson />
-                                            {/* <div className="text-lg ml-2">{user.username}</div> */}
-                                        </div>
-                                    </button>
-                                </Tooltip>
-                            </Link>
-                        </>
+                        <button onClick={() => navigate('/my-account')}>
+                            <Tooltip
+                                content="My Account"
+                                placement="bottom"
+                                className=" mt-6"
+                            >
+                                <div>
+                                    <div className="flex items-center">
+                                        <MdPerson />
+                                        <div className="text-lg ml-2">{user.username}</div>
+                                    </div>
+                                </div>
+                            </Tooltip>
+                        </button>
                     }
                 </div>
-                <Toaster />
             </div>
+            <Toaster />
         </>
     )
 }

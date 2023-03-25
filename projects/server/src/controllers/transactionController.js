@@ -436,6 +436,7 @@ module.exports = {
             // let getToken = req.dataToken
             // console.log(getToken)
             let { user_id, ongkir, receiver, address, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
+            // console.log(cart)
 
             let findData = await db.user_address.findOne({
                 where: {
@@ -492,26 +493,51 @@ module.exports = {
 
             // console.log(Math.min(...closestWH))
 
+            const date = new Date().toJSON().slice(0, 10).split('-');
+
+            // console.log(`${date[0]}${date[1]}${date[2]}`);
+
+            let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 1000000 + Date.now())}`
 
             var kreat = await db.transaction.create({
-                user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+                id: idTransaction, user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
             }, { transaction: t })
 
-            await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id}) AND upload_payment IS NULL;`)
+            await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id})
+             AND upload_payment IS NULL;`)
 
 
             await db.status_transaction_log.create({
                 transaction_id: kreat.dataValues.id, order_status_id: 1
             }, { transaction: t })
 
-            cart.forEach(async (item, index) => {
-                await db.transaction_detail.create({
-                    transaction_id: kreat.dataValues.id, qty: item.qty, price: item.product_detail.price,
-                    product_name: item.product.name, weight: item.product_detail.weight, memory_storage: item.product_detail.memory_storage,
-                    color: item.product_detail.color, product_img: item.product.product_images[0].img, category_id: item.product.category_id, product_detail_id: item.product_detail.id,
-
+            let dataCart = []
+            for (let i = 0; i < cart.length; i++) {
+                dataCart.push({
+                    transaction_id: kreat.dataValues.id,
+                    qty: cart[i].qty,
+                    price: cart[i].product_detail.price,
+                    product_name: cart[i].product.name,
+                    weight: cart[i].product_detail.weight,
+                    memory_storage: cart[i].product_detail.memory_storage,
+                    color: cart[i].product_detail.color,
+                    connectivity: cart[i].product_detail.connectivity,
+                    screen_size: cart[i].product_detail.screen_size,
+                    processor: cart[i].product_detail.processor,
+                    product_img: cart[i].product.product_images[0].img,
+                    category_id: cart[i].product.category_id,
+                    product_detail_id: cart[i].product_detail.id
                 })
-            }, { transaction: t })
+            }
+            // console.log(dataCart)
+
+            await db.transaction_detail.bulkCreate(dataCart, { transaction: t })
+
+            await db.cart.destroy({
+                where:{
+                    user_id
+                }
+            })
 
             await t.commit()
             res.status(201).send({
@@ -531,7 +557,7 @@ module.exports = {
     },
     updateOrder: async (req, res) => {
         let { transaction_id, code, load, warehouse_id } = req.query
-        
+
         //getting the transaction data
         let transaction_detail = JSON.parse(load)
         if (code == 3) {
@@ -684,18 +710,18 @@ module.exports = {
                     transaction_id, order_status_id: code
                 })
             } else {
-                transaction_detail.forEach(async(item,index)=>{
+                transaction_detail.forEach(async (item, index) => {
                     let getData = await db.product_detail.findOne({
-                        where:{
-                            id:item.product_detail_id
+                        where: {
+                            id: item.product_detail_id
                         }
                     })
-                    
+
                     await db.product_detail.update({
-                        qty:getData.dataValues.qty+item.qty
-                    },{
-                        where:{
-                            id:item.product_detail_id
+                        qty: getData.dataValues.qty + item.qty
+                    }, {
+                        where: {
+                            id: item.product_detail_id
                         }
                     })
                 })
@@ -861,7 +887,7 @@ module.exports = {
             })
         }
     },
-      test: async (req, res) => {
+    test: async (req, res) => {
         let { date } = req.body
 
         let response = await db.transaction.findOne({
