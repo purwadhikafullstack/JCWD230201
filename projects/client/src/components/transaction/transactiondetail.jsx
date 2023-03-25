@@ -7,7 +7,8 @@ import { TransactionData } from '../../data/transactionAdmin'
 
 export default function TransactionDetail() {
     const { transaction, setTransaction } = useContext(TransactionData)
-    const [maxpayment, setMaxpayment] = useState(false), [pop, setPop] = useState(false), [disable,setDisable] = useState(false)
+    const [maxpayment, setMaxpayment] = useState(false), [pop, setPop] = useState(false), [disable, setDisable] = useState(false)
+    let [submit,setSubmit] = useState(1)
     console.log(transaction.transaction_details)
 
     let total_price = 0
@@ -25,14 +26,15 @@ export default function TransactionDetail() {
 
     let updateOrder = async (id, code, load, wh_id) => {
         try {
-            // console.log(id)
-            // console.log(code)
-            // console.log(load)
             let response = await axios.patch(`http://localhost:8000/transaction/update?transaction_id=${id}&code=${code}&load=${JSON.stringify(load)}&warehouse_id=${wh_id}`)
-            response.data.message == 'Order Confirmed' ? toast.success(response.data.message) : toast.error(response.data.message)
-            setPop(false)
-            setDisable(false)
-            setTransaction(null)
+            response.data.message == 'Order confirmed' ? toast.success(response.data.message) : toast.error(response.data.message)
+            setTimeout(()=>{
+                toast('Loading..')
+                setPop(false)
+                setDisable(false)
+                setTransaction(null)
+                window.location.reload(false)
+             }, 1500)
         } catch (error) {
 
         }
@@ -83,7 +85,7 @@ export default function TransactionDetail() {
                                 No. Invoice
                             </div>
                             <div className='font-bold text-emerald-600 text-xs'>
-                                INV/20220408/MPL/22097371{transaction.id}
+                                {transaction.id}
                             </div>
                         </div>
 
@@ -133,16 +135,24 @@ export default function TransactionDetail() {
                                                                     {item.memory_storage ? `${item.memory_storage} GB` : null}
                                                                 </div>
                                                             </div>
+
                                                         </div>
 
-                                                        <div className='ml-10 p-3'>
 
-                                                            <div className='flex flex-col justify-end items-end border-l pl-5 gap-2  border-gray-300'>
+
+                                                        <div className='p-3 w-1/2  flex justify-end'>
+                                                            <div className='border-r border-gray-300 w-1/3'>
+                                                                <div className='flex pr-3 flex-col justify-start items-end py-2 text-xs text-gray-500'>
+                                                                    <p>{item.qty} item x</p>    <p>Rp.{(item.price).toLocaleString()}</p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className='flex flex-col justify-end items-end gap-2 w-2/3'>
                                                                 <div className='text-gray-500'>
                                                                     total harga
                                                                 </div>
                                                                 <div className='text-lg font-semibold'>
-                                                                    Rp. {(item.price).toLocaleString()}
+                                                                    Rp. {(item.price * item.qty).toLocaleString()}
                                                                 </div>
                                                             </div>
 
@@ -170,16 +180,19 @@ export default function TransactionDetail() {
                                         </button>
 
                                         {
-                                            transaction.order_status_id == 2 ?
+                                            transaction.order_status_id == 2?
                                                 <div className='flex gap-4 mt-4'>
                                                     <button onClick={() => {
-                                                        
-                                                        updateOrder(transaction.id, 3, transaction.transaction_details, transaction.location_warehouse_id)
+                                                        setSubmit(1)
+                                                        setPop(true)
+
+                                                        // updateOrder(transaction.id, 3, transaction.transaction_details, transaction.location_warehouse_id)
                                                     }
                                                     } className='bg-green-500 text-white py-1 px-3'>
                                                         Submit
                                                     </button>
                                                     <button onClick={() => {
+                                                        setSubmit(2)
                                                         setPop(true)
                                                     }
                                                     } className='bg-orange-500 text-white py-1 px-3'>
@@ -194,12 +207,19 @@ export default function TransactionDetail() {
                                                                 </button>
                                                                 <div className="p-6 text-center">
                                                                     <svg aria-hidden="true" className="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Cancel this transaction?</h3>
-                                                                    <button onClick={() => {
-                                                                         setDisable(true)
+                                                                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                                        Do you want to {submit==1?'submit':'cancel'} this transaction?
+                                                                        </h3>
+                                                                    <button
+                                                                    disabled={disable}
+                                                                    onClick={() => {
+                                                                        setDisable(true)
+                                                                        submit==1?
+                                                                        updateOrder(transaction.id, 3, transaction.transaction_details, transaction.location_warehouse_id)
+                                                                        :
                                                                         updateOrder(transaction.id, 1, transaction.transaction_details, transaction.location_warehouse_id)
-                                                                    }} data-modal-hide="popup-modal" type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                                                                        Yes, I'm sure
+                                                                    }} data-modal-hide="popup-modal" type="button" className={`text-white ${submit==1?'bg-green-500 hover:bg-green-700':'bg-red-600 hover:bg-red-800'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
+                                                                        Yes, {submit==1?"i'm sure":'cancel it'}
                                                                     </button>
                                                                     <button onClick={() => setPop(false)} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
                                                                 </div>
