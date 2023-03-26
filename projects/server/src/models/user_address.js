@@ -27,7 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     latitude:DataTypes.STRING,
     longitude:DataTypes.STRING,
     receiver_name:DataTypes.STRING,
-    phone_number:DataTypes.STRING
+    phone_number: {
+      type: DataTypes.STRING,
+      validate: {
+        len: [8, 13],
+        isNumeric: true
+      }
+    }
   }, {
     sequelize,
     modelName: 'user_address',

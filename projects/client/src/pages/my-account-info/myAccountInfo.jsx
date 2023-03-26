@@ -9,6 +9,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 import { Modal, Button } from 'flowbite-react'
 
 import { userData } from '../../data/userData'
+import Loading from "../../components/loading/loading"
 
 export default function MyAccountInfo() {
 
@@ -66,7 +67,7 @@ export default function MyAccountInfo() {
         } catch (error) {
             console.log(error)
             setMessage(error.message)
-            
+
         }
     }
 
@@ -81,7 +82,7 @@ export default function MyAccountInfo() {
                 }
             })
             console.log(data)
-            
+
 
             toast.success('Update Profile Picture Success!', {
                 style: {
@@ -137,7 +138,7 @@ export default function MyAccountInfo() {
                     headers: {
                         "token": localStorage.getItem('token')
                     }
-                })   
+                })
 
             }
             toast.success("Update Data Profile Success")
@@ -158,11 +159,11 @@ export default function MyAccountInfo() {
 
     return (
         user ?
-            <div className="w-full h-screen">
-                <div className="border text-xl font-bold px-5 py-2">
+            <div className="w-full h-max">
+                <div className="border text-base lg:text-xl font-bold px-5 py-2">
                     Change Account Information
                 </div>
-                <div className="border p-5 grid grid-cols-2">
+                <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
                         <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">
@@ -258,6 +259,6 @@ export default function MyAccountInfo() {
                 </div>
                 <Toaster />
             </div>
-            : <div>Loading</div>
+            : <Loading />
     )
 }

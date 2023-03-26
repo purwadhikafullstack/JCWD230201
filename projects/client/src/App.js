@@ -95,7 +95,7 @@ function App() {
     try {
       let { data } = await axios.get(`http://localhost:8000/product/${id}`)
       setShow(data.data)
-      console.log(data);
+      // console.log(data);
       var arrColor = []
       var arrColor2 = []
       data.data.forEach((item, index) => {
@@ -108,7 +108,7 @@ function App() {
       setArrColor(arrColor2);
 
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
   // let loginKeep = async () => {
@@ -155,7 +155,7 @@ function App() {
       setLoading(false)
 
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
@@ -185,7 +185,7 @@ function App() {
                   <Route path='products-location' element={<AdminProductLocation />} >
                     <Route path=':id' element={<AdminProductListLocation />} />
                   </Route>
-                  <Route path='sales-report' element={<SalesReport/>}/>
+                  <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 
                 </Route>
@@ -202,20 +202,20 @@ function App() {
               <Route path='/activation/:id' element={<Activation />} />
               <Route path='/confirm-email' element={<ConfirmEmail />} />
               <Route path='/reset-password/:id' element={<ResetPassword />} />
-              <Route path='/my-account' element={<MyAccount />}>
+              <Route path='/my-account' element={<MyAccount data={{ itemCart, setItemCart }} />}>
                 <Route path='' element={<DashboardAccount />} />
                 <Route path='information' element={<MyAccountInfo />} />
                 <Route path='address' element={<MyAccountAddress />} />
                 <Route path='history' element={<TransactionHistory />} />
-                <Route path='history/:id' element={<DetailTransaction />} />
+                <Route path='history-detail' element={<DetailTransaction />} />
               </Route>
-              <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, totalPrice,loading,setLoading,setLoadingIndex,loadingIndex }} />} />
+              <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, setItemCart, totalPrice, loading, setLoading, setLoadingIndex, loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
               <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct }} func={{ getProduct }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
-              <Route path='/shipping/success/:id' element={<ShippingSuccess />} />
+              <Route path='/shipping/success' element={<ShippingSuccess func={{ getCart }} />} />
 
             </Routes>
             <Toaster />

@@ -36,7 +36,13 @@ module.exports = (sequelize, DataTypes) => {
     password:DataTypes.STRING,
     status: DataTypes.STRING,
     name: DataTypes.STRING,
-    phone_number: DataTypes.STRING,
+    phone_number: {
+      type: DataTypes.STRING,
+      validate:{
+        len:[8,13],
+        isNumeric:true
+      }
+    },
     photo_profile: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,

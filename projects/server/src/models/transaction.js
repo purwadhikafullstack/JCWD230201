@@ -14,22 +14,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-     
-      this.belongsTo(models.user,{
-        foreignKey:'user_id'
+
+      this.belongsTo(models.user, {
+        foreignKey: 'user_id'
       }),
-      this.belongsTo(models.order_status,{
-        foreignKey:'order_status_id'
-      }),
-      this.hasMany(models.transaction_detail,{
-        foreignKey:'transaction_id'
-      }),
-      this.hasMany(models.status_transaction_log,{
-        foreignKey:'transaction_id'
-      }),
-      this.belongsTo(models.location_warehouse,{
-        foreignKey:'location_warehouse_id'
-      })
+        this.belongsTo(models.order_status, {
+          foreignKey: 'order_status_id'
+        }),
+        this.hasMany(models.transaction_detail, {
+          foreignKey: 'transaction_id'
+        }),
+        this.hasMany(models.status_transaction_log, {
+          foreignKey: 'transaction_id'
+        }),
+        this.belongsTo(models.location_warehouse, {
+          foreignKey: 'location_warehouse_id'
+        })
     }
   }
   transaction.init({

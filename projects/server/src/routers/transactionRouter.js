@@ -16,9 +16,10 @@ Router.patch('/update', transactionController.updateOrder)
 Router.patch('/ship', transactionController.shipOrder)
 Router.get('/getDataTransaction', tokenVerify, transactionController.getDataTransaction)
 Router.get('/allTransactionUser', tokenVerify, transactionController.allTransactionUser)
-Router.get('/detailTransaction/:id', transactionController.detailTransactionUser)
+Router.get('/detailTransaction', transactionController.detailTransactionUser)
 Router.post('/payment-proof', upload, transactionController.uploadPayment)
 Router.post('/cancel-transaction',transactionController.cancelTransactions)
+Router.post('/confirm-order', transactionController.confirmOrder)
 
 Router.post('/tester', transactionController.test)
 

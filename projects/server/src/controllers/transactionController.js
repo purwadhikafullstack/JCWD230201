@@ -435,6 +435,7 @@ module.exports = {
             // let getToken = req.dataToken
             // console.log(getToken)
             let { user_id, ongkir, receiver, address, courier, user_name, phone_number, subdistrict, province, city, upload_payment, cart, user_address_id } = req.body
+            // console.log(cart)
 
             let findData = await db.user_address.findOne({
                 where: {
@@ -496,6 +497,11 @@ module.exports = {
             console.log(date)
             // console.log(`${date[0]}${date[1]}${date[2]}`);
 
+            const date = new Date().toJSON().slice(0, 10).split('-');
+
+            // console.log(`${date[0]}${date[1]}${date[2]}`);
+
+            let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 1000000 + Date.now())}`
 
             var kreat = await db.transaction.create({
                 id: `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 10000000)+Math.floor(Math.random() * 10)+3}`, user_id, ongkir,
@@ -524,14 +530,35 @@ module.exports = {
                 transaction_id: kreat.dataValues.id, order_status_id: 1
             }, { transaction: t })
 
-            cart.forEach(async (item, index) => {
-                await db.transaction_detail.create({
-                    transaction_id: kreat.dataValues.id, qty: item.qty, price: item.product_detail.price,
-                    product_name: item.product.name, weight: item.product_detail.weight, memory_storage: item.product_detail.memory_storage,
-                    color: item.product_detail.color, product_img: item.product.product_images[0].img, category_id: item.product.category_id, product_detail_id: item.product_detail.id,
-
+            let dataCart = []
+            for (let i = 0; i < cart.length; i++) {
+                dataCart.push({
+                    transaction_id: kreat.dataValues.id,
+                    qty: cart[i].qty,
+                    price: cart[i].product_detail.price,
+                    product_name: cart[i].product.name,
+                    weight: cart[i].product_detail.weight,
+                    memory_storage: cart[i].product_detail.memory_storage,
+                    color: cart[i].product_detail.color,
+                    connectivity: cart[i].product_detail.connectivity,
+                    screen_size: cart[i].product_detail.screen_size,
+                    processor: cart[i].product_detail.processor,
+                    product_img: cart[i].product.product_images[0].img,
+                    category_id: cart[i].product.category_id,
+                    product_detail_id: cart[i].product_detail.id
                 })
+            }
+            // console.log(dataCart)
 
+            await db.transaction_detail.bulkCreate(dataCart, { transaction: t })
+
+            await db.cart.destroy({
+                where:{
+                    user_id
+                }
+            })
+            
+            cart.forEach(async (item, index) =>{
                 let compare = await db.product_detail.findOne({
                     where: {
                         id: item.product_detail_id
@@ -804,6 +831,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
             let { id } = req.query
+            console.log(id)
             let data = await db.transaction.findOne({
                 where: {
                     user_id: getToken.id,
@@ -819,7 +847,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'data success',
-                data
+                data:data
             })
         } catch (error) {
             res.status(401).send({
@@ -860,12 +888,13 @@ module.exports = {
     },
     detailTransactionUser: async (req, res) => {
         try {
-            let { id } = req.params
+            let { id } = req.query
+            console.log(id)
 
 
             let data = await db.transaction.findOne({
                 where: {
-                    id: id
+                    id
                 },
                 include: [
                     { model: db.order_status },
@@ -1025,7 +1054,6 @@ module.exports = {
     },
     test: async (req, res) => {
         let { date, id } = req.body
-
         let response = await db.transaction.findOne({
             where: {
                 // exprired: date
@@ -1035,5 +1063,31 @@ module.exports = {
         res.status(201).send({
             response
         })
+    },
+    confirmOrder:async(req,res)=>{
+        try {
+            let { id } = req.body
+            // console.log(id)
+
+            await db.transaction.update({
+                order_status_id: 5
+            }, {
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Confirm Order Success!',
+                data: null
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
     }
 }

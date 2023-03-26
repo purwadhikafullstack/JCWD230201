@@ -9,6 +9,8 @@ import axios from "axios"
 
 import { toast, Toaster } from 'react-hot-toast'
 
+import Loading from "../../components/loading/loading"
+
 export default function MyAccountAddress() {
 
     let province = useRef()
@@ -246,13 +248,13 @@ export default function MyAccountAddress() {
                     {
                         addressDB.length === 0 ?
                             <>
-                                <div className="border">
+                                <div className="border-2">
                                     <div className="border-b-2 text-2xl font-bold px-5 py-2">
                                         Add Address
                                     </div>
-                                    <div className="px-5 py-2">
+                                    <div className="px-5 py-5">
                                         <div className="flex justify-center">
-                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
+                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 py-1 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
                                                 + Add Address
                                             </button>
                                             <Modal
@@ -386,8 +388,8 @@ export default function MyAccountAddress() {
                             </>
                             :
                             <>
-                                <div className="border-2">
-                                    <div className="border-b-2 text-2xl font-semibold px-5 py-2">
+                                <div className="border-2 border-black">
+                                    <div className="border-b-2 border-black text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 bg-neutral-200">
                                         Main Address
                                     </div>
                                     {
@@ -398,7 +400,7 @@ export default function MyAccountAddress() {
                                                         <div className="font-bold">{value.receiver_name}</div>
                                                         <div>{value.user_address}</div>
                                                         <div>{`${value.subdistrict}, ${value.city}, ${value.province}`}</div>
-                                                        <div className="flex items-center"><BsTelephone className="mr-2" />{`0${value.phone_number}`}</div>
+                                                        <div className="flex items-center"><BsTelephone className="mr-2" />{value.phone_number}</div>
                                                         <button onClick={() => {
                                                             setModalEdit(!modalEdit)
                                                             setChoosenUser(value)
@@ -537,10 +539,10 @@ export default function MyAccountAddress() {
 
                                 </div>
                                 <div className="border-2 mt-5">
-                                    <div className="border-b-2 text-2xl font-semibold px-5 py-2 flex justify-between items-center">
+                                    <div className="border-b-2 text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 flex justify-between items-center ">
                                         Additional Address
                                         <div>
-                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-base font-semibold px-3 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
+                                            <button onClick={() => setModal(!modal)} className="rounded-sm text-sm md:text-base font-semibold px-3 bg-neutral-900 text-neutral-100 hover:text-neutral-900 hover:bg-neutral-100 border border-black focus:ring-0 focus:ring-transparent">
                                                 + Add Address
                                             </button>
                                             <Modal
@@ -670,7 +672,7 @@ export default function MyAccountAddress() {
                                             </Modal>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-5 ">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 md:gap-5 ">
                                         {
                                             addressDB.map((value, index) => {
                                                 return (
@@ -679,7 +681,7 @@ export default function MyAccountAddress() {
                                                             <div className="font-bold">{value.receiver_name}</div>
                                                             <div>{value.user_address}</div>
                                                             <div>{`${value.subdistrict}, ${value.city}, ${value.province}`}</div>
-                                                            <div className="flex items-center"><BsTelephone className="mr-2" />{`0${value.phone_number}`}</div>
+                                                            <div className="flex items-center"><BsTelephone className="mr-2" />{value.phone_number}</div>
                                                             <button onClick={() => changeMain(value)} value={value} className="py-2 font-bold px-3">
                                                                 <li>Set as Main Address</li>
                                                             </button>
@@ -696,11 +698,11 @@ export default function MyAccountAddress() {
                                                                 >
                                                                     <Modal.Header />
                                                                     <Modal.Body>
-                                                                        <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
+                                                                        <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 ">
                                                                             <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
                                                                                 Edit Address
                                                                             </h3>
-                                                                            <div>
+                                                                            <div className="">
                                                                                 <div>
                                                                                     <div className="mb-2 block">
                                                                                         <Label
@@ -859,14 +861,10 @@ export default function MyAccountAddress() {
                                 </div>
                             </>
                     }
-                    <Toaster />
                 </div>
+                    <Toaster />
             </>
             :
-            <>
-                <div>
-                    Loading
-                </div>
-            </>
+            <Loading/>
     )
 }

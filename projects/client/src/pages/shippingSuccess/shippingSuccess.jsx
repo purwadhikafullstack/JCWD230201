@@ -4,8 +4,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import Moment from "react-moment"
 import Loading from "../../components/loading/loading"
 
-export default function ShippingSuccess() {
-    const { id } = useParams()
+export default function ShippingSuccess(props) {
+    // const { id } = useParams()
+    const queryParams = new URLSearchParams(window.location.search);
 
     const [status, setStatus] = useState('')
     const [orderNumber, setOrderNumber] = useState('')
@@ -16,6 +17,8 @@ export default function ShippingSuccess() {
 
     let getData = async () => {
         try {
+            const id = queryParams.get('id');
+            // console.log(id)
             let response = await axios.get(`http://localhost:8000/transaction/getDataTransaction?id=${id}`, {
                 headers: {
                     token: localStorage.getItem('token')
@@ -38,6 +41,7 @@ export default function ShippingSuccess() {
 
     useEffect(() => {
         getData()
+        props.func.getCart()
     }, [])
 
     return (
@@ -104,7 +108,7 @@ export default function ShippingSuccess() {
                         </div>
 
                         <div className="flex justify-center my-6">
-                            <button onClick={() => navigate(`/my-account/history/${orderNumber}`)} className="bg-black text-white px-3 py-2 font-bold">
+                            <button onClick={() => navigate(`/my-account/history-detail?id=${orderNumber}`)} className="bg-black text-white px-3 py-2 font-bold">
                                 Order Detail
                             </button>
                         </div>
