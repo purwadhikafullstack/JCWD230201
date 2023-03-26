@@ -33,26 +33,26 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   transaction.init({
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      autoIncrement: false,
-      allowNull: false
+    id:{
+      allowNull:false,
+      autoIncrement:false,
+      primaryKey:true,
+      type: DataTypes.STRING
     },
     ongkir: DataTypes.INTEGER,
-    receiver: DataTypes.STRING,
-    address: DataTypes.STRING,
-    subdistrict: DataTypes.STRING,
-    city: DataTypes.STRING,
-    province: DataTypes.STRING,
-    warehouse_city: DataTypes.STRING,
-    courier: DataTypes.STRING,
-    user_name: DataTypes.STRING,
-    phone_number: DataTypes.STRING,
-    upload_payment: DataTypes.STRING,
-    exprired: {
-      type: DataTypes.DATE,
-      defaultValue: moment().add(2, 'hour').toDate()
+    receiver:DataTypes.STRING,
+    address:DataTypes.STRING,
+    subdistrict:DataTypes.STRING,
+    city:DataTypes.STRING,
+    province:DataTypes.STRING,
+    warehouse_city:DataTypes.STRING,
+    courier:DataTypes.STRING,
+    user_name:DataTypes.STRING,
+    phone_number:DataTypes.STRING,
+    upload_payment:DataTypes.STRING,
+    exprired:{
+      type:DataTypes.DATE
+      // defaultValue : moment().add(2, 'hour').toDate()
     }
   }, {
     sequelize,

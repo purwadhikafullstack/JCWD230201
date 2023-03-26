@@ -10,8 +10,6 @@ module.exports = {
     allTransaction: async (req, res) => {
         try {
             let { warehouse, order_status_id, from, to } = req.body
-            console.log(`${moment(from).add(1, 'days').format().split("T")[0]}`)
-            console.log(`ini to ya ${to}`)
             if (!from && !to) {
                 if (order_status_id == 0) {
                     console.log('masuk 1')
@@ -157,6 +155,7 @@ module.exports = {
                         })
                 }
             }
+
             if (!response) throw { message: 'data not found!' }
             res.status(201).send({
                 isError: false,
@@ -492,6 +491,11 @@ module.exports = {
             // console.log(findWH)
 
             // console.log(Math.min(...closestWH))
+            const x = new Date().toJSON()
+            console.log(x)
+            const date = new Date().toJSON().slice(0, 10).split('-');
+            console.log(date)
+            // console.log(`${date[0]}${date[1]}${date[2]}`);
 
             const date = new Date().toJSON().slice(0, 10).split('-');
 
@@ -500,11 +504,26 @@ module.exports = {
             let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 1000000 + Date.now())}`
 
             var kreat = await db.transaction.create({
-                id: idTransaction, user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
+                id: `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 10000000)+Math.floor(Math.random() * 10)+3}`, user_id, ongkir,
+                receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id,
+                courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1,
+                exprired: moment().add(2, 'hour').toDate()
             }, { transaction: t })
 
-            await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id})
-             AND upload_payment IS NULL;`)
+            var words = ''
+
+            cart.forEach((item, index) => {
+                words += `\nUPDATE product_details SET qty = ${item.product_detail.qty} WHERE id = ${item.product_detail_id};`
+
+            })
+            console.log('MASUK SINIIII SAAAYNG')
+            console.log(words)
+
+            await sequelize.query(`
+            CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 2 HOUR 
+            DO BEGIN
+            UPDATE transactions SET order_status_id = 6 WHERE id = '${kreat.dataValues.id}' AND upload_payment IS NULL;${words}
+            END;`)
 
 
             await db.status_transaction_log.create({
@@ -538,6 +557,21 @@ module.exports = {
                     user_id
                 }
             })
+            
+            cart.forEach(async (item, index) =>{
+                let compare = await db.product_detail.findOne({
+                    where: {
+                        id: item.product_detail_id
+                    }
+                })
+
+                await db.product_detail.update({ qty: compare.dataValues.qty - item.qty }, {
+                    where: {
+                        id: item.product_detail_id
+                    }
+                })
+
+            }, { transaction: t })
 
             await t.commit()
             res.status(201).send({
@@ -546,7 +580,7 @@ module.exports = {
                 data: kreat
             })
         } catch (error) {
-            // console.log(error)
+            console.log(error)
             await t.rollback()
             res.status(401).send({
                 isError: true,
@@ -559,7 +593,7 @@ module.exports = {
         let { transaction_id, code, load, warehouse_id } = req.query
 
         //getting the transaction data
-        let transaction_detail = JSON.parse(load)
+        var transaction_detail = JSON.parse(load)
         if (code == 3) {
             //dibawah ini apabila kondisi qty barang di warehouse yg bersangkutan tidak memenuhi jumlahnya
             transaction_detail.forEach(async (item, index) => {
@@ -656,6 +690,21 @@ module.exports = {
                                 order_status_id: 8
                             })
 
+                            await db.log_stock.bulkCreate([
+                                {
+                                    qty: x,
+                                    location_warehouse_id: distanceWH[i][1],
+                                    status: 'Reduction',
+                                    product_detail_id: item.product_detail_id
+                                },
+                                {
+                                    qty: x,
+                                    location_warehouse_id: warehouse_id,
+                                    status: 'Additional',
+                                    product_detail_id: item.product_detail_id
+                                }
+                            ])
+
                             break
                         } else {
                             await db.location_product.update({
@@ -676,6 +725,21 @@ module.exports = {
                                 order_status_id: 8
                             })
 
+                            await db.log_stock.bulkCreate([
+                                {
+                                    qty: distanceWH[i][2],
+                                    location_warehouse_id: distanceWH[i][1],
+                                    status: 'Reduction',
+                                    product_detail_id: item.product_detail_id
+                                },
+                                {
+                                    qty: distanceWH[i][2],
+                                    location_warehouse_id: warehouse_id,
+                                    status: 'Additional',
+                                    product_detail_id: item.product_detail_id
+                                }
+                            ])
+
                             initialQty += distanceWH[i][2]
                         }
                     }
@@ -691,6 +755,7 @@ module.exports = {
                     id: transaction_id
                 }
             })
+
         } else if (code == 1) {
 
             let compareData = await db.transaction.findOne({
@@ -724,6 +789,22 @@ module.exports = {
                             id: item.product_detail_id
                         }
                     })
+                    // ini kalo mau balikin log request nya tapi gak bisa karena gk dpt history nya
+                    // await db.log_stock.bulkCreate([
+                    //     {
+                    //         qty:item.qty,
+                    //         location_warehouse_id:warehouse_id,
+                    //         status:'Reduction',
+                    //         product_detail_id:item.product_detail_id
+                    //     },
+                    //     {
+                    //         qty:item.qty,
+                    //         location_warehouse_id:warehouse_id,
+                    //         status:'Additional',
+                    //         product_detail_id:item.product_detail_id
+                    //     }
+                    // ])
+
                 })
 
                 db.transaction.update({ order_status_id: 6 }, {
@@ -735,12 +816,14 @@ module.exports = {
                 db.status_transaction_log.create({
                     transaction_id, order_status_id: 6
                 })
+
+
             }
         }
 
         res.status(201).send({
             isError: false,
-            message: code == 3 ? 'Order Confirmed' : 'Order Canceled'
+            message: code == 3 ? 'Order confirmed' : 'Order canceled'
         })
     },
     getDataTransaction: async (req, res) => {
@@ -749,7 +832,6 @@ module.exports = {
             // console.log(getToken)
             let { id } = req.query
             console.log(id)
-
             let data = await db.transaction.findOne({
                 where: {
                     user_id: getToken.id,
@@ -808,6 +890,7 @@ module.exports = {
         try {
             let { id } = req.query
             console.log(id)
+
 
             let data = await db.transaction.findOne({
                 where: {
@@ -888,12 +971,93 @@ module.exports = {
             })
         }
     },
-    test: async (req, res) => {
-        let { date } = req.body
+    shipOrder: async (req, res) => {
+        let { transaction_id, code, load, warehouse_id } = req.query
 
+        var transaction_detail = JSON.parse(load)
+
+        if (code == 4) {
+            await db.transaction.update({ order_status_id: 4 }, {
+                where: {
+                    id: transaction_id
+                }
+            })
+
+            let words = []
+
+            transaction_detail.forEach(async (item, index) => {
+                let getQty = await db.location_product.findOne({
+                    where: {
+                        product_detail_id: item.product_detail_id,
+                        location_warehouse_id: warehouse_id
+                    }
+                })
+
+                await db.location_product.update({ qty: getQty.dataValues.qty - item.qty }, {
+                    where: {
+                        product_detail_id: item.product_detail_id,
+                        location_warehouse_id: warehouse_id
+                    }
+                })
+
+                let loader = {
+                    qty: null,
+                    status: 'Reduction',
+                    location_warehouse_id: warehouse_id,
+                    product_detail_id: null
+                }
+
+                loader.qty = getQty.dataValues.qty - item.qty
+                loader.product_detail_id = item.product_detail_id
+                words.push(loader)
+            })
+
+            await db.log_stock.bulkCreate(words)
+
+            await db.transaction.update({
+                exprired: moment().add(7, 'day').toDate()
+            }, {
+                where: {
+                    id: transaction_id
+                }
+            })
+
+            await sequelize.query(`
+            CREATE EVENT shipping_expired_${transaction_id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 7 DAY 
+            DO UPDATE transactions SET order_status_id = 5 WHERE id = '${transaction_id}';`)
+
+        } else if (code == 6) {
+            transaction_detail.forEach(async (item, index) => {
+                let getQty = await db.product_detail.findOne({
+                    where: {
+                        id: item.product_detail_id
+                    }
+                })
+
+                await db.product_detail.update({ qty: getQty.dataValues.qty + item.qty }, {
+                    where: {
+                        id: item.product_detail_id
+                    }
+                })
+            })
+            await db.transaction.update({ order_status_id: 6 }, {
+                where: {
+                    id: transaction_id
+                }
+            })
+        }
+
+        res.status(201).send({
+            isError: false,
+            message: code == 6 ? 'Order canceled' : 'Sending item'
+        })
+    },
+    test: async (req, res) => {
+        let { date, id } = req.body
         let response = await db.transaction.findOne({
             where: {
-                exprired: date
+                // exprired: date
+                id
             }
         })
         res.status(201).send({
