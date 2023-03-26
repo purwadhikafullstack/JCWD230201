@@ -222,8 +222,8 @@ export default function Shipping(props) {
             })
             // console.log(response)
 
-            navigate(`/shipping/success/${response.data.data.id}`)
-            props.func.setItemCart([])
+            navigate(`/shipping/success?id=${response.data.data.id}`)
+            // props.func.setItemCart([])
             // setDataCart([])
         } catch (error) {
 

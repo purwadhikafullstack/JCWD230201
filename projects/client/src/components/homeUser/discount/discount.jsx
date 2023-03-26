@@ -1,110 +1,217 @@
 import { Card } from "flowbite-react"
 import iphonedisc from './../../../Assets/iphonedisc.jpg'
+import "@lottiefiles/lottie-player";
 
 export default function Discount() {
     return (
         <div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 px-5 md:px-10 lg:px-36 mt-10">
-                <button className="">
-                    <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start text-2xl">
-                            iPhone 14 Pro
-                        </div>
-                        <div className="gap-1 flex justify-start text-lg">
-                            <div>
-                                <s>
-                                    Rp. 17.999.000
-                                </s>
+                <button className=" ">
+                    <div className="">
+                        <div className=''>
+                            <div className='min-h-[5px] relative' >
+                                <img src={iphonedisc} className='flex items-start min-w-[10px]' alt="hai" />
+                                <div className="absolute bottom-[60px] left-12">
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_xchv8mlf.json"
+                                        style={{ width: "100px" }}
+                                        speed="1"
+                                    ></lottie-player>
+                                </div>
                             </div>
-                            <div className="text-red-600 font-bold">
-                                Rp. 200.000
+                            <div className=''>
+                                <div className="flex justify-center font-bold text-lg">
+                                    iPhone 14 Pro
+                                </div>
+                                <div className="gap-1 flex-col justify-center text-sm">
+                                    <div className='text-md'>
+                                        <s>
+                                            Rp 17.999.000
+                                        </s>
+                                    </div>
+                                    <div className="text-red-600 font-bold text-lg">
+                                        Rp. 20.000.000
+                                    </div>
+                                </div>
+                                <div className='flex p-5 justify-center gap-3'>
+                                    {/* {props.data.arrColor[index].map((val, idx) => {
+                                        return (
+                                            <div style={{ backgroundColor: `${val}` }} className={`w-4 h-4 border rounded-full`}></div>
+                                        )
+                                    })} */}
+                                </div>
                             </div>
                         </div>
-                        <button className="bg-theme rounded-lg py-1 text-white">
-                            Details
-                        </button>
-                    </Card>
+                    </div>
                 </button>
-                <button className="">
-                    <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start font-bold">
-                            iPhone 14 Pro
-                        </div>
-                        <div className="gap-1 flex justify-start text-sm">
-                            <div>
-                                <s>
-                                    Rp. 500.000
-                                </s>
+                <button className=" ">
+                    <div className="">
+                        <div className=''>
+                            <div className='min-h-[5px] relative' >
+                                <img src={iphonedisc} className='flex items-start min-w-[10px]' alt="hai" />
+                                <div className="absolute bottom-[60px] left-12">
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_xchv8mlf.json"
+                                        style={{ width: "100px" }}
+                                        speed="1"
+                                    ></lottie-player>
+                                </div>
                             </div>
-                            <div className="text-red-600 font-bold">
-                                Rp. 200.000
+                            <div className=''>
+                                <div className="flex justify-center font-bold text-lg">
+                                    iPhone 14 Pro
+                                </div>
+                                <div className="gap-1 flex-col justify-center text-sm">
+                                    <div className='text-md'>
+                                        <s>
+                                            Rp 17.999.000
+                                        </s>
+                                    </div>
+                                    <div className="text-red-600 font-bold text-lg">
+                                        Rp. 20.000.000
+                                    </div>
+                                </div>
+                                <div className='flex p-5 justify-center gap-3'>
+                                    {/* {props.data.arrColor[index].map((val, idx) => {
+                                        return (
+                                            <div style={{ backgroundColor: `${val}` }} className={`w-4 h-4 border rounded-full`}></div>
+                                        )
+                                    })} */}
+                                </div>
                             </div>
                         </div>
-                        <button className="bg-theme rounded-lg py-1 text-white">
-                            Details
-                        </button>
-                    </Card>
+                    </div>
                 </button>
-                <button className="">
-                    <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start font-bold">
-                            iPhone 14 Pro
-                        </div>
-                        <div className="gap-1 flex justify-start text-sm">
-                            <div>
-                                <s>
-                                    Rp. 500.000
-                                </s>
+                <button className=" ">
+                    <div className="">
+                        <div className=''>
+                            <div className='min-h-[5px] relative' >
+                                <img src={iphonedisc} className='flex items-start min-w-[10px]' alt="hai" />
+                                <div className="absolute bottom-[60px] left-12">
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_xchv8mlf.json"
+                                        style={{ width: "100px" }}
+                                        speed="1"
+                                    ></lottie-player>
+                                </div>
                             </div>
-                            <div className="text-red-600 font-bold">
-                                Rp. 200.000
+                            <div className=''>
+                                <div className="flex justify-center font-bold text-lg">
+                                    iPhone 14 Pro
+                                </div>
+                                <div className="gap-1 flex-col justify-center text-sm">
+                                    <div className='text-md'>
+                                        <s>
+                                            Rp 17.999.000
+                                        </s>
+                                    </div>
+                                    <div className="text-red-600 font-bold text-lg">
+                                        Rp. 20.000.000
+                                    </div>
+                                </div>
+                                <div className='flex p-5 justify-center gap-3'>
+                                    {/* {props.data.arrColor[index].map((val, idx) => {
+                                        return (
+                                            <div style={{ backgroundColor: `${val}` }} className={`w-4 h-4 border rounded-full`}></div>
+                                        )
+                                    })} */}
+                                </div>
                             </div>
                         </div>
-                        <button className="bg-theme rounded-lg py-1 text-white">
-                            Details
-                        </button>
-                    </Card>
+                    </div>
                 </button>
-                <button className="">
-                    <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start font-bold">
-                            iPhone 14 Pro
-                        </div>
-                        <div className="gap-1 flex justify-start text-sm">
-                            <div>
-                                <s>
-                                    Rp. 500.000
-                                </s>
+                <button className=" ">
+                    <div className="">
+                        <div className=''>
+                            <div className='min-h-[5px] relative' >
+                                <img src={iphonedisc} className='flex items-start min-w-[10px]' alt="hai" />
+                                <div className="absolute bottom-[60px] left-12">
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_xchv8mlf.json"
+                                        style={{ width: "100px" }}
+                                        speed="1"
+                                    ></lottie-player>
+                                </div>
                             </div>
-                            <div className="text-red-600 font-bold">
-                                Rp. 200.000
+                            <div className=''>
+                                <div className="flex justify-center font-bold text-lg">
+                                    iPhone 14 Pro
+                                </div>
+                                <div className="gap-1 flex-col justify-center text-sm">
+                                    <div className='text-md'>
+                                        <s>
+                                            Rp 17.999.000
+                                        </s>
+                                    </div>
+                                    <div className="text-red-600 font-bold text-lg">
+                                        Rp. 20.000.000
+                                    </div>
+                                </div>
+                                <div className='flex p-5 justify-center gap-3'>
+                                    {/* {props.data.arrColor[index].map((val, idx) => {
+                                        return (
+                                            <div style={{ backgroundColor: `${val}` }} className={`w-4 h-4 border rounded-full`}></div>
+                                        )
+                                    })} */}
+                                </div>
                             </div>
                         </div>
-                        <button className="bg-theme rounded-lg py-1 text-white">
-                            Details
-                        </button>
-                    </Card>
+                    </div>
                 </button>
-                <button className="">
-                    <Card imgSrc={iphonedisc}>
-                        <div className="flex justify-start font-bold">
-                            iPhone 14 Pro
-                        </div>
-                        <div className="gap-1 flex justify-start text-sm">
-                            <div>
-                                <s>
-                                    Rp. 500.000
-                                </s>
+                <button className=" ">
+                    <div className="">
+                        <div className=''>
+                            <div className='min-h-[5px] relative' >
+                                <img src={iphonedisc} className='flex items-start min-w-[10px]' alt="hai" />
+                                <div className="absolute bottom-[60px] left-12">
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets3.lottiefiles.com/packages/lf20_xchv8mlf.json"
+                                        style={{ width: "100px" }}
+                                        speed="1"
+                                    ></lottie-player>
+                                </div>
                             </div>
-                            <div className="text-red-600 font-bold">
-                                Rp. 200.000
+                            <div className=''>
+                                <div className="flex justify-center font-bold text-lg">
+                                    iPhone 14 Pro
+                                </div>
+                                <div className="gap-1 flex-col justify-center text-sm">
+                                    <div className='text-md'>
+                                        <s>
+                                            Rp 17.999.000
+                                        </s>
+                                    </div>
+                                    <div className="text-red-600 font-bold text-lg">
+                                        Rp. 20.000.000
+                                    </div>
+                                </div>
+                                <div className='flex p-5 justify-center gap-3'>
+                                    {/* {props.data.arrColor[index].map((val, idx) => {
+                                        return (
+                                            <div style={{ backgroundColor: `${val}` }} className={`w-4 h-4 border rounded-full`}></div>
+                                        )
+                                    })} */}
+                                </div>
                             </div>
                         </div>
-                        <button className="bg-theme rounded-lg py-1 text-white">
-                            Details
-                        </button>
-                    </Card>
+                    </div>
                 </button>
+                
             </div>
         </div>
     )

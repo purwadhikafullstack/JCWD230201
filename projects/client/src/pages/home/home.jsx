@@ -43,7 +43,7 @@ export default function Home() {
                     </button>
                 </div>
             </div> */}
-            <div className="flex justify-center mt-10">
+            {/* <div className="flex justify-center mt-10">
                 <lottie-player
                     autoplay
                     loop
@@ -51,7 +51,7 @@ export default function Home() {
                     src="https://assets5.lottiefiles.com/private_files/lf30_6t1tjl3b.json"
                     style={{ width: "1300px" }}
                 ></lottie-player>
-            </div>
+            </div> */}
             <div>
                 <Discount />
             </div>

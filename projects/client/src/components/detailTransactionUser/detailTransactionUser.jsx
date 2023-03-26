@@ -13,21 +13,30 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi'
 import Loading from "../loading/loading"
 
 export default function DetailTransaction() {
-    const { id } = useParams()
+    // const { id } = useParams()
+
+    const queryParams = new URLSearchParams(window.location.search);
 
     const [transactionDetail, setTransactionDetail] = useState({})
     const [product, setProduct] = useState([])
     const [totalPrice, setTotalPrice] = useState(0)
     const [modalCancel, setModalCancel] = useState(false)
+    const [modalConfirm, setModalConfirm] = useState(false)
     const [cancelID, setCancelID] = useState(0)
+    const [modal, setModal] = useState(false)
+
+    const [payment, setPayment] = useState([])
+    const [message, setMessage] = useState('')
 
     let getData = async () => {
         try {
-            let response = await axios.get(`http://localhost:8000/transaction/detailTransaction/${id}`)
+            var id = queryParams.get('id');
+            let response = await axios.get(`http://localhost:8000/transaction/detailTransaction?id=${id}`)
 
-            // console.log(response.data.data)
+            console.log(response.data.data)
             setTransactionDetail({
                 ...transactionDetail,
+                id: response.data.data.id,
                 name: response.data.data.receiver,
                 address: response.data.data.address,
                 city: response.data.data.city,
@@ -38,7 +47,8 @@ export default function DetailTransaction() {
                 courier: `${response.data.data.courier.split(',')[0].toUpperCase()}, ${response.data.data.courier.split(',')[1]}`,
                 status: response.data.data.order_status.status,
                 statusID: response.data.data.order_status.id,
-                ongkir: response.data.data.ongkir
+                ongkir: response.data.data.ongkir,
+                updatedAt: response.data.data.updatedAt
             })
             setProduct(response.data.data.transaction_details)
             setCancelID(response.data.data.id)
@@ -74,6 +84,71 @@ export default function DetailTransaction() {
         }
     }
 
+    let confirmOrder = async (input) => {
+        try {
+            // console.log(input)
+            await axios.post('http://localhost:8000/transaction/confirm-order', {
+                id: input
+            })
+
+            toast.success('Confirm Order Success!')
+
+            getData()
+
+        } catch (error) {
+
+        }
+    }
+
+    let onImageValidation = (e) => {
+        try {
+            let files = [...e.target.files]
+            // console.log(files[0])
+            setPayment(files)
+
+            if (files.length !== 0) {
+                files.forEach((value) => {
+                    if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
+                })
+            }
+            setMessage('')
+
+
+        } catch (error) {
+            // console.log(error)
+            setMessage(error.message)
+
+        }
+    }
+
+    let uploadPayment = async (input) => {
+        try {
+            // console.log(input)
+            let fd = new FormData()
+            fd.append('images', payment[0])
+            fd.append('id', input)
+
+            let data = await axios.post('http://localhost:8000/transaction/payment-proof', fd)
+            // console.log(data)
+
+
+            toast.success('Upload Payment Proof Success!', {
+                style: {
+                    background: "black",
+                    color: 'white'
+                }
+            })
+
+                setModal(false)
+
+            // setTimeout(() => {
+            //     window.location.reload(false)
+            // }, 3000)
+        } catch (error) {
+            // console.log(error)
+        }
+    }
+
     useEffect(() => {
         getData()
     }, [])
@@ -83,10 +158,14 @@ export default function DetailTransaction() {
             {
                 transactionDetail ?
                     <div>
-                        {id}
-                        <h1 className="text-2xl font-semibold pb-5">
-                            Transaction Detail
-                        </h1>
+                        <div className="pb-5 flex">
+                            <h1 className="text-2xl font-semibold">
+                                Transaction Detail
+                            </h1>
+                            <div className="flex items-end ml-3 text-sm">
+                                Order Number: {transactionDetail.id}
+                            </div>
+                        </div>
                         <div className="border rounded-sm px-3 py-5">
 
                             <div className="border rounded-sm mt-3 px-4">
@@ -108,9 +187,48 @@ export default function DetailTransaction() {
                                             {transactionDetail.statusID === 6 ? <MdOutlineCancel /> : <MdPayment />}
                                         </div>
                                         <p className="mt-5 font-semibold text-center">
-                                            {transactionDetail.statusID === 6 ? "Order Canceled" : transactionDetail.statusID === 1 ? "Waiting for Payment" : transactionDetail.statusID >= 2 ? "Waiting for Confirmation Payment" : "Payment Success"}
-                                            { }
+                                            {transactionDetail.statusID === 6 ? "Order Canceled" : transactionDetail.statusID === 1 ? "Waiting for Payment" : transactionDetail.statusID === 2 ? "Waiting for Confirmation Payment" : "Payment Success"}
                                         </p>
+                                        {
+                                            transactionDetail.statusID === 1 ?
+                                                <>
+                                                    <button onClick={() => {
+                                                        setModal(!modal)
+                                                    }} className="rounded-sm border border-black mt-2 w-full py-2 hover:bg-black hover:text-white">
+                                                        Upload Payment
+                                                    </button>
+                                                    <Modal
+                                                        show={modal}
+                                                        size="md"
+                                                        onClose={() => {
+                                                            setModal(!modal)
+                                                        }}
+                                                    >
+                                                        <Modal.Header>
+                                                            Upload Payment
+                                                        </Modal.Header>
+                                                        <Modal.Body>
+                                                            <div>
+                                                                <input onChange={(e) => onImageValidation(e)} type="file" />
+                                                                {message}
+                                                            </div>
+                                                        </Modal.Body>
+                                                        <Modal.Footer>
+                                                            <button onClick={() => uploadPayment(transactionDetail.id)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm px-10 py-2">
+                                                                Upload
+                                                            </button>
+                                                            <button onClick={() => setModal(false)} className="bg-white text-black hover:bg-black hover:text-white border border-black rounded-sm px-10 py-2">
+                                                                Decline
+                                                            </button>
+                                                        </Modal.Footer>
+                                                    </Modal>
+                                                </>
+                                                :
+                                                null
+                                        }
+                                        {/* <p className="text-sm mt-3">
+                                            {`${transactionDetail.updatedAt.split('T')[0]} ${transactionDetail.updatedAt.split('T')[1].split('.')[0]}`}
+                                        </p> */}
                                     </div>
                                     <div className="flex items-center">
                                         <MdArrowForwardIos />
@@ -144,9 +262,45 @@ export default function DetailTransaction() {
                                         <p className="mt-5 font-semibold">
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 5 ? "Order Success" : null}
                                         </p>
-                                        <button className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm mt-2 px-2 py-1">
-                                            Confirm Order
-                                        </button>
+                                        {transactionDetail.statusID === 4 ?
+                                            <>
+                                                <button onClick={() => setModalConfirm(!modalConfirm)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm mt-2 px-2 py-1">
+                                                    Confirm Order
+                                                </button>
+                                                <Modal
+                                                    show={modalConfirm}
+                                                    size="md"
+                                                    popup={true}
+                                                    onClose={() => setModalConfirm(!modalConfirm)}
+                                                >
+                                                    <Modal.Header />
+                                                    <Modal.Body>
+                                                        <div className="text-center">
+                                                            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                                                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                                Are you sure the product has been received?
+                                                            </h3>
+                                                            <div className="flex justify-center gap-4">
+                                                                <Button
+                                                                    color="info"
+                                                                    onClick={() => confirmOrder(transactionDetail.id)}
+                                                                >
+                                                                    Confirm Order
+                                                                </Button>
+                                                                <Button
+                                                                    color="gray"
+                                                                    onClick={() => setModalConfirm(false)}
+                                                                >
+                                                                    No, cancel
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </>
+                                            :
+                                            null
+                                        }
                                     </div>
                                 </div>
                             </div>

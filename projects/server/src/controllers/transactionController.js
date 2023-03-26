@@ -503,7 +503,7 @@ module.exports = {
                 id: idTransaction, user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id, courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1
             }, { transaction: t })
 
-            await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id})
+            await sequelize.query(`CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 1 HOUR DO UPDATE transactions SET order_status_id = 6 WHERE id = (${kreat.dataValues.id})
              AND upload_payment IS NULL;`)
 
 
@@ -748,7 +748,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
             let { id } = req.query
-            // console.log(id)
+            console.log(id)
 
             let data = await db.transaction.findOne({
                 where: {
@@ -765,7 +765,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'data success',
-                data
+                data:data
             })
         } catch (error) {
             res.status(401).send({
@@ -806,11 +806,12 @@ module.exports = {
     },
     detailTransactionUser: async (req, res) => {
         try {
-            let { id } = req.params
+            let { id } = req.query
+            console.log(id)
 
             let data = await db.transaction.findOne({
                 where: {
-                    id: id
+                    id
                 },
                 include: [
                     { model: db.order_status },
@@ -898,5 +899,31 @@ module.exports = {
         res.status(201).send({
             response
         })
+    },
+    confirmOrder:async(req,res)=>{
+        try {
+            let { id } = req.body
+            // console.log(id)
+
+            await db.transaction.update({
+                order_status_id: 5
+            }, {
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Confirm Order Success!',
+                data: null
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
     }
 }
