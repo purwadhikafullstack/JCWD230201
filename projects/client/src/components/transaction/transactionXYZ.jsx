@@ -20,6 +20,13 @@ export default function TransactionXYZ() {
     let [select, setSelect] = useState(null), [dataFilter, setDataFilter] = useState([]), [page, setPage] = useState(0), [ship, setShip] = useState(1)
     let [dataTR, setDataTR] = useState([]), [totalPrice, setTotalPrice] = useState(0), [loadDate, setLoadDate] = useState([])
 
+    let [ok,setOk] = useState({
+        id:null,
+        code:null,
+        transaction:[],
+        warehouse:null
+    })
+
     const [date, setDate] = useState({
         from: "",
         to: "",
@@ -81,6 +88,7 @@ export default function TransactionXYZ() {
     let getAllTr = async () => {
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
         let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0 } : { order_status_id: 0 })
+        console.log(response.data.data)
         setDataTR(response.data.data)
        
 
@@ -130,8 +138,8 @@ export default function TransactionXYZ() {
     }
 
     let shipping = async (id, code, load, wh_id) => {
-        console.log(load)
-        let response = await axios.patch(`http://localhost:8000/transaction/ship?transaction_id=${id}&code=${code}&load=${JSON.stringify(load)}&warehouse_id=${wh_id}`)
+        // console.log(ok)
+        let response = await axios.patch(`http://localhost:8000/transaction/ship?transaction_id=${ok.id}&code=${ok.code}&load=${JSON.stringify(ok.transaction)}&warehouse_id=${ok.warehouse}`)
         response.data.message == 'Order canceled' ? toast.error(response.data.message) : toast.success(response.data.message)
         setTimeout(()=>{
             toast('Loading..')
@@ -356,6 +364,7 @@ export default function TransactionXYZ() {
                                                         <button onClick={() => {
                                                             setShip(1)
                                                             setPop(true)
+                                                            setOk({...ok, id:item.id, code:4,transaction:item.transaction_details,warehouse:item.location_warehouse_id})
                                                         }
                                                         } className='py-1 px-3 text-white bg-green-500 rounded-sm'>
                                                             Ready to Ship
@@ -363,6 +372,7 @@ export default function TransactionXYZ() {
                                                         <button onClick={() => {
                                                             setShip(2)
                                                             setPop(true)
+                                                            setOk({...ok, id:item.id, code:6,transaction:item.transaction_details,warehouse:item.location_warehouse_id})
                                                         }} className='px-3 py-1 text-white bg-red-500 rounded-sm'>
                                                             Cancel
                                                         </button>
@@ -391,15 +401,12 @@ export default function TransactionXYZ() {
                                                         <button
                                                         disabled={disable}
                                                             onClick={() => {
-                                                                setDisable(true)
-                                                                ship == 1 ?
-                                                                    shipping(item.id, 4, item.transaction_details, item.location_warehouse_id)
-                                                                    :
-                                                                    shipping(item.id,6, item.transaction_details, item.location_warehouse_id)
+                                                                setDisable(true)                             
+                                                                    shipping(ok.id, ok.code, ok.transaction, ok.warehouse)  
                                                             }} data-modal-hide="popup-modal" type="button" className={`text-white ${ship == 1 ? 'bg-green-500 hover:bg-green-700' : 'bg-red-600 hover:bg-red-800'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
                                                             {
                                                                 ship == 1 ?
-                                                                    'Yes, Send items' : 'No, Cancel it'
+                                                                    'Yes, send items' : 'Yes, cancel it'
                                                             }
                                                         </button>
                                                         <button disabled={disable} onClick={() => setPop(false)} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>

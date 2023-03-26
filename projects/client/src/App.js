@@ -71,12 +71,14 @@ function App() {
 
   let keepLogin = async () => {
     let response = await CheckLogin()
-    // console.log(response.id)
+    // console.log(response)
     if (!response) {
       localStorage.removeItem('token')
       setUser(null)
+    }else{
+      setUser(response)
     }
-    setUser(response)
+   
   }
 
   let getProductDetail = async (id) => {
