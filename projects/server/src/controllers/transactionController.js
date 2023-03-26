@@ -498,7 +498,7 @@ module.exports = {
 
 
             var kreat = await db.transaction.create({
-                id: `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 10000000)+Math.floor(Math.random() * 10)+3}`, user_id, ongkir,
+                id: `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 10000000) * 2}`, user_id, ongkir,
                 receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id,
                 courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1,
                 exprired: moment().add(2, 'hour').toDate()
@@ -507,16 +507,20 @@ module.exports = {
             var words = ''
 
             cart.forEach((item, index) => {
-                words += `\nUPDATE product_details SET qty = ${item.product_detail.qty} WHERE id = ${item.product_detail_id};`
+                words += `UPDATE product_details, transactions SET product_details.qty = ${item.product_detail.qty} WHERE product_details.id = ${item.product_detail_id} AND transactions.id = "${kreat.dataValues.id}" AND upload_payment IS NULL ;`
 
             })
-            console.log('MASUK SINIIII SAAAYNG')
             console.log(words)
 
             await sequelize.query(`
             CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 2 HOUR 
             DO BEGIN
-            UPDATE transactions SET order_status_id = 6 WHERE id = '${kreat.dataValues.id}' AND upload_payment IS NULL;${words}
+            UPDATE transactions SET order_status_id = 6 WHERE id = "${kreat.dataValues.id}" AND upload_payment IS NULL;
+            INSERT INTO status_transaction_logs (order_status_id,transaction_id)
+            SELECT 6, "${kreat.dataValues.id}" FROM DUAL
+            WHERE EXISTS(SELECT 1 FROM transactions WHERE id="${kreat.dataValues.id}" AND upload_payment IS NULL);
+            ${words}
+            
             END;`)
 
 
@@ -644,17 +648,6 @@ module.exports = {
                                     }
                                 })
 
-                            await db.location_product.update({
-                                qty: item.qty
-                            },
-                                {
-                                    where: {
-                                        location_warehouse_id: warehouse_id,
-                                        product_detail_id: item.product_detail_id
-                                    }
-                                })
-
-
                             await db.log_request.create({
                                 location_product_id_origin: distanceWH[i][1],
                                 location_product_id_target: warehouse_id,
@@ -677,6 +670,23 @@ module.exports = {
                                     product_detail_id: item.product_detail_id
                                 }
                             ])
+
+                            await db.log_stock.create({
+                                qty: item.qty,
+                                location_warehouse_id: warehouse_id,
+                                status: 'Reduction',
+                                product_detail_id: item.product_detail_id
+                            })
+
+                            await db.location_product.update({
+                                qty: 0
+                            },
+                                {
+                                    where: {
+                                        location_warehouse_id: warehouse_id,
+                                        product_detail_id: item.product_detail_id
+                                    }
+                                })
 
                             break
                         } else {
@@ -717,13 +727,31 @@ module.exports = {
                         }
                     }
                 }
+                else {
+                    await db.status_transaction_log.create({
+                        transaction_id, order_status_id: code
+                    })
+
+                    await db.location_product.update({
+                        qty: findData.dataValues.location_products[0].dataValues.qty - item.qty
+                    },
+                        {
+                            where: {
+                                location_warehouse_id :warehouse_id,
+                                product_detail_id: item.product_detail_id
+                            }
+                        })
+
+                    await db.log_stock.create({
+                        qty: item.qty,
+                        location_warehouse_id: warehouse_id,
+                        status: 'Reduction',
+                        product_detail_id: item.product_detail_id
+                    })
+                }
             })
 
-            db.status_transaction_log.create({
-                transaction_id, order_status_id: code
-            })
-
-            db.transaction.update({ order_status_id: code }, {
+            await db.transaction.update({ order_status_id: code }, {
                 where: {
                     id: transaction_id
                 }
@@ -789,8 +817,6 @@ module.exports = {
                 db.status_transaction_log.create({
                     transaction_id, order_status_id: 6
                 })
-
-
             }
         }
 
@@ -948,73 +974,65 @@ module.exports = {
         var transaction_detail = JSON.parse(load)
 
         if (code == 4) {
-            await db.transaction.update({ order_status_id: 4 }, {
+            await db.transaction.update({ order_status_id: 4, exprired: moment().add(7, 'day').toDate() }, {
                 where: {
                     id: transaction_id
                 }
             })
 
-            let words = []
-
-            transaction_detail.forEach(async (item, index) => {
-                let getQty = await db.location_product.findOne({
-                    where: {
-                        product_detail_id: item.product_detail_id,
-                        location_warehouse_id: warehouse_id
-                    }
-                })
-
-                await db.location_product.update({ qty: getQty.dataValues.qty - item.qty }, {
-                    where: {
-                        product_detail_id: item.product_detail_id,
-                        location_warehouse_id: warehouse_id
-                    }
-                })
-
-                let loader = {
-                    qty: null,
-                    status: 'Reduction',
-                    location_warehouse_id: warehouse_id,
-                    product_detail_id: null
-                }
-
-                loader.qty = getQty.dataValues.qty - item.qty
-                loader.product_detail_id = item.product_detail_id
-                words.push(loader)
-            })
-
-            await db.log_stock.bulkCreate(words)
-
-            await db.transaction.update({
-                exprired: moment().add(7, 'day').toDate()
-            }, {
-                where: {
-                    id: transaction_id
-                }
+            await db.status_transaction_log.create({
+                transaction_id, order_status_id: code
             })
 
             await sequelize.query(`
-            CREATE EVENT shipping_expired_${transaction_id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 7 DAY 
-            DO UPDATE transactions SET order_status_id = 5 WHERE id = '${transaction_id}';`)
+            CREATE EVENT shipping_expired_${transaction_id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 7 DAY
+            DO BEGIN
+             UPDATE transactions SET order_status_id = 5 WHERE id = "${transaction_id}";
+             INSERT INTO status_transaction_logs (order_status_id,transaction_id) VALUES (5, "${transaction_id}");
+             END;`)
 
         } else if (code == 6) {
+            console.log(transaction_detail)
             transaction_detail.forEach(async (item, index) => {
                 let getQty = await db.product_detail.findOne({
                     where: {
                         id: item.product_detail_id
+                    },
+                    include: {model: db.location_product, where: {
+                            location_warehouse_id: warehouse_id
+                        }
                     }
                 })
+                // console.log(getQty)
+     
 
                 await db.product_detail.update({ qty: getQty.dataValues.qty + item.qty }, {
                     where: {
                         id: item.product_detail_id
                     }
                 })
+                await db.location_product.update({ qty: getQty.dataValues.location_products[0].dataValues.qty + item.qty }, {
+                    where: {
+                        location_warehouse_id: warehouse_id,
+                        product_detail_id: item.product_detail_id
+                    }
+                })
+    
+                await db.log_stock.create({
+                                qty: item.qty,
+                                location_warehouse_id: warehouse_id,
+                                status: 'Additional',
+                                product_detail_id: item.product_detail_id
+                            }
+                        )
             })
             await db.transaction.update({ order_status_id: 6 }, {
                 where: {
                     id: transaction_id
                 }
+            })
+            await db.status_transaction_log.create({
+                transaction_id, order_status_id: code
             })
         }
 

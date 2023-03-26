@@ -34,7 +34,7 @@ export default function Warehouse() {
     }
     let postAddress = async () => {
         try {
-            if (onProvince.current.value == 'Please Select Province' || onCity.current.value === 'Please Select City') throw { message: 'Incomplete Input KONTOL' }
+            if (onProvince.current.value == 'Please Select Province' || onCity.current.value === 'Please Select City') throw { message: 'Incomplete Input' }
             let inputProvince = onProvince.current.value.split(", ")[1]
             let inputWH_Address = WH_address.current.value
             let inputCity = onCity.current.value.split(",")[1]
