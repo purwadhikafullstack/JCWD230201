@@ -497,15 +497,10 @@ module.exports = {
             console.log(date)
             // console.log(`${date[0]}${date[1]}${date[2]}`);
 
-            const date = new Date().toJSON().slice(0, 10).split('-');
-
-            // console.log(`${date[0]}${date[1]}${date[2]}`);
-
-            let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 1000000 + Date.now())}`
+            let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 1000 + Date.now().toString().slice(10))}`
 
             var kreat = await db.transaction.create({
-                id: `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random() * 10000000) * 2}`, user_id, ongkir,
-                receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id,
+                id: `${idTransaction}`, user_id, ongkir, receiver, address, warehouse_city: findWH.dataValues.city, location_warehouse_id: findWH.dataValues.id,
                 courier, user_name, phone_number, subdistrict, city, province, upload_payment, order_status_id: 1,
                 exprired: moment().add(2, 'hour').toDate()
             }, { transaction: t })
