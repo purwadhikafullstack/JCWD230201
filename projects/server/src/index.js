@@ -1,25 +1,45 @@
 require("dotenv/config");
 const express = require("express");
-const cors = require("cors");
+const cors = require('cors');
 const { join } = require("path");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
-app.use(
-  cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
-  })
-);
+app.use(cors());
+
 
 app.use(express.json());
 
+app.use('/Public',express.static('Public'))
+
 //#region API ROUTES
+const {adminRouter,userRouter,productRouter,transactionRouter,addressRouter,rajaongkirRouter,warehouseRouter, cartRouter, locationProductRouter} = require('./routers')
 
 // ===========================
 // NOTE : Add your routes here
+app.use('/admin', adminRouter)
+app.use('/product', productRouter)
+app.use('/users', userRouter)
+app.use('/transaction', transactionRouter)
+app.use('/shipping', addressRouter)
+app.use('/rajaongkir', rajaongkirRouter)
+app.use('/warehouse', warehouseRouter)
+app.use('/cart', cartRouter)
+app.use('/location', locationProductRouter)
+
+// ### Sequelize Synchronous
+// const Sequelize = require('sequelize');
+// const Models = require('./models');
+// Models.sequelize.sync({
+//     force : false,
+//     alter: true,
+//     logging : console.log
+// }).then(function () {
+//     console.log('Database is Synchronized!')
+
+// }).catch(function (err) {
+//     console.log(err, "Something Went Wrong with Database Update!")
+// });
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
