@@ -7,26 +7,87 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi'
 import { IoReceiptOutline } from 'react-icons/io5'
 import Loading from "../loading/loading"
 
+import Moment from"react-moment"
+import 'moment-timezone';
+
 export default function TransactionHistory() {
+
+    
 
     const [transaction, setTransaction] = useState([])
     const [totalPrice, setTotalPrice] = useState([])
  
     const [transactionID, setTransactionID] = useState(0)
+    const [modal, setModal] = useState(false)
+
+    const [payment, setPayment] = useState([])
+    const [message, setMessage] = useState('')
+
+    const[date,setDate]=useState([])
+
+    const [arrProducts, setArrProducts] = useState([])
+    const [showPage, setShowPage] = useState(1)
 
 
     let navigate = useNavigate()
     var sum = 0
 
-    let getData = async () => {
+    let getData = async (_page,btn) => {
         try {
-            let response = await axios.get('http://localhost:8000/transaction/allTransactionUser', {
-                headers: {
-                    token: localStorage.getItem('token')
-                }
+            
+            // let response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
+            //     headers: {
+            //         token: localStorage.getItem('token')
+            //     }
+            // })
+            // // console.log(response.data.data)
+            // setTransaction(response.data.data)
+            // setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
+            if(btn==="next"){
+                 _page = Number(_page) + 1
+            } else if (btn === "prev"){
+                _page = Number(_page) - 1
+            }
+            // console.log(showPage)
+            var response = await axios.get(`http://localhost:8000/transaction/page-transaction?page=${_page ? _page : showPage}`, {
+                    headers: {
+                        token: localStorage.getItem('token')
+                    }
+                })
+                // console.log(response.data.data)
+                setTransaction(response.data.data)
+                setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
+
+            // if (btn === "next") {
+               
+            //     var response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
+            //         headers: {
+            //             token: localStorage.getItem('token')
+            //         }
+            //     })
+            //     // console.log(response.data.data)
+            //     setTransaction(response.data.data)
+            //     setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
+            // } else if (btn === "prev") {
+            //     _page = Number(_page) - 1
+            //     var response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
+            //         headers: {
+            //             token: localStorage.getItem('token')
+            //         }
+            //     })
+            //     // console.log(response.data.data)
+            //     setTransaction(response.data.data)
+            //     setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
+            // }
+
+            var allDate=[]
+            response.data.data.forEach(value=>{
+                var dateString = value.updatedAt
+                var justClock = new Date(dateString).toTimeString();
+                var justDate = new Date(dateString).toUTCString();
+                allDate.push(`${justDate.split(' ').slice(0, 4).join(' ')} ${justClock.split(' ').slice(0, 1).join(' ')}`)             
             })
-            // console.log(response.data.data)
-            setTransaction(response.data.data)
+            setDate(allDate)
 
             var sum = 0
             var totprice = []
@@ -45,9 +106,58 @@ export default function TransactionHistory() {
 
         }
     }
+    let onImageValidation = (e) => {
+        try {
+            let files = [...e.target.files]
+            // console.log(files[0])
+            setPayment(files)
+
+            if (files.length !== 0) {
+                files.forEach((value) => {
+                    if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
+                })
+            }
+            setMessage('')
+
+
+        } catch (error) {
+            // console.log(error)
+            setMessage(error.message)
+
+        }
+    }
+
+    let uploadPayment = async (input) => {
+        try {
+            // console.log(input)
+            let fd = new FormData()
+            fd.append('images', payment[0])
+            fd.append('id', input)
+
+            let data = await axios.post('http://localhost:8000/transaction/payment-proof', fd)
+            // console.log(data)
+
+
+            toast.success('Upload Payment Proof Success!', {
+                style: {
+                    background: "black",
+                    color: 'white'
+                }
+            })
+            getData()
+
+            setModal(false)
+
+            // setTimeout(() => {
+            //     window.location.reload(false)
+            // }, 3000)
+        } catch (error) {
+            // console.log(error)
+        }
+    }
 
     useEffect(() => {
-        getData()
+        getData(showPage)
     }, [])
 
     if (!transaction) {
@@ -74,7 +184,7 @@ export default function TransactionHistory() {
                                             <p>
                                                 Order Number:
                                             </p>
-                                            <p className="font-bold">
+                                            <p className="font-bold text-gray-400">
                                                 {value.id}
                                             </p>
                                         </div>
@@ -83,7 +193,7 @@ export default function TransactionHistory() {
                                                 Order Date:
                                             </p>
                                             <p className="font-bold">
-                                                {`${value.createdAt.split('T')[0]} ${value.createdAt.split('T')[1].split('.')[0]}`}
+                                                {date[index]}
                                             </p>
                                         </div>
                                         <div>
@@ -109,11 +219,61 @@ export default function TransactionHistory() {
                                                 }} className="bg-black text-white rounded-sm border border-black hover:bg-white hover:text-black w-full py-2">
                                                 Order Detail
                                             </button>
+                                            {
+                                                value.order_status_id === 1 ?
+                                                    <>
+                                                        <button onClick={() => {
+                                                            setModal(!modal)
+                                                            setTransactionID(value.id)
+                                                        }} className="rounded-sm border border-black mt-2 w-full py-2 hover:bg-black hover:text-white">
+                                                            Upload Payment
+                                                        </button>
+                                                        <Modal
+                                                            show={modal}
+                                                            size="md"
+                                                            onClose={() => {
+                                                                setModal(!modal)
+                                                            }}
+                                                        >
+                                                            <Modal.Header>
+                                                                Upload Payment
+                                                            </Modal.Header>
+                                                            <Modal.Body>
+                                                                <div>
+                                                                    <input onChange={(e) => onImageValidation(e)} type="file" />
+                                                                    {message}
+                                                                </div>
+                                                            </Modal.Body>
+                                                            <Modal.Footer>
+                                                                <button onClick={() => uploadPayment(value.id)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm px-10 py-2">
+                                                                    Upload
+                                                                </button>
+                                                                <button onClick={() => setModal(false)} className="bg-white text-black hover:bg-black hover:text-white border border-black rounded-sm px-10 py-2">
+                                                                    Decline
+                                                                </button>
+                                                            </Modal.Footer>
+                                                        </Modal>
+                                                    </>
+                                                    :
+                                                    null
+                                            }
                                         </div>
                                     </div>
                                 )
                             })
                         }
+                        <div className='flex justify-center border p-5'>
+                                <button className={`border font-semibold rounded-l-lg px-7 hover:bg-black hover:text-white ${showPage.page === 1 ?`hidden`:`block`}`} onClick={()=> {getData(showPage.page, "prev")}}>
+                                    Previous
+                                </button>
+                                <div>
+                                   Page {showPage.page}
+                                </div>
+                            <button className={`border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white ${showPage.page === showPage.pages ?`hidden`:`block`}`} onClick={()=> {getData(showPage.page, "next")}}>
+                                    Next
+                                </button>
+                            </div>
+
                     </div>
                 </div>
                 <Toaster />

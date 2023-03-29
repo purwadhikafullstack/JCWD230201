@@ -552,12 +552,12 @@ module.exports = {
             await db.transaction_detail.bulkCreate(dataCart, { transaction: t })
 
             await db.cart.destroy({
-                where:{
+                where: {
                     user_id
                 }
             })
-            
-            cart.forEach(async (item, index) =>{
+
+            cart.forEach(async (item, index) => {
                 let compare = await db.product_detail.findOne({
                     where: {
                         id: item.product_detail_id
@@ -759,7 +759,7 @@ module.exports = {
                     },
                         {
                             where: {
-                                location_warehouse_id :warehouse_id,
+                                location_warehouse_id: warehouse_id,
                                 product_detail_id: item.product_detail_id
                             }
                         })
@@ -868,7 +868,7 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'data success',
-                data:data
+                data: data
             })
         } catch (error) {
             res.status(401).send({
@@ -1022,13 +1022,14 @@ module.exports = {
                     where: {
                         id: item.product_detail_id
                     },
-                    include: {model: db.location_product, where: {
+                    include: {
+                        model: db.location_product, where: {
                             location_warehouse_id: warehouse_id
                         }
                     }
                 })
                 // console.log(getQty)
-     
+
 
                 await db.product_detail.update({ qty: getQty.dataValues.qty + item.qty }, {
                     where: {
@@ -1041,14 +1042,14 @@ module.exports = {
                         product_detail_id: item.product_detail_id
                     }
                 })
-    
+
                 await db.log_stock.create({
-                                qty: item.qty,
-                                location_warehouse_id: warehouse_id,
-                                status: 'Additional',
-                                product_detail_id: item.product_detail_id
-                            }
-                        )
+                    qty: item.qty,
+                    location_warehouse_id: warehouse_id,
+                    status: 'Additional',
+                    product_detail_id: item.product_detail_id
+                }
+                )
             })
             await db.transaction.update({ order_status_id: 6 }, {
                 where: {
@@ -1077,7 +1078,7 @@ module.exports = {
             response
         })
     },
-    confirmOrder:async(req,res)=>{
+    confirmOrder: async (req, res) => {
         try {
             let { id } = req.body
             // console.log(id)
@@ -1095,6 +1096,52 @@ module.exports = {
                 message: 'Confirm Order Success!',
                 data: null
             })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    getAllTransactionUser: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let { page } = req.query
+
+            let data1 = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                }
+            })
+
+            var limit = 5
+            var pages = Math.ceil(data1.length / limit)
+            var offset = limit * (Number(page) - 1)
+
+            let data = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ],
+                offset,
+                limit
+            })
+
+            // console.log(data)
+            return res.status(200).send({
+                isError: false,
+                message: "Get All Transaction Success",
+                data: data,
+                total: data1.length,
+                page: Number(page),
+                pages: pages
+            });
         } catch (error) {
             res.status(401).send({
                 isError: true,

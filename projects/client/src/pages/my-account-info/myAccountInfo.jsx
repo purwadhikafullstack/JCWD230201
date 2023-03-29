@@ -17,6 +17,7 @@ export default function MyAccountInfo() {
 
     const { user, setUser } = useContext(userData)
 
+    const [disable, setDisable] = useState(false)
     const [message, setMessage] = useState('')
     const [profile, setProfile] = useState({
         name: '',

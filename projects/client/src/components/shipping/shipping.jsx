@@ -66,13 +66,13 @@ export default function Shipping(props) {
                     "token": localStorage.getItem('token')
                 }
             })
-            console.log(response.data.data);
+            // console.log(response.data.data);
             setCheckAddress(response.data.data);
             let aa = []
             response.data.data.forEach((item) => {
                 return item.value == 1 ? aa.push(item) : null
             })
-            console.log(aa[0]);
+            // console.log(aa[0]);
             setArrInitial(aa[0])
             setArrInitialCity(aa[0].city_id)
             setValueDefault(response.data.data);
@@ -84,7 +84,7 @@ export default function Shipping(props) {
             setInitialSubdistrict(aa[0].subdistrict)
             setInitialNumber(aa[0].phone_umber)
         } catch (error) {
-            console.log(error.message)
+            // console.log(error.message)
         }
     }
 
@@ -128,7 +128,7 @@ export default function Shipping(props) {
             });
             setArrProvince(response.data.data);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -142,7 +142,7 @@ export default function Shipping(props) {
             });
             setArrCity(data.data.data.results)
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -158,17 +158,17 @@ export default function Shipping(props) {
             setSelectedSubdistrict(value.subdistrict);
             setShowAddress(false)
             setSelectedID(value.id)
-            console.log(value);
+            // console.log(value);
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
     let getCost = async () => {
         try {
-            console.log(onCourier.current.value);
+            // console.log(onCourier.current.value);
             // console.log(onCost.current.value);
             let data = selectedCityId ? await axios.post('http://localhost:8000/rajaongkir/ongkir', { origin: selectedCityId, destination: selectedCityId, weight: 1700, courier: `${onCourier.current.value}` }, {
                 headers: {
@@ -182,16 +182,16 @@ export default function Shipping(props) {
                 })
 
             setCostShipping(data.data.data.results[0].costs);
-            console.log(data);
+            // console.log(data);
             setPriceShipping(costShipping[onCost.current.value.split(",")[1]].cost[0].value);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
     let getService = () => {
         getCost()
-        console.log(onCost.current.value)
+        // console.log(onCost.current.value)
     }
 
     let getCart = async () => {
@@ -603,7 +603,7 @@ export default function Shipping(props) {
                                     Rp. {(totalPrice + priceShipping).toLocaleString()}
                                 </div>
                             </div>
-                            <button onClick={() => setPaymentInfoModal(!paymentInfoModal)} className={`bg-black text-white font-bold w-full py-2 rounded`} disabled={disable}>
+                            <button onClick={() => setPaymentInfoModal(!paymentInfoModal)} className={`bg-black text-white font-bold w-full py-2 rounded disabled:cursor-not-allowed`} disabled={disable}>
                                 Buy
                             </button>
                             <Modal

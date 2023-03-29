@@ -24,7 +24,7 @@ export default function ShippingSuccess(props) {
                     token: localStorage.getItem('token')
                 }
             })
-            console.log(response)
+            // console.log(response)
             setStatus(response.data.data.order_status.status)
             setOrderNumber(response.data.data.id)
             setData(response.data.data)
@@ -86,7 +86,7 @@ export default function ShippingSuccess(props) {
                             </div>
                         </div>
 
-                        <div className="bg-blue-200 flex justify-between py-4 px-3">
+                        <div className="bg-blue-200 flex justify-between rounded-sm py-4 px-3">
                             <p className="text-teal-800">
                                 Expired Payment
                             </p>
@@ -98,7 +98,7 @@ export default function ShippingSuccess(props) {
                             </p>
                         </div>
 
-                        <div className="text-center bg-sky-50 mt-6 py-3">
+                        <div className="text-center rounded-sm bg-sky-50 mt-6 py-3">
                             <p>
                                 VA Number - BCA Virtual Account
                             </p>
@@ -108,7 +108,7 @@ export default function ShippingSuccess(props) {
                         </div>
 
                         <div className="flex justify-center my-6">
-                            <button onClick={() => navigate(`/my-account/history-detail?id=${orderNumber}`)} className="bg-black text-white px-3 py-2 font-bold">
+                            <button onClick={() => navigate(`/my-account/history-detail?id=${orderNumber}`)} className="bg-black rounded-sm text-white px-3 py-2 font-bold">
                                 Order Detail
                             </button>
                         </div>
