@@ -314,8 +314,8 @@ export default function TransactionXYZ() {
                                         <div className='flex px-5 justify-between'>
                                             <div className='w-4/5 flex flex-col'>
                                                 <div className='flex'>
-                                                    <img src={require(`../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" />
-                                                    {/* <img src={`http://localhost:8000/Public/images/${item.transaction_details[0].product_img}`} className='w-20 h-20 object-contain' alt="" /> */}
+                                                    {/* <img src={require(`../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" /> */}
+                                                    <img src={`http://localhost:8000/Public/images/${item.transaction_details[0].product_img}`} className='w-20 h-20 object-contain' alt="" />
                                                     <div className='mt-4 font-bold flex flex-col items-start'>
                                                         <button>
                                                             {item.transaction_details[0].product_name}

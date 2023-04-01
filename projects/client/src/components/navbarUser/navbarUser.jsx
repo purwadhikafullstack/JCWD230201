@@ -32,7 +32,7 @@ export default function NavbarUser(props) {
 
     useEffect(() => {
         getCategory()
-        props.func.getCart()
+        // props.func.getCart()
     }, [])
 
     // if (!props.data.itemCart) {
@@ -43,19 +43,19 @@ export default function NavbarUser(props) {
     //     )
     // }
 
-    // if (!user) {
-    //     return (
-    //         <>
-    //             <Loading />
-    //         </>
-    //     )
-    // }
+    if (!user) {
+        return (
+            <>
+                <Loading />
+            </>
+        )
+    }
 
 
     return (
         <>
-            <div className="flex justify-between px-10 lg:justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
-                <div className="items-center flex lg:hidden text-2xl">
+            <div className="flex justify-between px-5 md:px-10 lg:justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
+                <div className="items-center flex lg:hidden text-2xl z-10">
                     {showSidebar ?
                         <>
                             <button
@@ -64,10 +64,11 @@ export default function NavbarUser(props) {
                                 <MdOutlineCancel />
                             </button>
                             <div
-                                className={`top-20 left-0 w-full md:w-80 bg-black text-white fixed transition h-full ease-in-out duration-300 overflow-y-scroll
-                                ${showSidebar ? "translate-x-0 " : "translate-x-full"}`}>
-                                <div className="flex flex-col">
-                                    <Sidebar func={ props.func } data={{...props.data,category}}/>
+                                className={`top-20 left-0 w-full z-20 md:w-80 bg-black text-white fixed  h-full transition ease-in-out duration-300 overflow-y-scroll
+                                ${showSidebar ? "transform translate-x-0 " : "transform translate-x-full"}`}
+                            >
+                                <div className="flex flex-col z-20">
+                                    <Sidebar func={props.func} data={{ ...props.data, category }} />
                                 </div>
                             </div>
                         </>
@@ -118,7 +119,7 @@ export default function NavbarUser(props) {
                     })}
                 </div>
                 <div className="flex items-center gap-5 text-2xl">
-                    {/* <button>
+                    <button>
                         <Tooltip
                             content="Search"
                             placement="bottom"
@@ -135,7 +136,7 @@ export default function NavbarUser(props) {
                         >
                             <MdFavorite />
                         </Tooltip>
-                    </button> */}
+                    </button>
                     <button onClick={() => props.func.notRegister()}>
                         <Link to='/cart'>
                             <Tooltip
@@ -187,7 +188,7 @@ export default function NavbarUser(props) {
                     }
                 </div>
             </div>
-            <Toaster />
+            {/* <Toaster /> */}
         </>
     )
 }

@@ -82,9 +82,17 @@ export default function ProductDetail(props) {
     }
     return (
         <>
-            <div className="pt-28 grid justify-center md:flex md:flex-wrap md:justify-center lg:flex lg:justify-center gap-7">
-                <div className="w-full h-full md:w-full md:h-full lg:w-96 lg:h-full">
-                    <div className="grid h-[200px] md:h-[300px] lg:h-96">
+            <div className="pt-20 md:pt-32 grid justify-center w-screen md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
+                <div className="lg:hidden flex items-center justify-between bg-white w-full px-3 md:px-5 py-2 border-b-2 fixed top-20">
+                    <div className="text-xl font-semibold">
+                        {props.data.detail.name}
+                    </div>
+                    <div className="text-xl font-semilight">
+                        Rp {selected ? (selected.price * quantity).toLocaleString() : props.data.detailProduct[0].price.toLocaleString()}
+                    </div>
+                </div>
+                <div className="w-full h-full md:w-full md:h-full lg:w-96 lg:h-full -z-10">
+                    <div className="grid h-[500px] md:h-[300px] lg:h-96">
                         <Carousel>
                             <img src={require(`../../Assets/${props.data.detail.product_images[0].img}`)} alt="...."  className="w-44 md:w-80 lg:w-96"/>
                         </Carousel>
@@ -103,7 +111,7 @@ export default function ProductDetail(props) {
                         <div className="text-sm font-bold py-3 px-1 text-neutral-600">
                             COLOR :
                         </div>
-                        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                        <div className="grid grid-cols-3 lg:grid-cols-4 gap-2">
                             {arrColor.map((value, index)=>{
                                 return(
                                     <div>
@@ -134,19 +142,38 @@ export default function ProductDetail(props) {
                         })}
                     </div>
 
+                    <div className="w-full hidden md:block lg:hidden">
+                        <button onClick={() => {
+                            addToCart()
+                        }}
+                            className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                            Add to cart
+                        </button>
+                    </div>
+
+
                     <div className="w-80 md:w-96 mt-10">
                         {props.data.detail.description}
                     </div>
                     <div className="font-semibold mt-10">
                         Isi Kotak :
-                        <li>iPhone dengan iOS 16.</li>
+                        <li>{props.data.detail.name.split(' ')[0]} dengan iOS 16.</li>
                         <li>Kabel USB-C ke Lightning.</li>
                         <li>Buku Manual dan dokumentasi lain.</li>
                     </div>
 
                 </div>
 
-                <div className="flex flex-col items-center px-7 py-3 h-max border rounded w-full md:w-[250px]">
+                <div className="fixed bottom-0 w-full md:hidden">
+                    <button onClick={() => {
+                        addToCart()
+                    }}
+                        className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                        Add to cart
+                    </button>
+                </div>
+
+                <div className=" hidden lg:flex flex-col items-center px-7 py-3 h-max border rounded w-full md:w-[250px]">
                     <div className="text-2xl font-semibold">
                         Rp {selected ? (selected.price * quantity).toLocaleString() : props.data.detailProduct[0].price.toLocaleString()}
                     </div>

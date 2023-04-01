@@ -25,7 +25,7 @@ export default function Product(props) {
     }, [])
     return (
         <div className="pt-28">
-            <div className="flex justify-start pl-16 text-3xl font-bold">
+            <div className="flex justify-center md:justify-start md:pl-16 text-3xl font-bold">
                 All Products
             </div>
             <div className='flex justify-end mt-5 px-40'>

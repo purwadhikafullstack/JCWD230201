@@ -16,9 +16,9 @@ export default function Sidebar(props) {
 
     let showAccordion = (id) => {
         // console.log(id)
-        if(showContent !=id)  {
+        if (showContent != id) {
             setShowContent(id)
-        } else if (showContent==0) {
+        } else if (showContent == 0) {
             setShowContent(id)
         } else if (showContent) {
             setShowContent(0)
@@ -34,7 +34,7 @@ export default function Sidebar(props) {
         })
         setTimeout(() => {
             localStorage.removeItem('token')
-            window.location.reload(false)
+
         }, 2000)
         navigate('/')
     }
@@ -47,35 +47,45 @@ export default function Sidebar(props) {
                     props.data.category.map((value, index) => {
                         return (
                             <>
-                                <div>
+                                <div className='z-20'>
                                     <button onClick={() => showAccordion(value.id)} className="flex w-full items-center justify-between px-4 py-2 text-left text-xl font-medium text-white">
                                         <p>{value.name}</p>
                                         <MdOutlineKeyboardArrowDown className={!showContent ? 'rotate-180 transform' : ''} />
                                     </button>
                                     {
                                         showContent == value.id ?
-                                            value.products.map((val) => {
+                                            value.products.map((val, idx) => {
                                                 return (
-                                                    <button
-                                                        onClick={() => {
-                                                            props.func.getProductDetail(val.id)
-                                                            navigate(`/product/productdetail/${val.id}`)
-                                                        }}
-                                                        className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">
-                                                        {val.name}
-                                                    </button>
+                                                    <>
+                                                        <button
+                                                            onClick={() => {
+                                                                props.func.getProductDetail(val.id)
+                                                                navigate(`/product/productdetail/${val.id}`)
+                                                                window.location.reload(false)
+                                                            }}
+                                                            className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">
+                                                            {val.name}
+                                                        </button>
+                                                        {
+                                                            idx + 1 == value.products.length ?
+
+                                                                <button
+                                                                    onClick={() => {
+                                                                        navigate(`/product/${value.id}`)
+                                                                        window.location.reload(false)
+                                                                    }}
+                                                                    className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">
+                                                                    View All
+                                                                </button>
+                                                                :
+                                                                null
+                                                        }
+                                                    </>
                                                 )
                                             })
                                             :
                                             null
                                     }
-                                    {/* <button
-                                        onClick={() => {
-                                            navigate(`/product/${value.id}`)
-                                        }}
-                                        className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">>
-                                        View All
-                                    </button> */}
                                 </div>
                             </>
                         )

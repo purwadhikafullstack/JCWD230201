@@ -8,9 +8,9 @@ export const LoginAccount = async (inputEmail, inputPassword, toogle) => {
             await axios.post('http://localhost:8000/admin/login', { email: inputEmail, password: inputPassword })
             :
             await axios.post('http://localhost:8000/users/login', { email: inputEmail, password: inputPassword })
-        console.log('user') // taro disini buat API user
+        // console.log('user') // taro disini buat API user
 
-        console.log(response)
+        // console.log(response)
             return{
                 response:response.data.message,
                 id:response.data.data.token,

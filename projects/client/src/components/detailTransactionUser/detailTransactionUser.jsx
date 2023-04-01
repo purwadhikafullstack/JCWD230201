@@ -28,6 +28,15 @@ export default function DetailTransaction() {
     const [cancelID, setCancelID] = useState(0)
     const [date, setDate] = useState('')
 
+    let shotgunStatus = [
+        'bg-yellow-100 text-yellow-400 text-sm font-bold p-1 rounded-sm',
+        'bg-orange-100 text-orange-400 text-sm font-bold p-1 rounded-sm',
+        'bg-purple-200 text-purple-600 text-sm font-bold p-1 rounded-sm',
+        'bg-blue-100 text-blue-600 text-sm font-bold p-1 rounded-sm',
+        'bg-lime-400 bg-opacity-30 text-green-600 text-sm font-bold p-1 rounded-sm',
+        'bg-red-200 text-red-600 text-sm font-bold p-1 rounded-sm'
+    ]
+
     let getData = async () => {
         try {
             var id = queryParams.get('id');
@@ -132,7 +141,7 @@ export default function DetailTransaction() {
                                     <Badge
                                         color="info"
                                         size="sm"
-                                        className={transactionDetail.statusID === 6 ? "text-center bg-red-200 font-semibold text-red-600 w-max px-3 rounded-sm" : transactionDetail.statusID === 4 || transactionDetail.statusID === 5 ? "text-center bg-green-200 font-semibold text-green-600 w-max px-3 rounded-sm" : "text-center bg-blue-200 font-semibold text-sky-600 w-max px-3 rounded-sm"}
+                                        className={shotgunStatus[transactionDetail.statusID - 1]}
                                     >
                                         {transactionDetail.status}
                                     </Badge>
@@ -159,13 +168,13 @@ export default function DetailTransaction() {
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <div className={transactionDetail.statusID === 6 ? "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : transactionDetail.statusID >= 3 ? "bg-black text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center"}>
-                                            <BsArrowRepeat/>
+                                            <BsArrowRepeat />
                                         </div>
                                         <p className="mt-5 font-semibold text-center">
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 3 ? "Process" : null}
                                         </p>
                                         {
-                                            transactionDetail.statusID === 6 ?null: transactionDetail.statusID === 3 ?
+                                            transactionDetail.statusID === 6 ? null : transactionDetail.statusID === 3 ?
                                                 <p className="text-sm mt-3 text-center">
                                                     {date}
                                                 </p>
@@ -185,7 +194,7 @@ export default function DetailTransaction() {
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 4 ? "Shipped" : null}
                                         </p>
                                         {
-                                            transactionDetail.statusID === 6 ?null: transactionDetail.statusID === 4 ?
+                                            transactionDetail.statusID === 6 ? null : transactionDetail.statusID === 4 ?
                                                 <p className="text-sm mt-3 text-center">
                                                     {date}
                                                 </p>

@@ -7,23 +7,23 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi'
 import { IoReceiptOutline } from 'react-icons/io5'
 import Loading from "../loading/loading"
 
-import Moment from"react-moment"
+import Moment from "react-moment"
 import 'moment-timezone';
 
 export default function TransactionHistory() {
 
-    
+    const [disable, setDisable] = useState(true)
 
     const [transaction, setTransaction] = useState([])
     const [totalPrice, setTotalPrice] = useState([])
- 
+
     const [transactionID, setTransactionID] = useState(0)
     const [modal, setModal] = useState(false)
 
     const [payment, setPayment] = useState([])
     const [message, setMessage] = useState('')
 
-    const[date,setDate]=useState([])
+    const [date, setDate] = useState([])
 
     const [arrProducts, setArrProducts] = useState([])
     const [showPage, setShowPage] = useState(1)
@@ -32,60 +32,39 @@ export default function TransactionHistory() {
     let navigate = useNavigate()
     var sum = 0
 
-    let getData = async (_page,btn) => {
+    let shotgunStatus = [
+        'bg-yellow-100 text-yellow-400 text-sm font-bold p-1 text-center rounded-sm',
+        'bg-orange-100 text-orange-400 text-sm font-bold p-1 text-center rounded-sm',
+        'bg-purple-200 text-purple-600 text-sm font-bold p-1 text-center rounded-sm',
+        'bg-blue-100 text-blue-600 text-sm font-bold p-1 text-center rounded-sm',
+        'bg-lime-400 bg-opacity-30 text-green-600 text-sm font-bold p-1 text-center rounded-sm',
+        'bg-red-200 text-red-600 text-sm font-bold p-1 text-center rounded-sm'
+    ]
+
+    let getData = async (_page, btn) => {
         try {
-            
-            // let response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
-            //     headers: {
-            //         token: localStorage.getItem('token')
-            //     }
-            // })
-            // // console.log(response.data.data)
-            // setTransaction(response.data.data)
-            // setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
-            if(btn==="next"){
-                 _page = Number(_page) + 1
-            } else if (btn === "prev"){
+
+            if (btn === "next") {
+                _page = Number(_page) + 1
+            } else if (btn === "prev") {
                 _page = Number(_page) - 1
             }
             // console.log(showPage)
             var response = await axios.get(`http://localhost:8000/transaction/page-transaction?page=${_page ? _page : showPage}`, {
-                    headers: {
-                        token: localStorage.getItem('token')
-                    }
-                })
-                // console.log(response.data.data)
-                setTransaction(response.data.data)
-                setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
+                headers: {
+                    token: localStorage.getItem('token')
+                }
+            })
+            // console.log(response.data.data)
+            setTransaction(response.data.data)
+            setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
 
-            // if (btn === "next") {
-               
-            //     var response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
-            //         headers: {
-            //             token: localStorage.getItem('token')
-            //         }
-            //     })
-            //     // console.log(response.data.data)
-            //     setTransaction(response.data.data)
-            //     setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
-            // } else if (btn === "prev") {
-            //     _page = Number(_page) - 1
-            //     var response = await axios.get(`http://localhost:8000/transaction/allTransactionUser?page=${_page ? _page : showPage}`, {
-            //         headers: {
-            //             token: localStorage.getItem('token')
-            //         }
-            //     })
-            //     // console.log(response.data.data)
-            //     setTransaction(response.data.data)
-            //     setShowPage({ page: response.data.page, pages: response.data.pages, total: response.data.total })
-            // }
-
-            var allDate=[]
-            response.data.data.forEach(value=>{
+            var allDate = []
+            response.data.data.forEach(value => {
                 var dateString = value.updatedAt
                 var justClock = new Date(dateString).toTimeString();
                 var justDate = new Date(dateString).toUTCString();
-                allDate.push(`${justDate.split(' ').slice(0, 4).join(' ')} ${justClock.split(' ').slice(0, 1).join(' ')}`)             
+                allDate.push(`${justDate.split(' ').slice(0, 4).join(' ')} ${justClock.split(' ').slice(0, 1).join(' ')}`)
             })
             setDate(allDate)
 
@@ -112,12 +91,19 @@ export default function TransactionHistory() {
             // console.log(files[0])
             setPayment(files)
 
+            if (files.length === 0) {
+                setDisable(true)
+            } else {
+                setDisable(false)
+            }
+
             if (files.length !== 0) {
                 files.forEach((value) => {
                     if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
                 })
             }
             setMessage('')
+
 
 
         } catch (error) {
@@ -146,11 +132,9 @@ export default function TransactionHistory() {
             })
             getData()
 
-            setModal(false)
-
-            // setTimeout(() => {
-            //     window.location.reload(false)
-            // }, 3000)
+            setTimeout(() => {
+                window.location.reload(false)
+            }, 3000)
         } catch (error) {
             // console.log(error)
         }
@@ -208,7 +192,7 @@ export default function TransactionHistory() {
                                             <p>
                                                 Status:
                                             </p>
-                                            <p className={value.order_status_id === 6 ? "text-center bg-red-200 font-semibold text-red-600" : value.order_status_id === 4 || value.order_status_id === 5 ? "text-center bg-green-200 font-semibold text-green-600" : "text-center bg-blue-200 font-semibold text-sky-600 px-1"}>
+                                            <p className={shotgunStatus[value.order_status_id-1]}>
                                                 {value.order_status.status}
                                             </p>
                                         </div>
@@ -216,7 +200,7 @@ export default function TransactionHistory() {
                                             <button onClick={() => {
                                                 navigate(`/my-account/history-detail?id=${value.id}`)
                                                 // console.log(`/my-account/history/${value.id}`)
-                                                }} className="bg-black text-white rounded-sm border border-black hover:bg-white hover:text-black w-full py-2">
+                                            }} className="bg-black text-white rounded-sm border border-black hover:bg-white hover:text-black w-full py-2">
                                                 Order Detail
                                             </button>
                                             {
@@ -245,10 +229,12 @@ export default function TransactionHistory() {
                                                                 </div>
                                                             </Modal.Body>
                                                             <Modal.Footer>
-                                                                <button onClick={() => uploadPayment(value.id)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm px-10 py-2">
+                                                                <button onClick={() => uploadPayment(value.id)} disabled={disable} className="bg-black text-white hover:bg-white hover:text-black border disabled:hover disabled:cursor-not-allowed border-black rounded-sm px-10 py-2">
                                                                     Upload
                                                                 </button>
-                                                                <button onClick={() => setModal(false)} className="bg-white text-black hover:bg-black hover:text-white border border-black rounded-sm px-10 py-2">
+                                                                <button onClick={() => {
+                                                                    setModal(false)
+                                                                }} className="bg-white text-black hover:bg-black hover:text-white border border-black rounded-sm px-10 py-2">
                                                                     Decline
                                                                 </button>
                                                             </Modal.Footer>
@@ -263,16 +249,16 @@ export default function TransactionHistory() {
                             })
                         }
                         <div className='flex justify-center border p-5'>
-                                <button className={`border font-semibold rounded-l-lg px-7 hover:bg-black hover:text-white ${showPage.page === 1 ?`hidden`:`block`}`} onClick={()=> {getData(showPage.page, "prev")}}>
-                                    Previous
-                                </button>
-                                <div>
-                                   Page {showPage.page}
-                                </div>
-                            <button className={`border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white ${showPage.page === showPage.pages ?`hidden`:`block`}`} onClick={()=> {getData(showPage.page, "next")}}>
-                                    Next
-                                </button>
+                            <button className={`border font-semibold rounded-l-lg px-7 hover:bg-black hover:text-white ${showPage.page === 1 ? `hidden` : `block`}`} onClick={() => { getData(showPage.page, "prev") }}>
+                                Previous
+                            </button>
+                            <div>
+                                Page {showPage.page}
                             </div>
+                            <button className={`border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white ${showPage.page === showPage.pages ? `hidden` : `block`}`} onClick={() => { getData(showPage.page, "next") }}>
+                                Next
+                            </button>
+                        </div>
 
                     </div>
                 </div>

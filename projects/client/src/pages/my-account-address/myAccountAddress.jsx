@@ -862,9 +862,9 @@ export default function MyAccountAddress() {
                             </>
                     }
                 </div>
-                    <Toaster />
+                <Toaster />
             </>
             :
-            <Loading/>
+            <Loading />
     )
 }
