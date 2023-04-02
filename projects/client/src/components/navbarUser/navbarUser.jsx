@@ -43,13 +43,13 @@ export default function NavbarUser(props) {
     //     )
     // }
 
-    if (!user) {
-        return (
-            <>
-                <Loading />
-            </>
-        )
-    }
+    // if (!user) {
+    //     return (
+    //         <>
+    //             <Loading />
+    //         </>
+    //     )
+    // }
 
 
     return (
@@ -92,7 +92,7 @@ export default function NavbarUser(props) {
                     </Link>
                     {category.map((value, index) => {
                         return (
-                            <button className="hidden lg:block lg:px-3 hover:bg-neutral-500" onClick={() => props.func.getProduct(value.id)}>
+                            <button className="px-3 hover:bg-neutral-500" onClick={() => {props.func.getProduct(value.id);props.func.getColor(value.id)}}>
                                 <Link to={`/product/${value.id}`}>
                                     <div className="group relative dropdown px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
                                         <div>{value.name}</div>

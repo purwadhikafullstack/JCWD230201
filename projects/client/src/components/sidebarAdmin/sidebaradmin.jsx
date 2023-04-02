@@ -1,6 +1,6 @@
 import { TbBuildingWarehouse, TbReportAnalytics } from 'react-icons/tb'
 import { MdOutlineSpaceDashboard } from 'react-icons/md'
-import { BsBox } from 'react-icons/bs'
+import { BsMailbox } from 'react-icons/bs'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { userData } from "../../data/userData";
@@ -54,6 +54,15 @@ export default function SidebarAdmin() {
                         Sales Reports
                     </button>
                     <ManageProduct/>
+                    {
+                        user.role == 2 ?
+                            <button onClick={() => navigate('mutation')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                                <BsMailbox size={'20px'} />
+                                Mutation
+                            </button>
+                            :
+                            null
+                    }
                 </div>
 
                 <div className='flex flex-col items-center justify-end h-full'>
