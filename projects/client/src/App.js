@@ -214,18 +214,22 @@ function App() {
 
   //   }
   // }
-  let notRegister = () => {
-    // console.log(localStorage);
-    if ((localStorage.getItem("token") == null) || (verifyStatus === "Unverified")) {
-      setTimeout(() => {
-        toast('Login or Regist First', {
-          duration: 3000
-        })
-      }, 1000)
+  let notRegister = async() => {
+    try {
 
-      setTimeout(() => {
-        navigate('/')
-      }, 3000)
+      if ((localStorage.getItem("token") == null) || (data.data.status === "Unverified")) {
+        setTimeout(() => {
+          toast('Login or Regist First', {
+            duration: 3000
+          })
+        }, 1000)
+
+        setTimeout(() => {
+          navigate('/')
+        }, 3000)
+      }
+    } catch (error) {
+      
     }
   }
 
@@ -308,7 +312,6 @@ function App() {
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess func={{ getCart }} />} />
-
             </Routes>
             <Toaster />
             <Footer />

@@ -28,5 +28,4 @@ Router.get('/sort-name/:category_id', productController.getSortName)
 Router.post('/sort-product/:category_id', productController.postSortColor)
 Router.get('/color/:category_id', productController.getColor)
 
-
 module.exports = Router

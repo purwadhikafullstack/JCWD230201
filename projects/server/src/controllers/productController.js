@@ -1,23 +1,23 @@
 //import sequelize 
-const {sequelize} = require('./../models')
+const { sequelize } = require('./../models')
 const { Op } = require('sequelize')
-const {v4:uuidv4} = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 const { QueryTypes } = require('sequelize');
 
 const db = require('./../models/index')
 // Import Delete Files
 const deleteFiles = require('./../helpers/deleteFiles')
 
-module.exports= {
-    getAllProducts: async(req, res) => {
+module.exports = {
+    getAllProducts: async (req, res) => {
         try {
-            let {name} = req.query
+            let { name } = req.query
             let data = await db.category.findAll({
                 where: {
                     name
                 },
-                include :{
-                    model: db.product, include:{
+                include: {
+                    model: db.product, include: {
                         model: db.product_detail
                     }
                 }
@@ -35,9 +35,9 @@ module.exports= {
             })
         }
     },
-    getProduct: async(req, res) => {
+    getProduct: async (req, res) => {
         try {
-            let {category_id} = req.params
+            let { category_id } = req.params
             // console.log(name);
             let data = await db.product.findAll({
                 where: {
@@ -48,6 +48,7 @@ module.exports= {
                     },
                 {model: db.product_image}],
                 order:[[{model: db.product_detail},'price', 'ASC']]
+
             })
             res.status(201).send({
                 isError: false,
@@ -62,17 +63,17 @@ module.exports= {
             })
         }
     },
-    getProductDetails: async(req, res) => {
+    getProductDetails: async (req, res) => {
         try {
-            let {id} = req.params
+            let { id } = req.params
             let data = await db.product.findAll({
                 where: {
                     id
                 },
-                include:[{
+                include: [{
                     model: db.product_detail
                 },
-            {model: db.product_image}]
+                { model: db.product_image }]
             })
             let data2 = await db.location_product.findAll({
                 where:{
@@ -96,11 +97,11 @@ module.exports= {
                 data: error
             })
         }
-    } ,
-    getCategory: async(req,res)=>{
+    },
+    getCategory: async (req, res) => {
         try {
             let data = await db.category.findAll({
-                include:{
+                include: {
                     model: db.product
                 }
             })
@@ -117,16 +118,16 @@ module.exports= {
             })
         }
     },
-    getSelected: async(req, res) =>{
+    getSelected: async (req, res) => {
         try {
-            let {product_id, color, memory_storage} = req.params
+            let { product_id, color, memory_storage } = req.params
             let data = await sequelize.query(
                 'SELECT * FROM product_details WHERE (product_id = ? AND (color = ? AND memory_storage = ?))',
                 {
-                  replacements: [product_id, color, memory_storage],
-                  type: QueryTypes.SELECT
+                    replacements: [product_id, color, memory_storage],
+                    type: QueryTypes.SELECT
                 }
-              );
+            );
             res.status(200).send({
                 isError: false,
                 message: "Get Selected Product Success",
@@ -140,33 +141,33 @@ module.exports= {
             })
         }
     },
-    postCategory: async(req, res)=>{
+    postCategory: async (req, res) => {
         try {
-            let {name} = req.body
+            let { name } = req.body
 
             let result = await db.category.findOne({
                 where: {
                     name
                 }
             })
-            
-            if(result){
+
+            if (result) {
                 res.status(400).send({
                     isError: true,
                     message: "Category Already Exist"
                 })
-            }else if(!name){
+            } else if (!name) {
                 res.status(400).send({
                     isError: true,
                     message: "Category Name Cannot Empty"
                 })
-            }else{
-                let data = await db.category.create({name})
+            } else {
+                let data = await db.category.create({ name })
                 res.status(201).send({
-                isError: false,
-                message: "Post Category Success",
-                data
-            })
+                    isError: false,
+                    message: "Post Category Success",
+                    data
+                })
             }
         } catch (error) {
             res.status(400).send({
@@ -176,26 +177,26 @@ module.exports= {
             })
         }
     },
-    editCategory: async(req, res)=>{
+    editCategory: async (req, res) => {
         try {
-            let {id, name} = req.body
+            let { id, name } = req.body
             let result = await db.category.findOne({
-                where:{
+                where: {
                     name
                 }
             })
-            if(result){
+            if (result) {
                 res.status(400).send({
                     isError: true,
                     message: "Category Already Exist"
                 })
-            }else if(!name){
+            } else if (!name) {
                 res.status(400).send({
                     isError: true,
                     message: "New Category Cannot Empty"
                 })
-            }else{
-                await db.category.update({id, name},{
+            } else {
+                await db.category.update({ id, name }, {
                     where: {
                         id
                     }
@@ -205,7 +206,7 @@ module.exports= {
                     message: "Edit Category Success"
                 })
             }
-            
+
         } catch (error) {
             res.status(400).send({
                 isError: true,
@@ -214,9 +215,9 @@ module.exports= {
             })
         }
     },
-    deleteCategory: async(req, res)=>{
+    deleteCategory: async (req, res) => {
         try {
-            let {id} = req.body
+            let { id } = req.body
             await db.category.destroy({
                 where: {
                     id
@@ -234,23 +235,23 @@ module.exports= {
             })
         }
     },
-    addProduct: async(req, res)=>{
+    addProduct: async (req, res) => {
         const t = await sequelize.transaction()
         try {
             let dataToCreate = JSON.parse(req.body.data)
             console.log(dataToCreate);
-            let response = await db.product.create({...dataToCreate , name: dataToCreate.name, description: dataToCreate.description, category_id: dataToCreate.category_id})
+            let response = await db.product.create({ ...dataToCreate, name: dataToCreate.name, description: dataToCreate.description, category_id: dataToCreate.category_id })
             console.log(response);
 
             let find = await db.product.findOne({
-                where:{
+                where: {
                     name: dataToCreate.name
                 }
             }, { transaction: t })
             console.log(find.dataValues.id, "INI ID PRODUCT")
 
-            let data = await db.product_detail.create({price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id})
-            let photo = await db.product_image.create({img: req.files.images[0].path.split("/")[2], product_id: find.dataValues.id})
+            let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
+            let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[2], product_id: find.dataValues.id })
             // console.log(req.files.images[0].path.split("/")[2])
             await t.commit()
             res.status(201).send({
@@ -269,15 +270,15 @@ module.exports= {
             })
         }
     },
-    getCategoryDetail: async(req, res)=>{
+    getCategoryDetail: async (req, res) => {
         try {
-            let {id} = req.body
+            let { id } = req.body
             let find = await db.product_detail.findOne({
-                where:{
+                where: {
                     id
                 }
             })
-            
+
             console.log(find.dataValues.product_id);
 
             let findTwo = await db.product.findOne({
@@ -288,7 +289,7 @@ module.exports= {
             console.log(findTwo.dataValues.category_id);
 
             let findThree = await db.category.findOne({
-                where:{
+                where: {
                     id: findTwo.dataValues.category_id
                 }
             })
@@ -299,15 +300,15 @@ module.exports= {
                 data: findThree
             })
         } catch (error) {
-            
+
         }
     },
-    updateProduct: async(req, res)=>{
+    updateProduct: async (req, res) => {
         try {
             // let {name, id, description, price, storage, color, qty} = req.body
-            let {id, name, description, category_id} = req.body
+            let { id, name, description, category_id } = req.body
 
-            await db.product.update({name, description, category_id},{
+            await db.product.update({ name, description, category_id }, {
                 where: {
                     id
                 }
@@ -317,13 +318,13 @@ module.exports= {
                 message: "Update Product Success"
             })
         } catch (error) {
-            
+
         }
     },
-    updateProductDetail: async(req, res)=>{
+    updateProductDetail: async (req, res) => {
         try {
-            let {id, qty, price, memory_storage, color, colorhex, product_id} = req.body
-            await db.product_detail.update({id, qty, price, memory_storage, color, colorhex, product_id},{
+            let { id, qty, price, memory_storage, color, colorhex, product_id } = req.body
+            await db.product_detail.update({ id, qty, price, memory_storage, color, colorhex, product_id }, {
                 where: {
                     id
                 }
@@ -342,18 +343,18 @@ module.exports= {
             })
         }
     },
-    updateProductDetailImage: async(req, res)=>{
+    updateProductDetailImage: async (req, res) => {
         const t = await sequelize.transaction()
         try {
             let dataToCreate = JSON.parse(req.body.data)
-            
-            await db.product_detail.update({...dataToCreate, qty: dataToCreate.qty, price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex},{
+
+            await db.product_detail.update({ ...dataToCreate, qty: dataToCreate.qty, price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex }, {
                 where: {
                     id: dataToCreate.id
                 }
             }, { transaction: t })
-            await db.product_image.update({img: req.files.images[0].path.split("/")[2]},{
-                where:{
+            await db.product_image.update({ img: req.files.images[0].path.split("/")[2] }, {
+                where: {
                     product_id: dataToCreate.product_id
                 }
             }, { transaction: t })
@@ -373,9 +374,9 @@ module.exports= {
             })
         }
     },
-    deleteProduct: async(req, res)=>{
+    deleteProduct: async (req, res) => {
         try {
-            let {id} = req.body
+            let { id } = req.body
             await db.product.destroy({
                 where: {
                     id
@@ -386,12 +387,12 @@ module.exports= {
                 message: "Delete Product Success"
             })
         } catch (error) {
-            
+
         }
     },
-    deleteProductDetail: async(req, res)=>{
+    deleteProductDetail: async (req, res) => {
         try {
-            let {id} = req.body
+            let { id } = req.body
             await db.product_detail.destroy({
                 where: {
                     id
@@ -402,7 +403,7 @@ module.exports= {
                 message: "Delete Product Detail Success"
             })
         } catch (error) {
-            
+
         }
     },
     // getColor: async(req, res)=>{
@@ -430,7 +431,7 @@ module.exports= {
     // },
     getProducts: async(req, res)=>{
         try {
-            let {page} = req.query
+            let { page } = req.query
             console.log(page);
             let data = await db.product_detail.findAll({
                 // include:{
@@ -443,7 +444,7 @@ module.exports= {
             var offset = limit * (Number(page) - 1)
 
             let data1 = await db.product_detail.findAll({
-                include:{
+                include: {
                     model: db.product
                 },
                 offset,
@@ -452,11 +453,11 @@ module.exports= {
             return res.status(200).send({
                 isError: false,
                 message: "Get every Product Success",
-                data: data1, 
-                total: data.length, 
+                data: data1,
+                total: data.length,
                 page: Number(page),
                 pages: pages
-              });
+            });
         } catch (error) {
             res.status(401).send({
                 isError: true,
@@ -465,19 +466,19 @@ module.exports= {
             })
         }
     },
-    getProductsAdmin: async(req, res)=>{
+    getProductsAdmin: async (req, res) => {
         try {
-            let {category_id} = req.params
+            let { category_id } = req.params
             // let {page} = req.query
             // console.log(name);
             let data = await db.product.findAll({
                 where: {
                     category_id
                 },
-                include:[{
-                        model: db.product_detail
-                    },
-                {model: db.product_image}]
+                include: [{
+                    model: db.product_detail
+                },
+                { model: db.product_image }]
             })
             // var limit = 3
             // var pages = Math.ceil(data.length / limit)
@@ -751,6 +752,4 @@ module.exports= {
                 message: error.message,
                 data: error,
                 });
-        }
-    }
 }

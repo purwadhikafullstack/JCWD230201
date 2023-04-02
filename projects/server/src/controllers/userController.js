@@ -34,18 +34,22 @@ module.exports = {
         try {
             let { name, email, phone_number } = req.body
 
+            if (!name || !email || !phone_number) throw { message: "Please fill your data" }
+
             let dataEmail = await db.user.findOne({
                 where: {
                     email
                 }
             })
 
-            if (dataEmail) throw { message: 'Email already register' }
+            if (dataEmail) throw { message: 'Email already registered' }
 
-            if(isNaN(phone_number)) throw {message:"Please input a number"}
+            if (isNaN(phone_number)) throw { message: "Please input a number" }
+
+            if (phone_number.length < 8 || phone_number.length > 13) throw { message: 'Please input your valid phone number' }
 
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
-            console.log(resCreateUsers)
+            // console.log(resCreateUsers)
 
             const template = await fs.readFile('./template/confirmation.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
@@ -69,7 +73,7 @@ module.exports = {
             console.log(error)
             res.status(401).send({
                 isError: true,
-                message: error,
+                message: error.message,
             })
         }
     },
@@ -140,7 +144,7 @@ module.exports = {
             // console.log(email)
             // console.log(password)
 
-            if (!password) throw { message: 'Please Fill All Data!' }
+            if (!password) throw { message: 'Please fill all data!' }
 
             let dataUser = await db.user.findOne({
                 where: {
@@ -148,13 +152,13 @@ module.exports = {
                 }
             })
             // console.log(dataUser.dataValues)
-            if (!dataUser) throw { message: 'Account Not Found!' }
+            if (!dataUser) throw { message: 'Account not found!' }
 
             let matchPassword = await hashMatch(password, dataUser.dataValues.password)
 
             if (matchPassword === false) return res.status(404).send({
                 isError: true,
-                message: 'Wrong Password',
+                message: 'Wrong password',
                 data: null
             })
 
@@ -387,11 +391,11 @@ module.exports = {
                 }
             })
 
-                let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
-                console.log(jalan)
+            let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
+            console.log(jalan)
 
-                let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
-                console.log(response.data.results[0].geometry.lat)
+            let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
+            console.log(response.data.results[0].geometry.lat)
 
             if (!checkData) {
                 await db.user_address.create({
@@ -488,7 +492,7 @@ module.exports = {
                 }
             })
 
-            console.log(data)
+            // console.log(data)
 
             for (let i = 0; i < data.length; i++) {
                 if (data[i].dataValues.value == 1) {

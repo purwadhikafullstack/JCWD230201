@@ -17,6 +17,7 @@ export default function MyAccountInfo() {
 
     const { user, setUser } = useContext(userData)
 
+    const [disable, setDisable] = useState(false)
     const [message, setMessage] = useState('')
     const [profile, setProfile] = useState({
         name: '',
@@ -117,7 +118,6 @@ export default function MyAccountInfo() {
             // if (!profile.oldpassword && profile.newpassword) throw {message: 'Please input your current password'}
 
             if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
-                console.log('2')
 
                 await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number }, {
                     headers: {
@@ -125,7 +125,6 @@ export default function MyAccountInfo() {
                     }
                 })
             } else if (profile.name && profile.phone_number && profile.oldpassword && profile.newpassword) {
-                console.log('3')
 
                 if (profile.newpassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
@@ -165,6 +164,9 @@ export default function MyAccountInfo() {
                 </div>
                 <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
+                        <div>
+                            {console.log(user.photo_profile)}
+                        </div>
                         <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">
                             <Button onClick={() => setModal(!modal)} className="rounded-sm bg-neutral-900 hover:bg-neutral-700 active:ring-0 active:ring-transparent">

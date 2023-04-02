@@ -82,7 +82,7 @@ export default function MyAccountAddress() {
                     key: "8d832179b0e66fb5dea1f75c477eca34"
                 }
             })
-            console.log(response.data.data.results)
+            // console.log(response.data.data.results)
             if (input.split(',')[2] == 'Edit') {
                 setProfile({ ...profile, cityEdit: response.data.data.results })
             } else {
@@ -91,7 +91,7 @@ export default function MyAccountAddress() {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -105,7 +105,7 @@ export default function MyAccountAddress() {
             // console.log(response.data.data)
             setAddressDB(response.data.data)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -121,7 +121,7 @@ export default function MyAccountAddress() {
                 city: choosenUser.city,
                 subdistrict: choosenUser.subdistrict
             })
-            console.log(response)
+            // console.log(response)
             getAddressUser()
 
             setChoosenUser({ ...choosenUser, receiver_name: '' })
@@ -148,7 +148,7 @@ export default function MyAccountAddress() {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -229,7 +229,7 @@ export default function MyAccountAddress() {
             // setModal(false)
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             // toast.error(error.response.data.message)
         } finally {
             setDisable(false)
@@ -248,7 +248,7 @@ export default function MyAccountAddress() {
                     {
                         addressDB.length === 0 ?
                             <>
-                                <div className="border-2">
+                                <div className="border-2 rounded-sm">
                                     <div className="border-b-2 text-2xl font-bold px-5 py-2">
                                         Add Address
                                     </div>
@@ -388,7 +388,7 @@ export default function MyAccountAddress() {
                             </>
                             :
                             <>
-                                <div className="border-2 border-black">
+                                <div className="border-2 border-black rounded-sm">
                                     <div className="border-b-2 border-black text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 bg-neutral-200">
                                         Main Address
                                     </div>
@@ -538,7 +538,7 @@ export default function MyAccountAddress() {
                                     }
 
                                 </div>
-                                <div className="border-2 mt-5">
+                                <div className="border-2 mt-5 rounded-sm">
                                     <div className="border-b-2 text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 flex justify-between items-center ">
                                         Additional Address
                                         <div>
@@ -862,9 +862,9 @@ export default function MyAccountAddress() {
                             </>
                     }
                 </div>
-                    <Toaster />
+                <Toaster />
             </>
             :
-            <Loading/>
+            <Loading />
     )
 }

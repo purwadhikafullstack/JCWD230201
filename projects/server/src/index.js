@@ -10,10 +10,10 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use('/Public',express.static('Public'))
+app.use('/Public', express.static(__dirname + '/Public'))
 
 //#region API ROUTES
-const {adminRouter,userRouter,productRouter,transactionRouter,addressRouter,rajaongkirRouter,warehouseRouter, cartRouter, locationProductRouter} = require('./routers')
+const { adminRouter, userRouter, productRouter, transactionRouter, addressRouter, rajaongkirRouter, warehouseRouter, cartRouter, locationProductRouter } = require('./routers')
 
 // ===========================
 // NOTE : Add your routes here

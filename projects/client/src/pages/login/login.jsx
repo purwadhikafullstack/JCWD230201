@@ -1,5 +1,5 @@
-import { useContext, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useRef, useState,useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { userData } from "../../data/userData";
 import { LoginAccount } from "../../utils/login";
@@ -12,6 +12,12 @@ export default function Login() {
     const [typePassword, setTypePassword] = useState('password')
 
     let navigate = useNavigate()
+    const location = useLocation();
+    console.log(location)
+    
+    // let from = location.state;
+    // console.log(from)
+    // navigate(from, { replace: true }); 
 
     const { user, setUser } = useContext(userData)
 

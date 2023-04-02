@@ -25,8 +25,10 @@ export default function ConfirmEmail() {
 
             toast.success(`Please check your email`)
 
+            email.current.value=''
+
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast.error(error.response.data.message)
         } finally {
             setDisabledButton(false)
