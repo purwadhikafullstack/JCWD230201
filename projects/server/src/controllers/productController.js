@@ -753,3 +753,5 @@ module.exports = {
                 data: error,
                 });
 }
+    }
+}
