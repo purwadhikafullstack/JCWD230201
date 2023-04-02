@@ -18,13 +18,13 @@ export default function Register() {
             let inputEmail = email.current.value
             let inputPhoneNumber = phoneNumber.current.value
 
-            if (inputName.length === 0 || inputEmail.length === 0 || inputPhoneNumber.length === 0) throw { message: 'Incomplete Input' }
+            if (inputName.length === 0 || inputEmail.length === 0 || inputPhoneNumber.length === 0) throw { message: 'Please input Your data' }
 
-            if (!inputEmail.includes('@') && !inputEmail.includes('.com')) throw { message: 'Please input a valid email' }
+            if (!inputEmail.includes('@') || !inputEmail.includes('.com')) throw { message: 'Please input a valid email' }
 
             if (isNaN(inputPhoneNumber)) throw { message: 'Please input a number' }
 
-            if(inputPhoneNumber.length<8 && inputPhoneNumber>13) throw {message:'Please input your valid phone number'}
+            if (inputPhoneNumber.length < 8 || inputPhoneNumber.length > 13) throw { message: 'Please input your valid phone number' }
 
             setDisabledButton(true)
 
@@ -33,15 +33,18 @@ export default function Register() {
 
             toast.success(`Register success, please check your email`)
 
+            setDisabledButton(false)
             fullName.current.value = ''
             email.current.value = ''
             phoneNumber.current.value = ''
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
-            setDisabledButton(false)
-        } finally {
+            // console.log(error)
+            if(!error.response){
+                toast.error(error.message)
+            } else{
+                toast.error(error.response.data.message)
+            }
             setDisabledButton(false)
         }
     }
@@ -78,7 +81,7 @@ export default function Register() {
                         <Spinner
                             aria-label="Medium sized spinner example"
                             size="md"
-                        />
+                        /> Loading . . .
                     </button> : <button disabled={disabledButton} onClick={onSubmit} className="bg-neutral-900 px-5 py-3 mt-3 text-white w-full">
                         Create an Account
                     </button>}
@@ -90,16 +93,16 @@ export default function Register() {
 
                 </div>
             </div>
-                <Toaster
-                    toastOptions={{
-                        success: {
-                            duration: 10000
-                        },
-                        error: {
-                            duration: 5000
-                        }
-                    }}
-                />
+            <Toaster
+                toastOptions={{
+                    success: {
+                        duration: 10000
+                    },
+                    error: {
+                        duration: 5000
+                    }
+                }}
+            />
         </>
     )
 }

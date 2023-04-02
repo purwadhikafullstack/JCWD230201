@@ -12,38 +12,38 @@ import { MdOutlineCopyright } from 'react-icons/md'
 export default function Footer() {
     return (
         <>
-            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row lg:flex-row px-5 md:px-10 lg:px-80 py-6 gap-7 mt-10'>
-                <div className='flex items-center gap-4'>
-                    <img src={FooterWarranty} />
-                    <div className='text-white'>
+            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row lg:flex-row px-5 md:px-10 lg:px-80 py-6 mt-10'>
+                <div className='flex items-center mr-5 my-3'>
+                    <img src={FooterWarranty} className="mr-3 w-9 md:w-10 lg:w-12"/>
+                    <div className='text-white text-sm lg:text-base'>
                         <p className='font-bold'>Official Warranty</p>
                         <p>Official Warrranty Product / TAM Warranty</p>
                     </div>
                 </div>
-                <div className='flex items-center gap-4'>
-                    <img src={FooterService} />
-                    <div className='text-white'>
+                <div className='flex items-center mr-5 my-3'>
+                    <img src={FooterService} className="mr-3 w-9 md:w-10 lg:w-12" />
+                    <div className='text-white text-sm lg:text-base'>
                         <p className='font-bold'>Customer Service</p>
                         <p>Our Team is Ready to Help About Products</p>
                     </div>
                 </div>
-                <div className='flex items-center gap-4'>
-                    <img src={FooterShipper} />
-                    <div className='text-white'>
+                <div className='flex items-center mr-5 my-3'>
+                    <img src={FooterShipper} className="mr-3 w-9 md:w-10 lg:w-12" />
+                    <div className='text-white text-sm lg:text-base'>
                         <p className='font-bold'>Delivery Service</p>
                         <p>Trusted Shipping And Security</p>
                     </div>
                 </div>
-                <div className='flex items-center gap-4'>
-                    <img src={FooterPromo} />
-                    <div className='text-white'>
+                <div className='flex items-center my-3'>
+                    <img src={FooterPromo} className="mr-3 w-9 md:w-10 lg:w-12" />
+                    <div className='text-white text-sm lg:text-base'>
                         <p className='font-bold'>Shopping Benefit</p>
                         <p>Latest Promos and Info on Latest Gadget Products</p>
                     </div>
                 </div>
             </div>
 
-            <div className='bg-black flex items-center lg:justify-center flex-col lg:flex-row gap-10 py-7'>
+            <div className='bg-black flex items-center lg:justify-center flex-col lg:flex-row gap-10 py-7 -z-10'>
                 <p className='text-white text-sm font-semibold text-center lg:text-start'>
                     Start subscribing to the newsletter and get the latest information and promos
                 </p>
@@ -55,7 +55,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 px-10 md:px-20 lg:px-80 gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 px-5 md:px-10 lg:px-80 lg:gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
                 <div className="">
                     <div className="text-lg font-semibold">
                         <img src={require('../../../Assets/logo black.jpg')} alt="" className='w-20' />
@@ -134,7 +134,7 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-            <p className='bg-black flex text-white items-center text-xs justify-center py-3'>
+            <p className='bg-black flex text-white items-center text-[10px] lg:text-xs justify-center py-3'>
                 COPYRIGHT <MdOutlineCopyright /> 2023 IFRIT. ALL RIGHTS RESERVED.
             </p>
         </>

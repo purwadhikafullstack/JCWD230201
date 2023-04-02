@@ -1,15 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
-import { MdSearch, MdFavorite, MdShoppingBag, MdPerson, MdLogout, MdOutlineLogout } from 'react-icons/md'
+import { MdSearch, MdFavorite, MdShoppingBag, MdPerson, MdOutlineCancel } from 'react-icons/md'
+import { GiHamburgerMenu } from 'react-icons/gi'
 import { useState, useEffect, useContext } from "react";
 import { Tooltip } from "flowbite-react";
 import axios from "axios";
 import { userData } from "../../data/userData";
 import { toast, Toaster } from "react-hot-toast";
 import Loading from "../loading/loading";
+import Sidebar from "../sidebarUser/sidebarUser";
 
 export default function NavbarUser(props) {
 
     const [category, setCategory] = useState([])
+
+    const [showSidebar, setShowSidebar] = useState(false)
 
     const { user, setUser } = useContext(userData)
 
@@ -22,23 +26,22 @@ export default function NavbarUser(props) {
             // console.log(response.data.data)
             setCategory(response.data.data)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
     useEffect(() => {
         getCategory()
-        props.func.getCart()
-        // props.data.itemCart
+        // props.func.getCart()
     }, [])
 
-    if (!props.data.itemCart) {
-        return (
-            <>
-                <Loading />
-            </>
-        )
-    }
+    // if (!props.data.itemCart) {
+    //     return (
+    //         <>
+    //             <Loading />
+    //         </>
+    //     )
+    // }
 
     if (!user) {
         return (
@@ -51,7 +54,32 @@ export default function NavbarUser(props) {
 
     return (
         <>
-            <div className="flex justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
+            <div className="flex justify-between px-5 md:px-10 lg:justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
+                <div className="items-center flex lg:hidden text-2xl z-10">
+                    {showSidebar ?
+                        <>
+                            <button
+                                onClick={() => setShowSidebar(!showSidebar)}
+                            >
+                                <MdOutlineCancel />
+                            </button>
+                            <div
+                                className={`top-20 left-0 w-full z-20 md:w-80 bg-black text-white fixed  h-full transition ease-in-out duration-300 overflow-y-scroll
+                                ${showSidebar ? "transform translate-x-0 " : "transform translate-x-full"}`}
+                            >
+                                <div className="flex flex-col z-20">
+                                    <Sidebar func={props.func} data={{ ...props.data, category }} />
+                                </div>
+                            </div>
+                        </>
+                        :
+                        <button
+                            onClick={() => setShowSidebar(!showSidebar)}
+                        >
+                            <GiHamburgerMenu />
+                        </button>
+                    }
+                </div>
                 <div className="flex items-center gap-10">
                     <Link to='/'>
                         <button className="w-12 object-contain flex items-end">
@@ -64,7 +92,7 @@ export default function NavbarUser(props) {
                     </Link>
                     {category.map((value, index) => {
                         return (
-                            <button className="px-3 hover:bg-neutral-500" onClick={() => props.func.getProduct(value.id)}>
+                            <button className="hidden lg:block lg:px-3 hover:bg-neutral-500" onClick={() => props.func.getProduct(value.id)}>
                                 <Link to={`/product/${value.id}`}>
                                     <div className="group relative dropdown px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
                                         <div>{value.name}</div>
@@ -114,7 +142,7 @@ export default function NavbarUser(props) {
                             <Tooltip
                                 content="Cart"
                                 placement="bottom"
-                                className=" mt-6"
+                                className="mt-3 hidden lg:block"
                             >
                                 <div className="relative px-3 py-3">
                                     <MdShoppingBag />
@@ -129,7 +157,8 @@ export default function NavbarUser(props) {
                         </Link>
                     </button>
                     {!localStorage.getItem('token') ?
-                        <button onClick={() => navigate('/login')}>
+                        <button onClick={() => navigate('/login')}
+                            className="hidden lg:block">
                             <Tooltip
                                 content="Login or Register"
                                 placement="bottom"
@@ -141,7 +170,8 @@ export default function NavbarUser(props) {
                             </Tooltip>
                         </button>
                         :
-                        <button onClick={() => navigate('/my-account')}>
+                        <button onClick={() => navigate('/my-account')}
+                            className="hidden lg:block">
                             <Tooltip
                                 content="My Account"
                                 placement="bottom"
@@ -150,7 +180,7 @@ export default function NavbarUser(props) {
                                 <div>
                                     <div className="flex items-center">
                                         <MdPerson />
-                                        <div className="text-lg ml-2">{user.username}</div>
+                                        {/* <div className="text-lg ml-2">{user.username}</div> */}
                                     </div>
                                 </div>
                             </Tooltip>
@@ -158,7 +188,7 @@ export default function NavbarUser(props) {
                     }
                 </div>
             </div>
-            <Toaster />
+            {/* <Toaster /> */}
         </>
     )
 }

@@ -9,6 +9,11 @@ module.exports = {
       }
     },
   },
+  variants: {
+    extend: {
+      animation: ['group-hover'],
+    },
+  },
   plugins: [
     require('flowbite/plugin')
   ],

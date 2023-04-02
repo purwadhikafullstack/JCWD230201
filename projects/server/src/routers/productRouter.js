@@ -23,6 +23,7 @@ Router.patch('/update-product/detail/a/a/a',upload, productController.updateProd
 Router.post('/delete-product/detail/a/a', productController.deleteProduct)
 Router.post('/delete-product/detail/a/a/a', productController.deleteProductDetail)
 Router.post('/color/b/b/b/b', productController.getColor)
+Router.post('/sort-product',productController.sortProduct)
 
 
 module.exports = Router
