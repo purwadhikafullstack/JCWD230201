@@ -99,40 +99,43 @@ export default function ProductDetail(props) {
                         </div>
                     </div>
                     <div>
-                        <div className="text-sm font-bold py-3 px-1 text-neutral-600">
-                            COLOR :
-                        </div>
-                        <div className="grid grid-cols-4 gap-2">
+                    <div className="flex gap-2">
                             {arrColor.map((value, index)=>{
                                 return(
                                     <div>
                                         {value?
+                                        <div>
+                                            <div className="text-sm font-bold py-3 px-1 text-neutral-600">
+                                                COLOR :
+                                            </div>
                                             <button onClick={()=>setColors(value)} style={{backgroundColor: colors==value? "#113F90":"white", color: colors==value?"white":"black"}} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
-                                            <div style={{backgroundColor: `${arrColorHex[index]}`}} className={`w-4 h-4 border rounded-full`}></div> {value}
-                                            </button>:null
+                                                <div style={{backgroundColor: `${arrColorHex[index]}`}} className={`w-4 h-4 border rounded-full`}></div> {value}
+                                            </button>
+                                        </div>:null
                                         }
                                     </div>
                                 )
                             })}
                         </div>
                     </div>
-                    <div className="text-sm font-bold py-3 px-1 text-neutral-600">
-                        CAPACITY :
-                    </div>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="flex gap-2">
                         {arrMemory.map((val) => {
                             return (
                                 <div>
                                     {val ?
+                                    <div>
+                                        <div className="text-sm font-bold py-3 px-1 text-neutral-600">
+                                            CAPACITY :
+                                        </div>
                                         <button onClick={() => getSelected(val)} style={{ backgroundColor: memory == val ? "#113F90" : "white", color: memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
                                             {val} GB
-                                        </button> : null
+                                        </button> 
+                                    </div>: null
                                     }
                                 </div>
                             )
                         })}
                     </div>
-
                     <div className="w-96 mt-10">
                         {props.data.detail.description}
                     </div>
@@ -162,6 +165,16 @@ export default function ProductDetail(props) {
                             +
                         </button>
                     </div>
+                    {
+                        props.data.detailQty==0?
+                            <div className=" text-red-500">
+                                Out of stock
+                            </div>
+                            :
+                            <div className=" text-red-500">
+                                Stocks: {props.data.detailQty}
+                            </div>
+                    }
                     <button onClick={() => {
                         addToCart()
                         }}

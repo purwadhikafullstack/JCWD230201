@@ -7,6 +7,7 @@ const upload = require('../middleware/upload')
 
 Router.get('/', productController.getAllProducts)
 Router.get('/productdetail/:id', productController.getProductDetails)
+Router.get('/detailqty/:id', productController.getDetailQty)
 Router.get('/category', productController.getCategory)
 Router.get('/products/all', productController.getProducts)
 Router.get('/products/:category_id', productController.getProductsAdmin)
@@ -22,7 +23,10 @@ Router.patch('/update-product/detail/a/a/a/a', productController.updateProductDe
 Router.patch('/update-product/detail/a/a/a',upload, productController.updateProductDetailImage)
 Router.post('/delete-product/detail/a/a', productController.deleteProduct)
 Router.post('/delete-product/detail/a/a/a', productController.deleteProductDetail)
-Router.post('/color/b/b/b/b', productController.getColor)
+// Router.post('/color/b/b/b/b', productController.getColor)
+Router.get('/sort-name/:category_id', productController.getSortName)
+Router.post('/sort-product/:category_id', productController.postSortColor)
+Router.get('/color/:category_id', productController.getColor)
 
 
 module.exports = Router

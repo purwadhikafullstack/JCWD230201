@@ -46,7 +46,8 @@ module.exports= {
                 include:[{
                         model: db.product_detail
                     },
-                {model: db.product_image}]
+                {model: db.product_image}],
+                order:[[{model: db.product_detail},'price', 'ASC']]
             })
             res.status(201).send({
                 isError: false,
@@ -73,10 +74,20 @@ module.exports= {
                 },
             {model: db.product_image}]
             })
+            let data2 = await db.location_product.findAll({
+                where:{
+                    product_detail_id: id
+                }
+            })
+            let arr = 0
+            for (let i = 0; i < data2.length; i++) {
+                arr=data2[i].qty+arr
+            }
             res.status(200).send({
                 isError: false,
                 message: "Get Product Details Success",
-                data
+                data: data,
+                data2: arr
             })
         } catch (error) {
             res.status(400).send({
@@ -394,29 +405,29 @@ module.exports= {
             
         }
     },
-    getColor: async(req, res)=>{
-        try {
-            let {color, colorhex} = req.body
-            // console.log(name);
-            let data = await db.product_detail.update({colorhex},{
-                where: {
-                    color
-                }
-            })
-            console.log(data);
-            res.status(201).send({
-                isError: false,
-                message: "Get Product Success",
-                data
-            })
-        } catch (error) {
-            res.status(401).send({
-                isError: true,
-                message: error.message,
-                data: error
-            })
-        }
-    },
+    // getColor: async(req, res)=>{
+    //     try {
+    //         let {color, colorhex} = req.body
+    //         // console.log(name);
+    //         let data = await db.product_detail.update({colorhex},{
+    //             where: {
+    //                 color
+    //             }
+    //         })
+    //         console.log(data);
+    //         res.status(201).send({
+    //             isError: false,
+    //             message: "Get Product Success",
+    //             data
+    //         })
+    //     } catch (error) {
+    //         res.status(401).send({
+    //             isError: true,
+    //             message: error.message,
+    //             data: error
+    //         })
+    //     }
+    // },
     getProducts: async(req, res)=>{
         try {
             let {page} = req.query
@@ -502,6 +513,244 @@ module.exports= {
                 message: error.message,
                 data: error
             })
+        }
+    },
+    getSortName: async(req, res)=>{
+        try {
+            let {category_id} = req.params
+            let {color} = req.body
+            let { sort } = req.query;
+            if (sort === "az") {
+            try {
+                let data = await db.product.findAll({
+                    where:{
+                        category_id
+                    }, order: [
+                        ['name', 'ASC'],
+                    ], include:[{
+                        model: db.product_detail
+                    },
+                {model: db.product_image}]
+                });
+                return res.status(201).send({
+                isError: false,
+                message: "Sort A-Z Success",
+                data,
+                });
+            } catch (error) {
+                return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
+            }
+            } else if (sort === "za") {
+            try {
+                let data = await db.product.findAll({
+                    where:{
+                        category_id
+                    }, order: [
+                        ['name', 'DESC'],
+                    ], include:[{
+                        model: db.product_detail
+                    },
+                {model: db.product_image}]});
+                return res.status(201).send({
+                isError: false,
+                message: "Sort Z-A Success",
+                data,
+                });
+            } catch (error) {
+                return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
+            }
+        }else if(sort === "lohi"){
+            let data = await db.product_detail.findAll({
+                include:[{
+                        model: db.product,where: {
+                            category_id
+                        }, include:{
+                            model: db.product_image
+                        }
+                    },],
+                order:[['price', 'ASC']]
+            })
+            let arr = []
+            let arr2 = []
+                for (let i = 0; i < data.length; i++) {
+                    if (!arr.includes(data[i].product_id)) {
+                        arr2.push(data[i])
+                        arr.push(data[i].product_id)
+                    }
+                }
+            console.log("BISMILLAH",arr)
+            // console.log("HAAAIIII",data[1])
+            res.status(201).send({
+                isError: false,
+                message: "Get Product Success",
+                data: arr2
+            })
+        }else if(sort === "hilo"){
+            let data = await db.product_detail.findAll({
+                include:[{
+                        model: db.product,where: {
+                            category_id
+                        }, include:{
+                            model: db.product_image
+                        }
+                    },],
+                order:[['price', 'DESC']]
+            })
+            let arr = []
+            let arr2 = []
+                for (let i = 0; i < data.length; i++) {
+                    if (!arr.includes(data[i].product_id)) {
+                        arr2.push(data[i])
+                        arr.push(data[i].product_id)
+                    }
+                }
+            console.log("BISMILLAH",arr)
+            // console.log("HAAAIIII",data[1])
+            res.status(201).send({
+                isError: false,
+                message: "Get Product Success",
+                data: arr2
+            })
+        }else if(sort === color){
+            let data = await db.product_detail.findAll({
+                include:[{
+                        model: db.product,where: {
+                            category_id
+                        }, include:{
+                            model: db.product_image
+                        }
+                    },],
+                where:{
+                    color
+                }
+            })
+            // let arr = []
+            // let arr2 = []
+            //     for (let i = 0; i < data.length; i++) {
+            //         if (!arr.includes(data[i].product_id)) {
+            //             arr2.push(data[i])
+            //             arr.push(data[i].product_id)
+            //         }
+            //     }
+            // console.log("BISMILLAH",arr)
+            // console.log("HAAAIIII",data[1])
+            res.status(201).send({
+                isError: false,
+                message: "Get Product Success",
+                data
+            })
+        }
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
+        }
+    },
+    postSortColor: async(req, res)=>{
+        try {
+            let {category_id} = req.params
+            let {color} = req.body
+            let data = await db.product_detail.findAll({
+                include:[{
+                        model: db.product,where: {
+                            category_id
+                        }, include:{
+                            model: db.product_image
+                        }
+                    },],
+                where:{
+                    color
+                }
+            })
+            let arr = []
+            let arr2 = []
+                for (let i = 0; i < data.length; i++) {
+                    if (!arr.includes(data[i].product_id)) {
+                        arr2.push(data[i])
+                        arr.push(data[i].product_id)
+                    }
+                }
+            console.log("BISMILLAH",arr)
+            // console.log("HAAAIIII",data[1])
+            res.status(201).send({
+                isError: false,
+                message: "Get Product Success",
+                data: arr2
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
+        }
+    },
+    getColor: async(req, res)=>{
+        try {
+            let {category_id} = req.params
+            let data = await db.product_detail.findAll({
+                // group: ['color'],
+                include:[{
+                    model: db.product,where:{
+                        category_id
+                    }
+                }]
+            })
+            let arr = []
+            let arr2 = []
+            for (let i = 0; i < data.length; i++) {
+                if (!arr.includes(data[i].color)) {
+                    arr2.push(data[i])
+                    arr.push(data[i].color)
+                }
+            }
+            console.log("BISMILLAH",arr)
+            res.status(201).send({
+                isError: false,
+                message: "Get Color Success",
+                data: arr2
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
+        }
+    },
+    getDetailQty: async(req, res)=>{
+        try {
+            let {id} = req.params
+            let data = await db.location_product.findAll({
+                where:{
+                    product_detail_id: id
+                }
+            })
+            let arr = 0
+            for (let i = 0; i < data.length; i++) {
+                arr=data[i].qty+arr
+            }
+            res.status(201).send({
+                isError: false,
+                message: "Get Color Success",
+                data: arr
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+                });
         }
     }
 }
