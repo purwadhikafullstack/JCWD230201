@@ -8,13 +8,27 @@ const axios = require('axios')
 
 module.exports = {
     getDataWH: async (req, res) => {
+        let {page} = req.query
+        var page_size = 4;
+        var offset = (page - 1) * page_size;
+        var limit = page_size;
 
-        let getWH = await db.location_warehouse.findAll()
+        var total_count = await db.location_warehouse.count()
+        var total_pages = Math.ceil(total_count / page_size)
+
+
+        let getWH = await db.location_warehouse.findAll({
+            offset,limit
+        })
 
         res.status(201).send({
             isError: false,
             message: 'get data success',
-            data: getWH
+            data: {
+                getWH,
+                total_count,
+                total_pages
+            }
         })
     },
     getEmptyWH:async(req,res)=>{

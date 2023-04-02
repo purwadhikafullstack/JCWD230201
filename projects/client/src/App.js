@@ -35,13 +35,14 @@ import ProductDetail from './components/product_detail/product_detail';
 import Shipping from './components/shipping/shipping';
 import Warehouse from './components/adminContainer/warehouse';
 import SalesReport from './components/adminContainer/salesreport';
-import TransactionXYZ from './components/transaction/transactionXYZ';
+import Transaction from './components/transaction/transaction';
 import TransactionHistory from './components/transactionHistoryUser/transactionHistoryUser';
 import DetailTransaction from './components/detailTransactionUser/detailTransactionUser';
 import AdminCategoryProducts from './components/adminContainer/adminCategoryProducts';
 import AdminProducts from './components/adminContainer/adminProducts';
 import AdminProductLocation from './components/adminContainer/adminProductLocation';
 import AdminProductListLocation from './components/adminContainer/adminProductListLocation';
+import LogProduct from './components/adminContainer/logProduct';
 
 
 //import context for global
@@ -179,7 +180,8 @@ function App() {
                   <Route path='all-user' element={<GetAllAccount />} />
                   <Route path='setting' element={<AdminSetting />} />
                   <Route path='profile/:id' element={<AdminSettingProfile />} />
-                  <Route path='Transaction' element={<TransactionXYZ />} />
+                  <Route path='Transaction' element={<Transaction />} />
+                  <Route path='log-product' element={<LogProduct />} />
                   <Route path='warehouse' element={<Warehouse />} />
                   <Route path='products' element={<AdminCategoryProducts />} >
                     <Route path=':id' element={<AdminProducts />} />
