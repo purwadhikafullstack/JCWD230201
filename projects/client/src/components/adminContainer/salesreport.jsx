@@ -8,6 +8,8 @@ import { TbHome2 } from 'react-icons/tb'
 import { AiOutlineStock } from 'react-icons/ai'
 import { userData } from '../../data/userData'
 import Loading from '../loading/loading'
+import React from 'react';
+import Moment from 'react-moment';
 
 
 //component
@@ -83,7 +85,7 @@ export default function SalesReport() {
             // console.log(total_price)
             let date = new Date()
 
-            setSekarang(date.toDateString())
+            setSekarang(date.toJSON())
 
             setVisible({
                 ...visible, list_wh: response.data.list_wh, total: total_price, ongkir: total_ongkir, WH: response.data.wh,
@@ -126,7 +128,7 @@ export default function SalesReport() {
                         total_product += item.qty
                     })
                 })
-                // console.log(total_price)
+                // console.log(response)
                 setVisible({ ...visible, total: total_price, ongkir: total_ongkir, transaction: total_transaction, qty: total_product })
                 // console.log(total_ongkir)
             } else if (T == 2) {
@@ -166,12 +168,14 @@ export default function SalesReport() {
             <div className="min-h-screen px-10 pt-5 pb-10">
 
                 <div className="flex flex-col mt-2 mb-10 ">
-                    <div>
+                    <div className='text-2xl font-semibold'>
                         Summary Records
                     </div>
-                    <div>
+                    <Moment className='text-gray-500 text-sm mb-8'
+                    format='dddd DD MMMM YYYY'
+                    >
                         {sekarang}
-                    </div>
+                    </Moment>
                     <div className='flex justify-between mb-5 text-white '>
                         <div className='h-20 gap-5 px-4 py-3 bg-stone-800 flex rounded-md border-b-4 border-yellow-300 group'>
                             <div className='flex items-center justify-center px-3.5 text-center rounded-full bg-white group-hover:rotate-12 group-hover:duration-200'>
@@ -179,11 +183,11 @@ export default function SalesReport() {
                             </div>
                             <div className='flex flex-col items-end'>
                                 <div className='flex items-center gap-2'>
-                                    <p className='text-xl font-semibold'>{visible.users}92</p> <p>Users</p>
+                                    <p className='text-xl font-semibold'>{visible.users}</p> <p>Users</p>
                                 </div>
 
                                 <div className='flex items-center text-sm gap-1 text-slate-400 '>
-                                    {visible.usersUV}2  <FiUserX />
+                                    {visible.usersUV?visible.usersUV:'0'}  <FiUserX />
                                 </div>
                             </div>
                         </div>
@@ -193,7 +197,7 @@ export default function SalesReport() {
                             </div>
                             <div className='flex flex-col items-end'>
                                 <div className='flex items-center gap-2'>
-                                    <p className='text-xl font-semibold'>{visible.trans_s}</p> <p>Orders</p>
+                                    <p className='text-xl font-semibold'>{visible.trans_s?visible.trans_s:0}</p> <p>Orders</p>
                                 </div>
 
                                 <div className='flex text-slate-400 items-center text-sm gap-1'>

@@ -8,13 +8,14 @@ import { AiOutlineLoading3Quarters, AiOutlineEye, AiOutlineEyeInvisible } from '
 
 export default function MenuAdminSetting(data) {
   // console.log(data.data)
-  let [update, setUpdate] = useState(false), [dataEmptyWH, setDataEmptyWH] = useState([]), [disable, setDisable] = useState(false)
-  let [pop,setPop] = useState(false)
+  let [dataEmptyWH, setDataEmptyWH] = useState([])
   let [visible, setVisible] = useState({
     check: false,
     disable: false,
     update: false,
-    password: false
+    password: false,
+    pop:false,
+    choice:1
   })
 
   let [profile, setProfile] = useState({
@@ -36,15 +37,14 @@ export default function MenuAdminSetting(data) {
 
   let submit = async () => {
     try {
-      console.log(profile)
       let response = await axios.post('http://localhost:8000/admin/update', profile)
-      console.log(response)
       toast.success(response.data.message)
+      setVisible({ ...visible, pop:false,disable:true })
       setTimeout(() => {
         window.location.reload(false)
       }, 2000)
     } catch (error) {
-      setVisible({ ...visible, disable: false })
+      setVisible({ ...visible, pop:false,disable:false })
       toast.error(error.response.data.message)
     }
 
@@ -53,6 +53,7 @@ export default function MenuAdminSetting(data) {
   let deleteAdmin = async () => {
     let response = await axios.post('http://localhost:8000/admin/delete', { id: profile.id })
     toast.success(response.data.message)
+    setVisible({ ...visible, pop:false })
     setTimeout(() => {
       toast('Loading..')
       window.location.reload(false)
@@ -124,7 +125,7 @@ export default function MenuAdminSetting(data) {
               <Menu.Item>
                 {({ active }) => (
                   <button 
-                  onClick={()=>setPop(true)}
+                  onClick={()=>setVisible({...visible,pop:true, choice:2})}
                     className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
                       } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
                   >
@@ -228,7 +229,7 @@ export default function MenuAdminSetting(data) {
                 id="warehouse"
                 required={true}
               >
-                <option value={data.data.location_warehouse}>{data.data.location_warehouse}</option>
+                <option value={data.data?.location_warehouse}>{data.data.location_warehouse? data.data.location_warehouse:'Please select warehouse'}</option>
                 {
                   dataEmptyWH.map((item, index) => <option value={item.id}>{item.city}</option>)
                 }
@@ -258,38 +259,62 @@ export default function MenuAdminSetting(data) {
                 null}
 
             <Button disabled={visible.disable} onClick={() => {
-              submit()
-              setVisible({ ...visible, disable: visible.disable ? false : true })
-
+              setVisible({ ...visible, pop:true, choice:1})
             }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-full'>
-              {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading...</span> : 'Submit'}
+             Submit
             </Button>
 
           </div>
         </Modal.Body>
       </Modal>
 
-      <div className={`${pop?'flex items-center justify-center':'hidden'} fixed top-0 bg-slate-300 bg-opacity-10  left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full`}>
-        <div className="relative w-full h-full max-w-md md:h-auto">
-          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <button type="button" onClick={()=>setPop(false)} className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white" data-modal-hide="popup-modal">
-              <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-              <span className="sr-only">Close modal</span>
-            </button>
-            <div className="p-6 text-center">
-              <svg aria-hidden="true" className="mx-auto mb-4 text-gray-400 w-14 h-14 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this account?</h3>
-              <button onClick={()=>{
-                setPop(false)
-                deleteAdmin(data.data)
-                }} data-modal-hide="popup-modal" type="button" className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                Yes, I'm sure
-              </button>
-              <button onClick={()=>setPop(false)} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">No, cancel</button>
+      <Modal
+
+show={visible.pop}
+size="md"
+popup={true}
+onClose={() => setVisible({ ...visible, pop: false })}
+>
+<Modal.Header />
+
+
+<Modal.Body>
+    <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="flex flex-col items-center justify-center">
+
+            <lottie-player
+                autoplay
+                loop
+                mode="normal"
+                src="https://assets3.lottiefiles.com/packages/lf20_q4wbz787.json"
+                style={{ width: "200px" }}    ></lottie-player>
+
+
+
+            <h3 className="mb-5 mt-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+              {
+                visible.choice==1?'Are you sure to update this admin?' : 'Are you sure want to delete this admin?'
+              }
+            </h3>
+            <div className='flex gap-3'>
+                <button
+                    disabled={visible.disable}
+                    onClick={() => {
+                      setVisible({ ...visible, disable: true })
+                      visible.choice==1?submit():deleteAdmin(data.data)
+                    }} data-modal-hide="popup-modal" type="button" className={`text-white ${visible.choice==1?'bg-blue-500 hover:bg-blue-600':'bg-red-500 hover:bg-red-600'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
+                    {
+                    visible.choice==1?'Yes, update' : 'Yes, delete'
+                    }
+                </button>
+                <button disabled={visible.disable} onClick={() => setVisible({ ...visible, pop: false })} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
             </div>
-          </div>
+
         </div>
-      </div>
+    </div>
+</Modal.Body>
+
+</Modal>
     </div>
   )
 }
