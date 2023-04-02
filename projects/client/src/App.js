@@ -42,6 +42,7 @@ import AdminCategoryProducts from './components/adminContainer/adminCategoryProd
 import AdminProducts from './components/adminContainer/adminProducts';
 import AdminProductLocation from './components/adminContainer/adminProductLocation';
 import AdminProductListLocation from './components/adminContainer/adminProductListLocation';
+import AdminMutation from './components/adminContainer/adminMutation';
 import LogProduct from './components/adminContainer/logProduct';
 
 
@@ -56,6 +57,8 @@ function App() {
   let location = useLocation()
 
   const [show, setShow] = useState([])
+  const [nyow, setNyow] = useState([])
+  const [adaSort, setAdaSort] = useState([])
   const [showDetail, setShowDetail] = useState([])
   const [detail, setDetail] = useState([])
   const [detailProduct, setDetailProduct] = useState([])
@@ -64,6 +67,7 @@ function App() {
   const [arrColor, setArrColor] = useState([])
   const [totalPrice, setTotalPrice] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [detailQty, setDetailQty] = useState(0)
 
   const [loadingIndex, setLoadingIndex] = useState(0)
 
@@ -89,29 +93,114 @@ function App() {
       // console.log(response.data.data[0].product_images[0].img);
       setDetail(response.data.data[0])
       setDetailProduct(response.data.data[0].product_details)
+      setDetailQty(response.data.data2);
     } catch (error) {
       console.log(error)
     }
   }
 
-  let getProduct = async (id) => {
+  let getColor = async(id)=>{
     try {
-      let { data } = await axios.get(`http://localhost:8000/product/${id}`)
-      setShow(data.data)
-      // console.log(data);
-      var arrColor = []
-      var arrColor2 = []
-      data.data.forEach((item, index) => {
-        item.product_details.forEach((item, index) => {
-          if (!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
-        })
-        arrColor2.push(arrColor)
-        arrColor = []
-      });
-      setArrColor(arrColor2);
-
+        let response = await axios.get(`http://localhost:8000/product/color/${id}`)
+        console.log(response.data.data);
+        setAdaSort(response.data.data);
     } catch (error) {
-      // console.log(error)
+        
+    }
+  }
+
+  let getProduct = async(id, ada)=>{
+    try {
+        if(ada==undefined){
+        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
+        setShow(data.data)
+        console.log(show);
+        setNyow();
+        var arrColor = []
+        var arrColor2 = []
+        data.data.forEach((item, index) => {
+          item.product_details.forEach((item, index)=>{
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          })
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+        // getColor()
+    }else if(ada === "az"){
+        let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+        console.log(response.data.data);
+        setShow(response.data.data);
+        setNyow();
+        var arrColor = []
+        var arrColor2 = []
+        response.data.data.forEach((item, index) => {
+          item.product_details.forEach((item, index)=>{
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          })
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+    }else if(ada === "za"){
+        let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+        console.log(response.data.data);
+        setShow(response.data.data);
+        setNyow();
+        var arrColor = []
+        var arrColor2 = []
+        response.data.data.forEach((item, index) => {
+          item.product_details.forEach((item, index)=>{
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          })
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+    }else if(ada === "lohi"){
+      let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+      console.log(response.data.data);
+      setShow(response.data.data);
+      setNyow(response.data.data);
+      var arrColor = []
+        var arrColor2 = []
+        response.data.data.forEach((item, index) => {
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+    }else if(ada === "hilo"){
+      let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+      console.log(response.data.data);
+      setShow(response.data.data);
+      setNyow(response.data.data);
+      var arrColor = []
+        var arrColor2 = []
+        response.data.data.forEach((item, index) => {
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+    }else{
+      console.log("MASHOK");
+      let response = await axios.post(`http://localhost:8000/product/sort-product/${id}`,{color: ada})
+      console.log(response.data.data);
+      setShow(response.data.data);
+      setNyow(response.data.data);
+      var arrColor = []
+        var arrColor2 = []
+        response.data.data.forEach((item, index) => {
+            if(!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
+          arrColor2.push(arrColor)
+          arrColor=[]
+        });
+        setArrColor(arrColor2);
+    }
+        
+    } catch (error) {
+        console.log(error)
     }
   }
   // let loginKeep = async () => {
@@ -126,18 +215,22 @@ function App() {
 
   //   }
   // }
-  let notRegister = () => {
-    // console.log(localStorage);
-    if ((localStorage.getItem("token") == null) || (verifyStatus === "Unverified")) {
-      setTimeout(() => {
-        toast('Login or Regist First', {
-          duration: 3000
-        })
-      }, 1000)
+  let notRegister = async() => {
+    try {
 
-      setTimeout(() => {
-        navigate('/')
-      }, 3000)
+      if ((localStorage.getItem("token") == null) || (data.data.status === "Unverified")) {
+        setTimeout(() => {
+          toast('Login or Regist First', {
+            duration: 3000
+          })
+        }, 1000)
+
+        setTimeout(() => {
+          navigate('/')
+        }, 3000)
+      }
+    } catch (error) {
+      
     }
   }
 
@@ -189,6 +282,7 @@ function App() {
                   <Route path='products-location' element={<AdminProductLocation />} >
                     <Route path=':id' element={<AdminProductListLocation />} />
                   </Route>
+                  <Route path='mutation' element={<AdminMutation />} />
                   <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 
@@ -198,7 +292,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart }} data={{ show, itemCart }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart, getColor }} data={{ show, itemCart, adaSort }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login />} />
@@ -216,11 +310,10 @@ function App() {
               <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, setItemCart, totalPrice, loading, setLoading, setLoadingIndex, loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct }} func={{ getProduct }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart }} />} />
+              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort }} func={{ getProduct, getColor }} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess func={{ getCart }} />} />
-
             </Routes>
             <Toaster />
             <Footer />

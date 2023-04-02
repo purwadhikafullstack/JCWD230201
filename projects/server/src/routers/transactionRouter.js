@@ -20,7 +20,7 @@ Router.get('/detailTransaction', transactionController.detailTransactionUser)
 Router.post('/payment-proof', upload, transactionController.uploadPayment)
 Router.post('/cancel-transaction',transactionController.cancelTransactions)
 Router.post('/confirm-order', transactionController.confirmOrder)
-
+Router.get('/page-transaction', tokenVerify, transactionController.getAllTransactionUser)
 Router.post('/tester', transactionController.test)
 
 

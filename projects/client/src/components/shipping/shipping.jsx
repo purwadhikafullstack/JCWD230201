@@ -66,13 +66,13 @@ export default function Shipping(props) {
                     "token": localStorage.getItem('token')
                 }
             })
-            console.log(response.data.data);
+            // console.log(response.data.data);
             setCheckAddress(response.data.data);
             let aa = []
             response.data.data.forEach((item) => {
                 return item.value == 1 ? aa.push(item) : null
             })
-            console.log(aa[0]);
+            // console.log(aa[0]);
             setArrInitial(aa[0])
             setArrInitialCity(aa[0].city_id)
             setValueDefault(response.data.data);
@@ -84,7 +84,7 @@ export default function Shipping(props) {
             setInitialSubdistrict(aa[0].subdistrict)
             setInitialNumber(aa[0].phone_umber)
         } catch (error) {
-            console.log(error.message)
+            // console.log(error.message)
         }
     }
 
@@ -128,7 +128,7 @@ export default function Shipping(props) {
             });
             setArrProvince(response.data.data);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -142,7 +142,7 @@ export default function Shipping(props) {
             });
             setArrCity(data.data.data.results)
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
@@ -158,17 +158,17 @@ export default function Shipping(props) {
             setSelectedSubdistrict(value.subdistrict);
             setShowAddress(false)
             setSelectedID(value.id)
-            console.log(value);
+            // console.log(value);
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
     let getCost = async () => {
         try {
-            console.log(onCourier.current.value);
+            // console.log(onCourier.current.value);
             // console.log(onCost.current.value);
             let data = selectedCityId ? await axios.post('http://localhost:8000/rajaongkir/ongkir', { origin: selectedCityId, destination: selectedCityId, weight: 1700, courier: `${onCourier.current.value}` }, {
                 headers: {
@@ -182,16 +182,16 @@ export default function Shipping(props) {
                 })
 
             setCostShipping(data.data.data.results[0].costs);
-            console.log(data);
+            // console.log(data);
             setPriceShipping(costShipping[onCost.current.value.split(",")[1]].cost[0].value);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
     let getService = () => {
         getCost()
-        console.log(onCost.current.value)
+        // console.log(onCost.current.value)
     }
 
     let getCart = async () => {
@@ -241,14 +241,14 @@ export default function Shipping(props) {
 
     return (
         <>
-            <div className="pt-28 flex flex-col p-36">
-                <div className='font-bold text-3xl flex justify-start py-5'>
+            <div className="pt-20 flex flex-col md:px-5 lg:p-36">
+                <div className='font-bold text-3xl flex justify-start py-5 px-3 md:px-0'>
                     Shipping
                 </div>
-                <div className='grid grid-cols-6 gap-9'>
-                    <div className='flex justify-end col-span-3'>
+                <div className='grid md:grid-cols-6 lg:gap-9'>
+                    <div className='flex justify-end col-span-3 md:mr-3 lg:mr-0'>
                         <div className='flex-col items-end w-full'>
-                            <div className='flex-col items-end border'>
+                            <div className='flex-col items-end border mb-5 md:mb-0'>
                                 <div className='flex justify-between border-b-2 py-3 px-3'>
                                     <div className='flex items-center font-bold'>
                                         Shipping Address
@@ -506,7 +506,49 @@ export default function Shipping(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div className='w-full border mt-5 rounded-sm'>
+
+                            <div className='block md:hidden w-full border h-max '>
+                                <div className='flex justify-between border-b-2 py-3 px-3'>
+                                    <div className='flex items-center font-bold'>
+                                        Shipping Courier
+                                    </div>
+                                </div>
+                                <div className='flex p-5'>
+                                    <div className='grid gap-2 w-full'>
+                                        <div className='font-bold'>
+                                            Choose Courier
+                                        </div>
+                                        <select ref={onCourier} onChange={(e) => {
+                                            getCost(e.target.value)
+
+                                            onCost.current.value = "chooseService"
+                                            setPriceShipping(0)
+                                        }} className='rounded-sm w-full border border-black focus:ring-0 focus:ring-transparent focus:border focus:border-black'>
+                                            <option value={"choose"}>Choose Shipping</option>
+                                            <option value={"jne"}>JNE</option>
+                                            <option value={"pos"}>POS</option>
+                                            <option value={"tiki"}>Tiki</option>
+                                        </select>
+                                        <div className='font-bold'>
+                                            Choose Service
+                                        </div>
+                                        <select ref={onCost} onChange={(e) => {
+                                            getService(e.target.value)
+                                            setDisable(false)
+                                        }} className='rounded-sm w-full border border-black focus:ring-0 focus:ring-transparent focus:border focus:border-black'>
+                                            <option value={"chooseService"}>Choose Service</option>
+                                            {costShipping.map((value, index) => {
+                                                return (
+                                                    <option value={`${value.service},${index}`}>{value.service}</option>
+
+                                                )
+                                            })}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='w-full border mt-5 rounded-sm mb-5 md:mb-0'>
                                 <div className='font-bold py-5 border-b-2 px-4'>
                                     Shipping from iFrit Warehouse
                                 </div>
@@ -534,8 +576,8 @@ export default function Shipping(props) {
                             </div>
                         </div>
                     </div>
-                    <div className='grid gap-5 col-span-3'>
-                        <div className='w-full border'>
+                    <div className='grid col-span-3 mb-32 md:ml-2 lg:ml-0'>
+                        <div className='hidden md:block w-full border h-max '>
                             <div className='flex justify-between border-b-2 py-3 px-3'>
                                 <div className='flex items-center font-bold'>
                                     Shipping Courier
@@ -575,7 +617,7 @@ export default function Shipping(props) {
                                 </div>
                             </div>
                         </div>
-                        <div className='w-full border h-max px-3 py-4'>
+                        <div className='w-full border h-max bg-white px-3 py-4'>
                             <div className='font-bold text-xl'>
                                 Shopping Summary
                             </div>
@@ -603,7 +645,7 @@ export default function Shipping(props) {
                                     Rp. {(totalPrice + priceShipping).toLocaleString()}
                                 </div>
                             </div>
-                            <button onClick={() => setPaymentInfoModal(!paymentInfoModal)} className={`bg-black text-white font-bold w-full py-2 rounded`} disabled={disable}>
+                            <button onClick={() => setPaymentInfoModal(!paymentInfoModal)} className={`bg-black text-white font-bold w-full py-2 rounded disabled:cursor-not-allowed`} disabled={disable}>
                                 Buy
                             </button>
                             <Modal

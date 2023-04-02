@@ -1155,7 +1155,7 @@ module.exports = {
                 await db.log_stock.create({
                     qty: item.qty,
                     location_warehouse_id: warehouse_id,
-                    status: 'Sold_Cancelation',
+                    status: 'Additional',
                     product_detail_id: item.product_detail_id,
                     product_id:item.product_id
                 }
@@ -1224,6 +1224,52 @@ module.exports = {
                 message: 'Confirm Order Success!',
                 data: null
             })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error,
+                data: null
+            })
+        }
+    },
+    getAllTransactionUser: async (req, res) => {
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let { page } = req.query
+
+            let data1 = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                }
+            })
+
+            var limit = 5
+            var pages = Math.ceil(data1.length / limit)
+            var offset = limit * (Number(page) - 1)
+
+            let data = await db.transaction.findAll({
+                where: {
+                    user_id: getToken.id
+                },
+                include: [
+                    { model: db.order_status },
+                    { model: db.transaction_detail }
+                ],
+                offset,
+                limit
+            })
+
+            // console.log(data)
+            return res.status(200).send({
+                isError: false,
+                message: "Get All Transaction Success",
+                data: data,
+                total: data1.length,
+                page: Number(page),
+                pages: pages
+            });
         } catch (error) {
             res.status(401).send({
                 isError: true,
