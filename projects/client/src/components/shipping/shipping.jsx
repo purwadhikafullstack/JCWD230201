@@ -61,7 +61,7 @@ export default function Shipping(props) {
 
     let getAllAddress = async () => {
         try {
-            let response = await axios.get(`http://localhost:8000/shipping`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/shipping`, {
                 headers: {
                     "token": localStorage.getItem('token')
                 }
@@ -98,14 +98,14 @@ export default function Shipping(props) {
             let inputSubdistrict = onSubdistrict.current.value
             let inputPhoneNumber = onPhone_number.current.value
             if (inputReceiverName.length === 0 || inputUserAddress.length === 0 || inputProvince.length === 0 || inputCity.length === 0 || inputSubdistrict.length === 0 || inputPhoneNumber.length === 0) throw { message: 'Incomplete Input' }
-            let response = checkAddress.length ? await axios.post(`http://localhost:8000/shipping/add-address`, { receiver_name: inputReceiverName, value: 0, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber },
+            let response = checkAddress.length ? await axios.post(`${process.env.REACT_APP_API_BASE_URL}/shipping/add-address`, { receiver_name: inputReceiverName, value: 0, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber },
                 {
                     headers: {
                         "token": localStorage.getItem('token')
                     }
                 })
                 :
-                await axios.post(`http://localhost:8000/shipping/add-address`, { receiver_name: inputReceiverName, value: 1, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber },
+                await axios.post(`${process.env.REACT_APP_API_BASE_URL}/shipping/add-address`, { receiver_name: inputReceiverName, value: 1, user_address: inputUserAddress, province: inputProvince, city: inputCity, city_id: inputCityId, subdistrict: inputSubdistrict, phone_number: inputPhoneNumber },
                     {
                         headers: {
                             "token": localStorage.getItem('token')
@@ -121,7 +121,7 @@ export default function Shipping(props) {
 
     let getDataProvince = async () => {
         try {
-            let response = await axios.get("http://localhost:8000/rajaongkir/province", {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/province`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -135,7 +135,7 @@ export default function Shipping(props) {
     let getDataCity = async () => {
         try {
             console.log(onProvince.current.value.split(",")[0])
-            let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
+            let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -170,12 +170,12 @@ export default function Shipping(props) {
         try {
             // console.log(onCourier.current.value);
             // console.log(onCost.current.value);
-            let data = selectedCityId ? await axios.post('http://localhost:8000/rajaongkir/ongkir', { origin: selectedCityId, destination: selectedCityId, weight: 1700, courier: `${onCourier.current.value}` }, {
+            let data = selectedCityId ? await axios.post(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/ongkir`, { origin: selectedCityId, destination: selectedCityId, weight: 1700, courier: `${onCourier.current.value}` }, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
             }) :
-                await axios.post('http://localhost:8000/rajaongkir/ongkir', { origin: arrInitialCity, destination: arrInitialCity, weight: 1700, courier: `${onCourier.current.value}` }, {
+                await axios.post(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/ongkir`, { origin: arrInitialCity, destination: arrInitialCity, weight: 1700, courier: `${onCourier.current.value}` }, {
                     headers: {
                         key: "767e2faef8f409adc96f179e3a949442",
                     },
@@ -196,7 +196,7 @@ export default function Shipping(props) {
 
     let getCart = async () => {
         try {
-            let response = await axios.get('http://localhost:8000/cart/data-cart', {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/cart/data-cart`, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -215,7 +215,7 @@ export default function Shipping(props) {
 
     let newOrder = async () => {
         try {
-            let response = await axios.post('http://localhost:8000/transaction/createOrder', { ongkir: priceShipping, receiver: !selectedName ? initialName : selectedName, address: !selectedUserAddress ? initialUserAddress : selectedUserAddress, subdistrict: !selectedSubdistrict ? initialSubdistrict : selectedSubdistrict, city: !selectedCity ? initialCity : selectedCity, province: !selectedProvince ? initialProvince : selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !selectedNumber ? initialNumber : selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/createOrder`, { ongkir: priceShipping, receiver: !selectedName ? initialName : selectedName, address: !selectedUserAddress ? initialUserAddress : selectedUserAddress, subdistrict: !selectedSubdistrict ? initialSubdistrict : selectedSubdistrict, city: !selectedCity ? initialCity : selectedCity, province: !selectedProvince ? initialProvince : selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !selectedNumber ? initialNumber : selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }

@@ -30,14 +30,14 @@ export default function MenuAdminSetting(data) {
   // console.log(data.data)
 
   let getEmptyWH = async () => {
-    let response = await axios.get('http://localhost:8000/warehouse/AvailableWH')
+    let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
     setDataEmptyWH(response.data.data)
     console.log(response.data.data)
   }
 
   let submit = async () => {
     try {
-      let response = await axios.post('http://localhost:8000/admin/update', profile)
+      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/update`, profile)
       toast.success(response.data.message)
       setVisible({ ...visible, pop:false,disable:true })
       setTimeout(() => {
@@ -51,7 +51,7 @@ export default function MenuAdminSetting(data) {
   }
 
   let deleteAdmin = async () => {
-    let response = await axios.post('http://localhost:8000/admin/delete', { id: profile.id })
+    let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/delete`, { id: profile.id })
     toast.success(response.data.message)
     setVisible({ ...visible, pop:false })
     setTimeout(() => {

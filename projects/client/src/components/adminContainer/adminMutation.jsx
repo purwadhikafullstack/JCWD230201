@@ -57,7 +57,7 @@ export default function AdminMutation(){
     
     let getLocation = async()=>{
         try {
-            let response = await axios.get('http://localhost:8000/location')
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
             console.log(response.data.data);
             setLocationName(response.data.data);
         } catch (error) {
@@ -78,7 +78,7 @@ export default function AdminMutation(){
             let a = Number(onLocation.current.value)
             console.log(a);
             // console.log(id);
-            let response = await axios.post('http://localhost:8000/location/detail', {location_warehouse_id: a})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/detail`, {location_warehouse_id: a})
             console.log(response);
             setDetailWarehouse(response.data.data)
             getDetailCategory()
@@ -90,7 +90,7 @@ export default function AdminMutation(){
     let getDetailCategory = async()=>{
         try {
             if(onLocation.current.value!=0){
-                let response = await axios.get('http://localhost:8000/location/category')
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/category`)
                 console.log(response);
                 setDetailCategory(response.data.data)
                 // getName()
@@ -107,7 +107,7 @@ export default function AdminMutation(){
     //         console.log(a);
     //         console.log(b)
     //         // console.log(id);
-    //         let response = await axios.post('http://localhost:8000/location/name', {location_warehouse_id: a, category_id: b})
+    //         let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/name`, {location_warehouse_id: a, category_id: b})
     //         console.log(response.data.data);
     //         setDetailName(response.data.data)
     //         // getDetailSpec()
@@ -128,7 +128,7 @@ export default function AdminMutation(){
             console.log(b)
             console.log(c)
             // console.log(id);
-            let response = await axios.post('http://localhost:8000/location/spec', {location_warehouse_id: a, category_id: b, product_id: c})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/spec`, {location_warehouse_id: a, category_id: b, product_id: c})
             console.log(response.data.data);
             setDetailSpec(response.data.data)
             // getDetailLast()
@@ -148,7 +148,7 @@ export default function AdminMutation(){
             // console.log(c)
             console.log(d);
             // console.log(id);
-            let response = await axios.post('http://localhost:8000/location/getqty', {location_warehouse_id: a, product_detail_id: d })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/getqty`, {location_warehouse_id: a, product_detail_id: d })
             console.log(response.data.data.qty);
             setThisQty(response.data.data.qty);
             // console.log(response);
@@ -164,7 +164,7 @@ export default function AdminMutation(){
         try {
             setThisQty(0)
             let b = Number(onCategory.current.value)
-            let response = await axios.post(`http://localhost:8000/location/getname`, {category_id: b})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/getname`, {category_id: b})
             console.log(response.data.data);
             setThisName(response.data.data);
         } catch (error) {
@@ -178,9 +178,9 @@ export default function AdminMutation(){
             let d = Number(onSpec.current.value)
             let e = Number(onQty.current.value)
             if(onQty.current.value!=0){
-            let response = await axios.post(`http://localhost:8000/location/a`, {qty: e, order_status_id: 7, product_detail_id: d, location_warehouse_id_origin: user.warehouse_id, location_warehouse_id_target: a})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/a`, {qty: e, order_status_id: 7, product_detail_id: d, location_warehouse_id_origin: user.warehouse_id, location_warehouse_id_target: a})
             console.log(response);
-            let response2 = await axios.patch(`http://localhost:8000/location/origin`, {id: response.data.data.id, product_detail_id: d, location_warehouse_id: user.warehouse_id})
+            let response2 = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/origin`, {id: response.data.data.id, product_detail_id: d, location_warehouse_id: user.warehouse_id})
             console.log(response2);
             onLocation.current.value=""
             onSpec.current.value=""
@@ -208,7 +208,7 @@ export default function AdminMutation(){
 
     let getMutation = async()=>{
         try {
-            let response = await axios.get(`http://localhost:8000/location/all-mutation/${user.warehouse_id}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}`)
             console.log(response.data.data);
             setMyMutation(response.data.data);
         } catch (error) {
@@ -218,7 +218,7 @@ export default function AdminMutation(){
 
     let getRequest = async()=>{
         try {
-            let response = await axios.post(`http://localhost:8000/location/request/${user.warehouse_id}`, {order_status_id: 7})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/request/${user.warehouse_id}`, {order_status_id: 7})
             console.log(response.data.data);
             setMyRequest(response.data.data)
         } catch (error) {
@@ -254,9 +254,9 @@ export default function AdminMutation(){
             let a = Number(forId)
             let b = Number(forOrigin)
             let c = Number(forQty)
-            let response = await axios.post(`http://localhost:8000/location/confirm`, {id: a, order_status_id: 5})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/confirm`, {id: a, order_status_id: 5})
             console.log(response.data.data)
-            let response2 = await axios.post(`http://localhost:8000/location/updateqty`, {id: b, qty: c})
+            let response2 = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/updateqty`, {id: b, qty: c})
             console.log(response2.data.data)
             getMutation()
             getRequest()
@@ -277,7 +277,7 @@ export default function AdminMutation(){
 
     // let getConfirm = async()=>{
     //     try {
-    //         let response = await axios.post(`http://localhost:8000/location/request/${user.warehouse_id}`, {order_status_id: 5})
+    //         let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/request/${user.warehouse_id}`, {order_status_id: 5})
     //         console.log(response.data.data);
     //         setMyConfirm(response.data.data)
     //     } catch (error) {
@@ -288,7 +288,7 @@ export default function AdminMutation(){
     let postCancel = async()=>{
         try {
             let a = Number(forCancel)
-            let response = await axios.post(`http://localhost:8000/location/cancel`, {id:a, order_status_id: 6})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/cancel`, {id:a, order_status_id: 6})
             console.log(response.data.data);
             setMyConfirm(response.data.data)
             getMutation()

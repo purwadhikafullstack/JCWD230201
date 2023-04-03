@@ -28,7 +28,7 @@ export default function AdminSettingProfile() {
 
     let profile = async () => {
         try {
-            let response = await axios.post('http://localhost:8000/admin/profile-setting', { id: id })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/profile-setting`, { id: id })
             setAdmin(response.data.data)
         } catch (error) {
             navigate('/page-not-found')
@@ -45,7 +45,7 @@ export default function AdminSettingProfile() {
     }
 
     let submit = async (input) => {
-        let response = await axios.post('http://localhost:8000/admin/update', input)
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/update`, input)
         console.log(response)
         toast.success(response.data.message)
         setTimeout(() => {

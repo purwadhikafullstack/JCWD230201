@@ -65,7 +65,7 @@ export default function Transaction() {
         if (input == "Filter") return setDataFilter([])
         if (input == "Warehouse") {
             setSelect(input)
-            let response = await axios.post('http://localhost:8000/transaction/filter', { data: input })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/filter`, { data: input })
 
             setDataFilter(response.data.data)
         }
@@ -74,7 +74,7 @@ export default function Transaction() {
     let getAllTr = async () => {
         setListData({ ...listData, loading: true })
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
-        let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0, page: 1 } : { order_status_id: 0, page: 1 })
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/getAllTransaction`, user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0, page: 1 } : { order_status_id: 0, page: 1 })
         console.log(response.data.data)
         setListData({
             ...listData, dataTR: response.data.data.response, total_count: response.data.data.total_count
@@ -100,7 +100,7 @@ export default function Transaction() {
         setPickWH(wh)
         setPickStatus(status)
         try {
-            var response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null, page:slot?slot:1 })
+            var response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/getAllTransaction`, { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null, page:slot?slot:1 })
             console.log(response.data.data)
 
             let loaderPrice = [], loaderDate = []
@@ -132,7 +132,7 @@ export default function Transaction() {
 
     let shipping = async (id, code, load, wh_id) => {
         // console.log(ok)
-        let response = await axios.patch(`http://localhost:8000/transaction/ship?transaction_id=${ok.id}&code=${ok.code}&load=${JSON.stringify(ok.transaction)}&warehouse_id=${ok.warehouse}`)
+        let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/ship?transaction_id=${ok.id}&code=${ok.code}&load=${JSON.stringify(ok.transaction)}&warehouse_id=${ok.warehouse}`)
         response.data.message == 'Order canceled' ? toast.error(response.data.message) : toast.success(response.data.message)
         setTimeout(() => {
             toast('Loading..')

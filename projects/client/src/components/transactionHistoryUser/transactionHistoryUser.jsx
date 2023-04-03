@@ -50,7 +50,7 @@ export default function TransactionHistory() {
                 _page = Number(_page) - 1
             }
             // console.log(showPage)
-            var response = await axios.get(`http://localhost:8000/transaction/page-transaction?page=${_page ? _page : showPage}`, {
+            var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/page-transaction?page=${_page ? _page : showPage}`, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -120,7 +120,7 @@ export default function TransactionHistory() {
             fd.append('images', payment[0])
             fd.append('id', input)
 
-            let data = await axios.post('http://localhost:8000/transaction/payment-proof', fd)
+            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/payment-proof`, fd)
             // console.log(data)
 
 

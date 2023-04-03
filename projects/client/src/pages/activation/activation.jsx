@@ -40,7 +40,7 @@ export default function Activation(props) {
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
-            let result = await axios.patch(`http://localhost:8000/users/activation/${id}`, { password: inputPassword })
+            let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/activation/${id}`, { password: inputPassword })
             // console.log(result)
 
             password.current.value = ''
@@ -52,7 +52,7 @@ export default function Activation(props) {
                 navigate('/login')
             }, 2000);
 
-            let resultStatus = await axios.get(`http://localhost:8000/users/getStatus/${id}`)
+            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
 
 
@@ -92,7 +92,7 @@ export default function Activation(props) {
 
     let getStatusUser = async () => {
         try {
-            let resultStatus = await axios.get(`http://localhost:8000/users/getStatus/${id}`)
+            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
             console.log(resultStatus.data.data.status)
 
