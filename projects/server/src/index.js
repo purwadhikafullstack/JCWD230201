@@ -20,15 +20,15 @@ const {adminRouter,userRouter,productRouter,transactionRouter,
 
 // ===========================
 // NOTE : Add your routes here
-app.use('/admin', adminRouter)
-app.use('/product', productRouter)
-app.use('/users', userRouter)
-app.use('/transaction', transactionRouter)
-app.use('/shipping', addressRouter)
-app.use('/rajaongkir', rajaongkirRouter)
-app.use('/warehouse', warehouseRouter)
-app.use('/cart', cartRouter)
-app.use('/location', locationProductRouter)
+app.use('/api/admin', adminRouter)
+app.use('/api/product', productRouter)
+app.use('/api/users', userRouter)
+app.use('/api/transaction', transactionRouter)
+app.use('/api/shipping', addressRouter)
+app.use('/api/rajaongkir', rajaongkirRouter)
+app.use('/api/warehouse', warehouseRouter)
+app.use('/api/cart', cartRouter)
+app.use('/api/location', locationProductRouter)
 app.use('/api/log', logRouter)
 
 // ### Sequelize Synchronous

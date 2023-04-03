@@ -89,7 +89,7 @@ function App() {
   let getProductDetail = async (id) => {
     try {
       // console.log(id);
-      let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/productdetail/${id}`)
       // console.log(response.data.data[0].product_images[0].img);
       setDetail(response.data.data[0])
       setDetailProduct(response.data.data[0].product_details)
@@ -101,7 +101,7 @@ function App() {
 
   let getColor = async(id)=>{
     try {
-        let response = await axios.get(`http://localhost:8000/product/color/${id}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/color/${id}`)
         console.log(response.data.data);
         setAdaSort(response.data.data);
     } catch (error) {
@@ -112,7 +112,7 @@ function App() {
   let getProduct = async(id, ada)=>{
     try {
         if(ada==undefined){
-        let {data} = await axios.get(`http://localhost:8000/product/${id}`)
+        let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}`)
         setShow(data.data)
         console.log(show);
         setNyow();
@@ -128,7 +128,7 @@ function App() {
         setArrColor(arrColor2);
         // getColor()
     }else if(ada === "az"){
-        let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
         console.log(response.data.data);
         setShow(response.data.data);
         setNyow();
@@ -143,7 +143,7 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "za"){
-        let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
         console.log(response.data.data);
         setShow(response.data.data);
         setNyow();
@@ -158,7 +158,7 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "lohi"){
-      let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
       console.log(response.data.data);
       setShow(response.data.data);
       setNyow(response.data.data);
@@ -171,7 +171,7 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "hilo"){
-      let response = await axios.get(`http://localhost:8000/product/sort-name/${id}?sort=${ada}`)
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
       console.log(response.data.data);
       setShow(response.data.data);
       setNyow(response.data.data);
@@ -185,7 +185,7 @@ function App() {
         setArrColor(arrColor2);
     }else{
       console.log("MASHOK");
-      let response = await axios.post(`http://localhost:8000/product/sort-product/${id}`,{color: ada})
+      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/sort-product/${id}`,{color: ada})
       console.log(response.data.data);
       setShow(response.data.data);
       setNyow(response.data.data);
@@ -205,7 +205,7 @@ function App() {
   }
   // let loginKeep = async () => {
   //   try {
-  //     let response = await axios.post('http://localhost:8000/users/keep-login', {
+  //     let response = await axios.post('${process.env.REACT_APP_API_BASE_URL}/users/keep-login', {
   //       headers: {
   //         "token": localStorage.getItem('token')
   //       }
@@ -236,7 +236,7 @@ function App() {
 
   let getCart = async () => {
     try {
-      let response = await axios.get('http://localhost:8000/cart/data-cart', {
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/cart/data-cart`, {
         headers: {
           token: localStorage.getItem('token')
         }

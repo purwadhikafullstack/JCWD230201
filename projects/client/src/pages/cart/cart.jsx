@@ -31,7 +31,7 @@ export default function Cart(props) {
 
     let getData = async () => {
         try {
-            let response = await axios.get('http://localhost:8000/cart/data-cart', {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/cart/data-cart`, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -56,7 +56,7 @@ export default function Cart(props) {
 
     let deleteCart = async () => {
         try {
-            await axios.post('http://localhost:8000/cart/delete-cart', { id: cartToDelete.id })
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/cart/delete-cart`, { id: cartToDelete.id })
 
             toast.success('Delete Product from Cart Success')
 
@@ -71,7 +71,7 @@ export default function Cart(props) {
     let updateQty = async (input) => {
         try {
 
-            let response = await axios.post('http://localhost:8000/cart/update-cart', { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/cart/update-cart`, { id: input.split(',')[1], type: input.split(',')[2], qtyx: input.split(',')[0] })
 
             getData()
 

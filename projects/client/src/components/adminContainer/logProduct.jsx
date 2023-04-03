@@ -39,7 +39,7 @@ export default function LogProduct() {
             getAllLog(1, 0, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
         }
         if (input == "Warehouse") {
-            let response = await axios.post('http://localhost:8000/transaction/filter', { data: input })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/filter`, { data: input })
             setDataFilter(response.data.data)
         }
     }

@@ -72,7 +72,7 @@ export default function SalesReport() {
                     color: 'white'
                 }
             })
-            let response = await axios.get(`http://localhost:8000/transaction/getSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id?user.warehouse_id:0}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id?user.warehouse_id:0}`)
             let total_price = 0, total_tr = 0, total_ongkir = 0, total_discount = 0
             console.log(response)
             response.data.data.forEach((item, index) => {
@@ -105,14 +105,14 @@ export default function SalesReport() {
         try {
             // console.log(M)
             if (!M) {
-                var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
+                var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
 
 
             } else if (M) {
                 if (M.split(',')[0] == 12) {
-                    var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
                 } else {
-                    var response = await axios.get(`http://localhost:8000/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}`)
                 }
 
             }

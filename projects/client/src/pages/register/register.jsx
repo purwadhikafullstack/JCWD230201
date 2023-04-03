@@ -28,7 +28,7 @@ export default function Register() {
 
             setDisabledButton(true)
 
-            let result = await axios.post(`http://localhost:8000/users/register`, { name: inputName, email: inputEmail, phone_number: inputPhoneNumber })
+            let result = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/register`, { name: inputName, email: inputEmail, phone_number: inputPhoneNumber })
             // console.log(result)
 
             toast.success(`Register success, please check your email`)

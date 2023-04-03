@@ -16,7 +16,7 @@ export default function AdminProductLocation(){
 
     let getLocation = async()=>{
         try {
-            let response = await axios.get('http://localhost:8000/location')
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
             console.log(response.data.data);
             setLocationName(response.data.data)
         } catch (error) {
@@ -27,7 +27,7 @@ export default function AdminProductLocation(){
     let getLocationProduct = async(id, _page, btn)=>{
         try {
             console.log(_page)
-            let response = await axios.get(`http://localhost:8000/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
             console.log("ada")
             console.log(response);
             setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
@@ -37,7 +37,7 @@ export default function AdminProductLocation(){
             console.log(locationProduct);
             if(btn==="next"){
                 _page = Number(_page) + 1
-                let response = await axios.get(`http://localhost:8000/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
                 console.log(response);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 setLocationCity(response.data.response[0].city);
@@ -46,7 +46,7 @@ export default function AdminProductLocation(){
                 console.log(locationProduct);
             }else if(btn==="prev"){
                 _page = Number(_page) - 1
-                let response = await axios.get(`http://localhost:8000/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/location-product/${id?id:initialCity}?page=${_page?_page:showPage}`)
                 console.log(response);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 setLocationCity(response.data.response[0].city);

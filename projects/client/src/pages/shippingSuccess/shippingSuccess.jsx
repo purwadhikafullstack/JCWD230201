@@ -20,7 +20,7 @@ export default function ShippingSuccess(props) {
         try {
             const id = queryParams.get('id');
             // console.log(id)
-            let response = await axios.get(`http://localhost:8000/transaction/getDataTransaction?id=${id}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getDataTransaction?id=${id}`, {
                 headers: {
                     token: localStorage.getItem('token')
                 }

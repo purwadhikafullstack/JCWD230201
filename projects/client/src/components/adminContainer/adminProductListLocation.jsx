@@ -44,9 +44,9 @@ export default function AdminProductListLocation(props){
             }
             else if(onUpdateInc.current.value>0&&onUpdateDec.current.value==0){
                 // console.log("Masuk Pertama")
-                let response = await axios.patch(`http://localhost:8000/location/update`,{id: quantity, qty: a})
+                let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: a})
                 console.log(response);
-                let data = await axios.post(`http://localhost:8000/location/stock`,{qty:onUpdateInc.current.value, status: "Additional", location_warehouse_id: loc, product_detail_id: proId})
+                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateInc.current.value, status: "Additional", location_warehouse_id: loc, product_detail_id: proId})
                 console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {
@@ -58,9 +58,9 @@ export default function AdminProductListLocation(props){
                 setShowModal(!showModal)
             }else if(onUpdateInc.current.value==0&&onUpdateDec.current.value>0){
                 // console.log("Masuk Kedua")
-                let response = await axios.patch(`http://localhost:8000/location/update`,{id: quantity, qty: b})
+                let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: b})
                 console.log(response);
-                let data = await axios.post(`http://localhost:8000/location/stock`,{qty:onUpdateDec.current.value, status: "Reduction", location_warehouse_id: loc, product_detail_id: proId})
+                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateDec.current.value, status: "Reduction", location_warehouse_id: loc, product_detail_id: proId})
                 console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {

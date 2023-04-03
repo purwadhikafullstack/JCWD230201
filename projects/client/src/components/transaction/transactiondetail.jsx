@@ -26,7 +26,7 @@ export default function TransactionDetail() {
 
     let updateOrder = async (id, code, load, wh_id) => {
         try {
-            let response = await axios.patch(`http://localhost:8000/transaction/update?transaction_id=${id}&code=${code}&load=${JSON.stringify(load)}&warehouse_id=${wh_id}`)
+            let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/update?transaction_id=${id}&code=${code}&load=${JSON.stringify(load)}&warehouse_id=${wh_id}`)
             toast.success(response.data.message)
             setTimeout(() => {
                 toast('Loading..')
