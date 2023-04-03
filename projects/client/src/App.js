@@ -218,7 +218,7 @@ function App() {
   let notRegister = async() => {
     try {
 
-      if ((localStorage.getItem("token") == null) || (data.data.status === "Unverified")) {
+      if ((localStorage.getItem("token") == null) || (verifyStatus==='unverified')) {
         setTimeout(() => {
           toast('Login or Regist First', {
             duration: 3000
