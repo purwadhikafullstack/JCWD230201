@@ -25,5 +25,4 @@ Router.post('/updateqty', locationProductController.updateProductQty)
 Router.post('/confirm/:location_warehouse_id_target', locationProductController.getConfirm)
 Router.post('/cancel', locationProductController.postCancel)
 
-
 module.exports = Router

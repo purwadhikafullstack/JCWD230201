@@ -27,5 +27,6 @@ Router.post('/delete-product/detail/a/a/a', productController.deleteProductDetai
 Router.get('/sort-name/:category_id', productController.getSortName)
 Router.post('/sort-product/:category_id', productController.postSortColor)
 Router.get('/color/:category_id', productController.getColor)
+Router.post('/color/b/b/b/b', productController.getColor)
 
 module.exports = Router
