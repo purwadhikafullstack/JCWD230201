@@ -1,4 +1,4 @@
-import { Breadcrumb } from "flowbite-react";
+import { Breadcrumb,Dropdown } from "flowbite-react";
 import { toast, Toaster } from "react-hot-toast";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ export default function MyAccount() {
         <>
             <div className="pt-20 grid grid-cols-8 lg:grid-cols-10 gap-1 px-5 lg:px-32">
 
-                <div className="col-start-1 col-end-8 lg:col-start-2 lg:col-end-9 py-3">
+                <div className="col-start-1 col-end-8 hidden lg:block lg:col-start-2 lg:col-end-9 py-3">
                     <Breadcrumb aria-label="Default breadcrumb example">
                         <Breadcrumb.Item>
                             <Link to='/'>
@@ -38,7 +38,7 @@ export default function MyAccount() {
                     </Breadcrumb>
                 </div>
 
-                <div className="col-start-1 col-end-9 lg:col-start-2 lg:col-end-4 w-60">
+                <div className="col-start-1 col-end-9 hidden lg:block lg:col-start-2 lg:col-end-4 w-60">
 
                     <Link to='/my-account/information'>
                         <div className="border-b-2 border-gray-300 py-2 px-3">
@@ -62,6 +62,28 @@ export default function MyAccount() {
                         Logout
                     </button>
 
+                </div>
+
+                <div className=" lg:hidden">
+                    <div className="my-5">
+                        <Dropdown
+                            label="Dashboard"
+                            inline={true}
+                        >
+                            <Dropdown.Item onClick={() => navigate('/my-account')}>
+                                My Account
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => navigate('/my-account/information')}>
+                                Account Information
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => navigate('/my-account/address')}>
+                                Address
+                            </Dropdown.Item>
+                            <Dropdown.Item onClick={() => navigate('/my-account/history')}>
+                                Transaction History
+                            </Dropdown.Item>
+                        </Dropdown>
+                    </div>
                 </div>
 
                 <div className="col-start-1 col-end-9 lg:col-start-4 lg:col-end-10">

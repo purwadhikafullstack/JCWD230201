@@ -2,6 +2,7 @@ require("dotenv/config");
 const express = require("express");
 const cors = require('cors');
 const { join } = require("path");
+require("dotenv/config")
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -10,22 +11,25 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use('/Public',express.static('Public'))
+app.use('/Public/',express.static(__dirname + '/Public'))
 
 //#region API ROUTES
-const {adminRouter,userRouter,productRouter,transactionRouter,addressRouter,rajaongkirRouter,warehouseRouter, cartRouter, locationProductRouter} = require('./routers')
+const {adminRouter,userRouter,productRouter,transactionRouter,
+  addressRouter,rajaongkirRouter,warehouseRouter, 
+  cartRouter, locationProductRouter,logRouter} = require('./routers')
 
 // ===========================
 // NOTE : Add your routes here
-app.use('/admin', adminRouter)
-app.use('/product', productRouter)
-app.use('/users', userRouter)
-app.use('/transaction', transactionRouter)
-app.use('/shipping', addressRouter)
-app.use('/rajaongkir', rajaongkirRouter)
-app.use('/warehouse', warehouseRouter)
-app.use('/cart', cartRouter)
-app.use('/location', locationProductRouter)
+app.use('/api/admin', adminRouter)
+app.use('/api/product', productRouter)
+app.use('/api/users', userRouter)
+app.use('/api/transaction', transactionRouter)
+app.use('/api/shipping', addressRouter)
+app.use('/api/rajaongkir', rajaongkirRouter)
+app.use('/api/warehouse', warehouseRouter)
+app.use('/api/cart', cartRouter)
+app.use('/api/location', locationProductRouter)
+app.use('/api/log', logRouter)
 
 // ### Sequelize Synchronous
 // const Sequelize = require('sequelize');

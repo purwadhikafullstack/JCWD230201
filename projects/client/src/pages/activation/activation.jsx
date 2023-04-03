@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { Navigate, useParams } from "react-router-dom"
+import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { toast, Toaster } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Spinner } from "flowbite-react"
@@ -9,6 +9,8 @@ export default function Activation(props) {
 
     let password = useRef()
     let confirmPassword = useRef()
+
+    let navigate = useNavigate()
 
     const [visiblePassword, setVisiblePassword] = useState(false)
     const [visibleConfirmPassword, setVisibleConfirmPassword] = useState(false)
@@ -29,10 +31,8 @@ export default function Activation(props) {
         try {
             // let inputPassword = password.current.value
             let inputConfirmPassword = confirmPassword.current.value
-            // console.log(inputPassword)
-            // console.log(inputConfirmPassword)
 
-            if (inputPassword.length === 0 || inputConfirmPassword.length === 0) throw { message: 'Input not complete' }
+            if (inputPassword.length === 0 || inputConfirmPassword.length === 0) throw { message: 'Please input your password' }
 
             if (inputPassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
@@ -40,23 +40,29 @@ export default function Activation(props) {
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
-            let result = await axios.patch(`http://localhost:8000/users/activation/${id}`, { password: inputPassword })
-            console.log(result)
+            let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/activation/${id}`, { password: inputPassword })
+            // console.log(result)
 
             password.current.value = ''
             confirmPassword.current.value = ''
-
+            
             toast.success('Account Verified!')
 
-            let resultStatus = await axios.get(`http://localhost:8000/users/getStatus/${id}`)
+            setTimeout(() => {
+                navigate('/login')
+            }, 2000);
+
+            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
 
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
-            password.current.value = ''
-            confirmPassword.current.value = ''
+            // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -86,7 +92,7 @@ export default function Activation(props) {
 
     let getStatusUser = async () => {
         try {
-            let resultStatus = await axios.get(`http://localhost:8000/users/getStatus/${id}`)
+            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
             console.log(resultStatus.data.data.status)
 

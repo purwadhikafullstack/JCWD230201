@@ -18,6 +18,7 @@
     "dialect": "mysql"
   },
   "production": {
+
     "username": "jcwd230201",
     "password": "group01",
     "database": "jcwd230201",

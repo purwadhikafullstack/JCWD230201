@@ -2,9 +2,12 @@ import axios from "axios"
 export const CheckLogin = async () => {
         try {
                 let getTokenId = localStorage.getItem('token')
-                // console.log(getTokenId)
-                if (!getTokenId) return null
-                let response = await axios.get(`http://localhost:8000/admin/keep-login?`, {
+                if(!getTokenId) return{
+                        id: null,
+                        username: null
+                }
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/keep-login?`, {
+
                         headers: {
                                 token: getTokenId
                         }

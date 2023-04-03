@@ -6,58 +6,70 @@ import MenuAdminSetting from '../menuDropdown/menuadminsetting'
 import Loading from '../loading/loading'
 import { AiOutlinePlus, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Modal, Label } from 'flowbite-react'
-import toast,{Toaster} from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
+import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 
 
 
 export default function AdminSetting() {
     let { user, setUser } = useContext(userData)
 
-    let [update, setUpdate] = useState(false), [dataEmptyWH, setDataEmptyWH] = useState([])
+    let [dataEmptyWH, setDataEmptyWH] = useState([])
 
-    const [disable, setDisable] = useState(false), [disable2,setDisable2]= useState(false)
     const [visiblePassword, setVisiblePassword] = useState(false)
     const [typePassword, setTypePassword] = useState('password')
-    let password = useRef(),nama=useRef(),imail=useRef(),nomor=useRef()
+    let password = useRef(), nama = useRef(), imail = useRef(), nomor = useRef()
     let navigate = useNavigate()
 
-    let [dataAdmin, setDataAdmin] = useState([])
+    let [list, setList] = useState({
+        dataAdmin: [],
+        loading: true,
+        page: 1,
+        total_pages: 0,
+        total_count: 0,
+        disable: false,
+        pop: false
+    })
     let [add, setAdd] = useState(false)
 
     let [profile, setProfile] = useState({
-        name:'',
+        name: '',
         email: '',
         gender: '',
-        phone_number:'',
-        location_warehouse_id:'',
-        password:''
+        phone_number: '',
+        location_warehouse_id: '',
+        password: ''
     })
-    let getDataWHA = async () => {
-        let response = await axios.get('http://localhost:8000/admin/getAdmin')
+    let getDataWHA = async (page) => {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/getAdmin?page=${page}`)
         console.log(response.data.data)
-        setDataAdmin(response.data.data.loader)
+        setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, total_pages: response.data.data.total_pages, loading: false, page })
     }
     let getEmptyWH = async () => {
-        let response = await axios.get('http://localhost:8000/warehouse/AvailableWH')
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
         setDataEmptyWH(response.data.data)
         console.log(response.data.data)
     }
 
-    let reg = async() =>{
-       try {
-        let response = await axios.post(`http://localhost:8000/admin/register`,{name:profile.name, email:profile.email, gender:profile.gender, phone_number:profile.phone_number, password:profile.password, location_warehouse_id:profile.location_warehouse_id})
-         toast.success(response.data.message)
-         setAdd(!add)
-         setDisable2(false)
-         setTimeout(()=>{
-            toast('Loading..')
-            window.location.reload(false)
-         }, 2000)
-       } catch (error) {
-        setDisable2(false)
-        toast.error(error.response.data.message)
-       }
-        
+    let reg = async () => {
+        if (!profile.name || !profile.email || !profile.gender || !profile.phone_number || !profile.location_warehouse_id || !profile.password) {
+            toast.error('Please input all data first')
+            setList({ ...list, pop: false })
+        } else {
+            try {
+                let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/register`, { name: profile.name, email: profile.email, gender: profile.gender, phone_number: profile.phone_number, password: profile.password, location_warehouse_id: profile.location_warehouse_id })
+                toast.success(response.data.message)
+                setList({ ...list, pop: false })
+                setAdd(!add)
+                setTimeout(() => {
+                    toast('Loading..')
+                    window.location.reload(false)
+                }, 2000)
+            } catch (error) {
+                setList({ ...list, pop: false })
+                toast.error(error.response.data.message)
+            }
+        }
     }
 
     let changeVisiblePassword = () => {
@@ -72,7 +84,7 @@ export default function AdminSetting() {
     }
 
     useEffect(() => {
-        getDataWHA()
+        getDataWHA(1)
     }, [])
 
     return (
@@ -80,12 +92,12 @@ export default function AdminSetting() {
             user.role == 1 ?
                 <div className="p-5 flex flex-col gap-2">
                     <div className='flex flex-col gap-1 mb-8'>
-                       
+
                         <div className="text-2xl font-semibold">
-                        Active Admin Registered
+                            Active Admin Registered
                         </div>
                         <div className='text-gray-500 text-sm opacity-60'>
-                                {dataAdmin.length} Admin Found
+                            {list.total_count} Admin Found
                         </div>
                     </div>
 
@@ -124,7 +136,7 @@ export default function AdminSetting() {
                                     </div>
                                     <input className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                         ref={nama}
-                                        onChange={()=>setProfile({...profile,name:nama.current.value})}
+                                        onChange={() => setProfile({ ...profile, name: nama.current.value })}
                                         id="name"
                                         placeholder="Input Name"
                                         required={true}
@@ -137,7 +149,7 @@ export default function AdminSetting() {
                                             value="Email"
                                         />
                                     </div>
-                                    <input  onChange={()=>setProfile({...profile,email:imail.current.value})} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
+                                    <input onChange={() => setProfile({ ...profile, email: imail.current.value })} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                         ref={imail}
                                         id="name"
                                         placeholder="Input Email"
@@ -145,16 +157,16 @@ export default function AdminSetting() {
                                     />
                                 </div>
 
-                                
+
                                 <div className='my-5'>
                                     <div className="mb-2 block">
                                         <Label
                                             value="phone_number"
                                         />
                                     </div>
-                                    <input  onChange={()=>setProfile({...profile,phone_number:nomor.current.value})} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
+                                    <input onChange={() => setProfile({ ...profile, phone_number: nomor.current.value })} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                         ref={nomor}
-                                     
+
                                         placeholder="Input phone_number"
                                         required={true}
                                     />
@@ -167,7 +179,7 @@ export default function AdminSetting() {
                                         />
                                     </div>
                                     <div className="flex items-center relative">
-                                        <input onChange={()=>setProfile({...profile,password:password.current.value})} ref={password} disabled={disable} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                                        <input onChange={() => setProfile({ ...profile, password: password.current.value })} ref={password} disabled={list.disable} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
                                         <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                                     </div>
                                 </div>
@@ -185,7 +197,7 @@ export default function AdminSetting() {
                                             placeholder='have a gender?'
                                             required={true}
                                         >
-                                         <option value=''>-gender-</option>  <option value="M">M</option> <option value="F">F</option>
+                                            <option value=''>-gender-</option>  <option value="M">M</option> <option value="F">F</option>
                                         </select>
                                     </div>
                                     <div>
@@ -199,31 +211,71 @@ export default function AdminSetting() {
                                             id="warehouse"
                                             required={true}
                                         >
-                                            <option  value={null}>Please Choose Warehouse</option>
+                                            <option value={null}>Please Choose Warehouse</option>
                                             {
                                                 dataEmptyWH.map((item, index) => <option value={item.id}>{item.city}</option>)
                                             }
                                         </select>
                                     </div>
                                 </div>
-                                    <button disabled={disable2} onClick={() =>{ 
-                                        setDisable2(true)
-                                        reg()
-                                        }} className='border border-stone-800 hover:bg-stone-800 hover:text-white hover:duration-300 mt-4 p-3 w-full text-blacktext-lg font-semibold'>Submit</button>
-                    
+                                <button onClick={() => {
+                                    setList({ ...list, pop: true })
+                                }} className='border border-stone-800 hover:bg-stone-800 hover:text-white hover:duration-300 mt-4 p-3 w-full text-blacktext-lg font-semibold'>Submit</button>
+
                             </Modal.Body>
+                        </Modal>
+
+                        <Modal
+
+                            show={list.pop}
+                            size="md"
+                            popup={true}
+                            onClose={() => setList({ ...list, pop: false })}
+                        >
+                            <Modal.Header />
+
+
+                            <Modal.Body>
+                                <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <div className="flex flex-col items-center justify-center">
+
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets3.lottiefiles.com/packages/lf20_q4wbz787.json"
+                                            style={{ width: "200px" }}    ></lottie-player>
+
+
+
+                                        <h3 className="mb-5 mt-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                            Are you sure to register this admin?
+                                        </h3>
+                                        <div className='flex gap-3'>
+                                            <button
+                                                disabled={list.disable}
+                                                onClick={() => {
+                                                    setList({ ...list, disable: true })
+                                                    reg()
+                                                }} data-modal-hide="popup-modal" type="button" className={`text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
+                                                Yes, add
+                                            </button>
+                                            <button disabled={list.disable} onClick={() => setList({ ...list, pop: false })} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </Modal.Body>
+
                         </Modal>
 
 
                     </div>
 
-                    <div className="relative overflow-visible shadow-md  sm:rounded-lg">
+                    <div className="relative overflow-visible shadow-md z-0  sm:rounded-lg">
                         <table className='w-full text-sm text-left border text-gray-500 dark:text-gray-400'>
                             <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
                                 <tr>
-                                    <th className="px-6 py-4">
-                                        No.
-                                    </th>
                                     <th className="px-6 py-4">
                                         Name
                                     </th>
@@ -247,16 +299,33 @@ export default function AdminSetting() {
                             </thead>
                             <tbody>
                                 {
-                                    dataAdmin.length == 0 ?
-                                        null :
-                                        dataAdmin.map((value, index) => {
+                                    list.loading ?
+                                        <tr>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                            </td>
+                                        </tr>
+                                        :
+                                        list.dataAdmin.map((value, index) => {
                                             return (
                                                 value.role == 1 ?
                                                     null :
                                                     <tr>
-                                                        <td className="px-6 py-4">
-                                                            {index + 1}
-                                                        </td>
                                                         <td className='px-6 py-4 gap-3'>
                                                             {value.name ? value.name : '-empty-'}
                                                         </td>
@@ -287,9 +356,30 @@ export default function AdminSetting() {
                             </tbody>
                         </table>
                         {/* box */}
+                        <div className='flex justify-center p-5 gap-2'>
+                            <button
+                                disabled={(list.page - 1) == 0}
+                                onClick={() => {
+                                    setList({ ...list, loading: true })
+                                    getDataWHA(list.page - 1)
+                                }} className='font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white'>
+                                Previous
+                            </button>
+                            <div>
+                                Page {list.page} of {list?.total_pages}
+                            </div>
+                            <button
+                                disabled={(list.page + 1) > list.total_pages}
+                                onClick={() => {
+                                    setList({ ...list, loading: true })
+                                    getDataWHA(list.page + 1)
+                                }} className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
+                                Next
+                            </button>
+                        </div>
 
                     </div>
-                    <Toaster/>
+                    <Toaster />
                 </div>
                 :
                 navigate('*')
