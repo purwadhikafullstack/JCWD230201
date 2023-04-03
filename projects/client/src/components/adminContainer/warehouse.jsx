@@ -6,15 +6,15 @@ import Loading from '../loading/loading'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { Modal, Button, Label } from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
-import { AiOutlineLoading3Quarters,AiOutlineSearch } from 'react-icons/ai'
-
+import { AiOutlineLoading3Quarters, AiOutlineSearch } from 'react-icons/ai'
+import '@lottiefiles/lottie-player'
 
 export default function Warehouse() {
-    let { user, setUser } = useContext(userData)
+    let { user } = useContext(userData)
     let navigate = useNavigate()
     let [disable, setDisable] = useState(false)
 
-    let [show, setShow] = useState(false), [show2, setShow2] = useState(false), [popDelete, setPopDelete] = useState(false)
+    let [show, setShow] = useState(false), [show2, setShow2] = useState(false)
     let onProvince = useRef(), changeProvince = useRef()
     let onCity = useRef(), changeCity = useRef()
     let onSubdistrict = useRef(), onSubdistrictC = useRef()
@@ -23,14 +23,20 @@ export default function Warehouse() {
     // console.log(onProvince.current.value)
     // console.log(onCity.current.value)
 
-    let [dataWH, setDataWH] = useState([]), [chosenWH, setChosenWH] = useState({})
+    let [dataWH, setDataWH] = useState({
+        wh: [], total_pages: 0, total_count: 0, loading: true, page: 1
+    }), [chosenWH, setChosenWH] = useState({})
+
     const [arrProvince, setArrProvince] = useState([]), [changeP, setChangeP] = useState([])
     const [arrCity, setArrCity] = useState([]), [changeC, setChangeC] = useState([])
 
-    let getDataWH = async () => {
-        let response = await axios.get('http://localhost:8000/warehouse/getwh')
-        setDataWH(response.data.data)
+    let getDataWH = async (page) => {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/getwh?page=${page}`)
         console.log(response.data.data)
+        setDataWH({
+            ...dataWH, wh: response.data.data.getWH, total_pages: response.data.data.total_pages,
+            total_count: response.data.data.total_count, loading: false, page, choice: 1, pop: false
+        })
     }
     let postAddress = async () => {
         try {
@@ -39,10 +45,11 @@ export default function Warehouse() {
             let inputWH_Address = WH_address.current.value
             let inputCity = onCity.current.value.split(",")[1]
             let inputSubdistrict = onSubdistrict.current.value
-            if (!inputSubdistrict|| !inputWH_Address) throw { message: 'Incomplete Input' }
-            let response = await axios.post(`http://localhost:8000/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
+            if (!inputSubdistrict || !inputWH_Address) throw { message: 'Incomplete Input' }
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
             toast.success(response.data.message)
             setShow(!show)
+            setDataWH({ ...dataWH, pop: false })
             setTimeout(() => {
                 toast('wait..')
             }, 2000)
@@ -77,8 +84,9 @@ export default function Warehouse() {
             let inputProvince_id = changeProvince.current.value == 'Please Select Province' ? chosenWH.province_id : changeProvince.current.value.split(", ")[0]
 
 
-            let response = await axios.post(`http://localhost:8000/warehouse/updateWH`, { id: chosenWH.id, province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: inputCity_id, province_id: inputProvince_id })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/updateWH`, { id: chosenWH.id, province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: inputCity_id, province_id: inputProvince_id })
 
+            setDataWH({ ...dataWH, pop: false })
             toast.success(response.data.message)
             setShow2(!show2)
             setTimeout(() => {
@@ -102,7 +110,7 @@ export default function Warehouse() {
 
     let getDataProvince = async () => {
         try {
-            let response = await axios.get("http://localhost:8000/rajaongkir/province", {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/province`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 }
@@ -117,7 +125,7 @@ export default function Warehouse() {
     let getDataCityforChange = async () => {
         console.log(changeProvince.current.value)
         try {
-            let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${changeProvince.current.value.split(",")[0]}`, {
+            let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${changeProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -131,7 +139,7 @@ export default function Warehouse() {
 
     let getDataCity = async () => {
         try {
-            let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
+            let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -143,10 +151,11 @@ export default function Warehouse() {
     };
 
     let deleteWH = async () => {
-        let response = await axios.post('http://localhost:8000/warehouse/deleteWH', { id: chosenWH.id })
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/deleteWH`, { id: chosenWH.id })
 
         toast.success(response.data.message)
         setShow2(!show2)
+        setDataWH({ ...dataWH, pop: false })
         setTimeout(() => {
             toast('Wait..')
         }, 2000)
@@ -157,7 +166,7 @@ export default function Warehouse() {
 
 
     useEffect(() => {
-        getDataWH()
+        getDataWH(1)
         getDataProvince()
     }, [])
 
@@ -166,17 +175,21 @@ export default function Warehouse() {
             user.role ?
                 user.role == 1 ?
                     <div className="p-5 flex flex-col gap-8 min-h-screen">
-                        <div className="text-2xl font-semibold">
+                        <div className='flex flex-col gap-1'>
+                            <div  className="text-2xl font-semibold">
                             Warehouse List
+                            </div>
+                            <div className='text-sm text-gray-400 '>{dataWH.total_count} warehouse found</div>
+                           
                         </div>
                         <div className='border border-slate-200 bg-slate-100 px-8 py-5 h-full rounded-md shadow-indigo-300 shadow-lg'>
                             <div className='flex justify-between mb-5 items-center'>
                                 <div className='relative flex items-center'>
-                                <button className='absolute'>
-                                    <AiOutlineSearch/>
-                                </button>
+                                    <button className='absolute'>
+                                        <AiOutlineSearch />
+                                    </button>
                                 </div>
-                               
+
                                 <button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-black'>
                                     <div><AiOutlinePlus size={'22px'} /></div>
                                     <div className='overflow-hidden flex gap-3 ml-3 h-full'>
@@ -184,6 +197,7 @@ export default function Warehouse() {
                                     </div>
                                 </button>
                                 <Modal
+
                                     show={show}
                                     size="md"
                                     popup={true}
@@ -223,7 +237,7 @@ export default function Warehouse() {
                                                         </div>
                                                         <select
                                                             ref={onCity}
-                                                            
+
                                                             id="city"
                                                             className="w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black"
                                                         >   <option value={null}>Please Select City</option>
@@ -262,11 +276,10 @@ export default function Warehouse() {
                                             </div>
 
                                             <div className=" flex justify-center">
-                                                <Button disabled={disable} onClick={() => {
-                                                    setDisable(!disable)
-                                                    postAddress()
+                                                <Button onClick={() => {
+                                                    setDataWH({ ...dataWH, pop: true, choice: 3 })
                                                 }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>
-                                                    {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading</span> : 'Submit'}
+                                                    Submit
                                                 </Button>
                                             </div>
 
@@ -299,23 +312,7 @@ export default function Warehouse() {
                                             <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.province} />
                                         </div>
 
-                                        <div>
-                                            <div className="mb-4 block">
-                                                <Label
-                                                    value="Province"
-                                                />
-                                            </div>
-                                            <select
-                                                onChange={() => getDataCityforChange()}
-                                                ref={changeProvince}
-                                                id="province"
-                                                className="w-full py-2 mb-10 px-2 border border-black focus:ring-transparent focus:border-black"
-                                            >   <option>Please Select Province</option>
-                                                {changeP.map((value, index) => {
-                                                    return <option value={`${value.province_id}, ${value.province}`}>{value.province}</option>;
-                                                })}
-                                            </select>
-                                        </div>
+
 
                                         <div>
                                             <div className="mb-2 block">
@@ -326,8 +323,46 @@ export default function Warehouse() {
                                             <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.city} />
                                         </div>
 
+
                                         <div>
                                             <div className="mb-2 block">
+                                                <Label
+                                                    value="Subdistrict WH before"
+                                                />
+                                            </div>
+                                            <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.subdistrict} />
+                                        </div>
+
+
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <Label
+                                                    value="WH Address before"
+                                                />
+                                            </div>
+                                            <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.address} />
+                                        </div>
+
+                                        <div>
+                                            <div className="mt-8 block mb-2">
+                                                <Label
+                                                    value="Province"
+                                                />
+                                            </div>
+                                            <select
+                                                onChange={() => getDataCityforChange()}
+                                                ref={changeProvince}
+                                                id="province"
+                                                className="w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                                            >   <option>Please Select Province</option>
+                                                {changeP.map((value, index) => {
+                                                    return <option value={`${value.province_id}, ${value.province}`}>{value.province}</option>;
+                                                })}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <div className=" block mb-2">
                                                 <Label
                                                     value="City"
                                                 />
@@ -336,7 +371,7 @@ export default function Warehouse() {
 
                                                 ref={changeCity}
                                                 id="city"
-                                                className="w-full mb-10 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                                                className="w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black"
                                             >               <option>Please Select City</option>
                                                 {changeC.map((value, index) => {
                                                     return (
@@ -347,20 +382,12 @@ export default function Warehouse() {
                                         </div>
 
                                         <div>
-                                            <div className="mb-2 block">
-                                                <Label
-                                                    value="Subdistrict WH before"
-                                                />
-                                            </div>
-                                            <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.subdistrict} />
-                                        </div>
-                                        <div>
-                                            <div className="mb-2 block">
+                                            <div className=" block mb-2">
                                                 <Label
                                                     value="Subdisctrict"
                                                 />
                                             </div>
-                                            <input className='w-full py-2 mb-10 px-2 border border-black focus:ring-transparent focus:border-black' ref={onSubdistrictC}
+                                            <input className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' ref={onSubdistrictC}
                                                 id="Subdisctrict"
                                                 placeholder="Subdistrict"
                                                 required={true}
@@ -368,15 +395,7 @@ export default function Warehouse() {
                                         </div>
 
                                         <div>
-                                            <div className="mb-2 block">
-                                                <Label
-                                                    value="WH Address before"
-                                                />
-                                            </div>
-                                            <input disabled={true} type="text" className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' placeholder={chosenWH.address} />
-                                        </div>
-                                        <div>
-                                            <div className="mb-2 block">
+                                            <div className="block mb-2">
                                                 <Label
                                                     value="WH Address"
                                                 />
@@ -388,17 +407,19 @@ export default function Warehouse() {
                                             />
                                         </div>
 
+
+
                                         <div className=" flex justify-center pt-10">
                                             <Button disabled={disable} onClick={() => {
-                                                setDisable(!disable)
-                                                
+                                                setDataWH({ ...dataWH, pop: true, choice: 1 })
                                             }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>
-                                                {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading...</span> : 'Submit'}
+                                                Submit
                                             </Button>
                                         </div>
+
                                         <div className=" flex justify-center pt-5">
-                                            <Button disabled={disable} onClick={() => deleteWH()} className='hover:border-white text-white border rounded-sm bg-red-700 hover:bg-red-500 w-[640px]'>
-                                                {disable ? <span className='flex gap-3 items-center'><AiOutlineLoading3Quarters className='animate-spin' />Loading...</span> : 'Delete Warehouse'}
+                                            <Button disabled={disable} onClick={() => setDataWH({ ...dataWH, pop: true, choice: 2 })} className='hover:border-white text-white border rounded-sm bg-red-700 hover:bg-red-500 w-[640px]'>
+                                                Delete Warehouse
                                             </Button>
                                         </div>
                                     </div>
@@ -439,43 +460,154 @@ export default function Warehouse() {
                                     </thead>
                                     <tbody>
                                         {
-                                            dataWH.map((item, index) => {
-                                                return (
-                                                    <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                            {index + 1}
-                                                        </th>
-                                                        <td className="px-6 py-4">
-                                                            {item.province}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            {item.city}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            {item.subdistrict}
-                                                        </td> <td className="px-6 py-4">
-                                                            {item.address}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            {item.latitude}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            {item.longitude}
-                                                        </td>
-                                                        <td className="px-6 py-4">
-                                                            <button onClick={() => {
-                                                                setChosenWH(item)
-                                                                setShow2(!show2)
-                                                            }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })}
+                                            dataWH.loading ?
+                                                <tr>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                </tr>
+                                                :
+                                                dataWH.wh.map((item, index) => {
+                                                    return (
+                                                        <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                                {item.id}
+                                                            </th>
+                                                            <td className="px-6 py-4">
+                                                                {item.province}
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                {item.city}
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                {item.subdistrict}
+                                                            </td> <td className="px-6 py-4">
+                                                                {item.address}
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                {item.latitude}
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                {item.longitude}
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <button onClick={() => {
+                                                                    setChosenWH(item)
+                                                                    setShow2(!show2)
+                                                                }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })}
 
                                     </tbody>
                                 </table>
                             </div>
+                            <div className='flex justify-center p-5 gap-2'>
+                                <button
+                                    disabled={(dataWH.page - 1) == 0}
+                                    onClick={() => {
+                                        setDataWH({ ...dataWH, loading: true })
+                                        getDataWH(dataWH.page - 1)
+                                    }} className='font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white'>
+                                    Previous
+                                </button>
+                                <div>
+                                    Page {dataWH.page} of {dataWH?.total_pages}
+                                </div>
+                                <button
+                                    disabled={(dataWH.page + 1) > dataWH.total_pages}
+                                    onClick={() => {
+                                        setDataWH({ ...dataWH, loading: true })
+                                        getDataWH(dataWH.page + 1)
+                                    }} className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
+                                    Next
+                                </button>
+                            </div>
+
+                            <Modal
+
+                                show={dataWH.pop}
+                                size="md"
+                                popup={true}
+                                onClose={() => setDataWH({ ...dataWH, pop: false })}
+                            >
+                                <Modal.Header />
+
+
+                                <Modal.Body>
+                                    <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                        <div className="flex flex-col items-center justify-center">
+
+                                            <lottie-player
+                                                autoplay
+                                                loop
+                                                mode="normal"
+                                                src="https://assets3.lottiefiles.com/packages/lf20_q4wbz787.json"
+                                                style={{ width: "200px" }}    ></lottie-player>
+
+
+
+                                            <h3 className="mb-5 mt-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                {
+                                                    dataWH.choice == 1 ?
+                                                        'Are you sure to update?'
+                                                        :
+                                                        dataWH.choice == 2 ?
+                                                            'Delete this warehouse?'
+                                                            :
+                                                            'Add new warehouse?'
+                                                }
+                                            </h3>
+                                            <div className='flex gap-3'>
+                                                <button
+                                                    disabled={disable}
+                                                    onClick={() => {
+                                                        setDisable(true)
+                                                        toast('processing')
+                                                        dataWH.choice == 1 ? updateWH() : dataWH.choice == 2 ? deleteWH() : postAddress()
+                                                    }} data-modal-hide="popup-modal" type="button" className={`text-white ${dataWH.choice == 1 ? 'bg-green-500 hover:bg-green-700' : dataWH.choice == 2 ? 'bg-red-600 hover:bg-red-800' : 'bg-blue-500 hover:bg-blue-600'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
+                                                    {
+                                                        dataWH.choice == 1 ?
+                                                            'Yes, update' :
+                                                            dataWH.choice == 2 ?
+                                                                'Yes, delete!' :
+                                                                'Yes, add'
+                                                    }
+                                                </button>
+                                                <button disabled={disable} onClick={() => setDataWH({ ...dataWH, pop: false })} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </Modal.Body>
+
+                            </Modal>
                         </div>
+
+
+
 
                         {/* box */}
                     </div>

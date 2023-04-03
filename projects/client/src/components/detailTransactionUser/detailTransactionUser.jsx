@@ -12,6 +12,9 @@ import { HiOutlineExclamationCircle } from 'react-icons/hi'
 
 import Loading from "../loading/loading"
 
+import Moment from "react-moment"
+import 'moment-timezone';
+
 export default function DetailTransaction() {
     // const { id } = useParams()
 
@@ -23,17 +26,23 @@ export default function DetailTransaction() {
     const [modalCancel, setModalCancel] = useState(false)
     const [modalConfirm, setModalConfirm] = useState(false)
     const [cancelID, setCancelID] = useState(0)
-    const [modal, setModal] = useState(false)
+    const [date, setDate] = useState('')
 
-    const [payment, setPayment] = useState([])
-    const [message, setMessage] = useState('')
+    let shotgunStatus = [
+        'bg-yellow-100 text-yellow-400 text-sm font-bold p-1 rounded-sm',
+        'bg-orange-100 text-orange-400 text-sm font-bold p-1 rounded-sm',
+        'bg-purple-200 text-purple-600 text-sm font-bold p-1 rounded-sm',
+        'bg-blue-100 text-blue-600 text-sm font-bold p-1 rounded-sm',
+        'bg-lime-400 bg-opacity-30 text-green-600 text-sm font-bold p-1 rounded-sm',
+        'bg-red-200 text-red-600 text-sm font-bold p-1 rounded-sm'
+    ]
 
     let getData = async () => {
         try {
             var id = queryParams.get('id');
-            let response = await axios.get(`http://localhost:8000/transaction/detailTransaction?id=${id}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/detailTransaction?id=${id}`)
 
-            console.log(response.data.data)
+            // console.log(response.data.data)
             setTransactionDetail({
                 ...transactionDetail,
                 id: response.data.data.id,
@@ -53,6 +62,11 @@ export default function DetailTransaction() {
             setProduct(response.data.data.transaction_details)
             setCancelID(response.data.data.id)
 
+            var dateString = response.data.data.updatedAt;
+            var justClock = new Date(dateString).toTimeString();
+            dateString = new Date(dateString).toUTCString();
+            setDate(`${dateString.split(' ').slice(0, 4).join(' ')} ${justClock.split(' ').slice(0, 1).join(' ')}`)
+
             let sum = 0
             response.data.data.transaction_details.forEach(e =>
                 sum += e.qty * e.price)
@@ -65,7 +79,7 @@ export default function DetailTransaction() {
     let cancelOrder = async (input) => {
         try {
             // console.log(input)
-            await axios.post('http://localhost:8000/transaction/cancel-transaction', {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-transaction`, {
                 id: input
             })
 
@@ -87,7 +101,7 @@ export default function DetailTransaction() {
     let confirmOrder = async (input) => {
         try {
             // console.log(input)
-            await axios.post('http://localhost:8000/transaction/confirm-order', {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/confirm-order`, {
                 id: input
             })
 
@@ -97,55 +111,6 @@ export default function DetailTransaction() {
 
         } catch (error) {
 
-        }
-    }
-
-    let onImageValidation = (e) => {
-        try {
-            let files = [...e.target.files]
-            // console.log(files[0])
-            setPayment(files)
-
-            if (files.length !== 0) {
-                files.forEach((value) => {
-                    if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
-                })
-            }
-            setMessage('')
-
-
-        } catch (error) {
-            // console.log(error)
-            setMessage(error.message)
-
-        }
-    }
-
-    let uploadPayment = async (input) => {
-        try {
-            // console.log(input)
-            let fd = new FormData()
-            fd.append('images', payment[0])
-            fd.append('id', input)
-
-            let data = await axios.post('http://localhost:8000/transaction/payment-proof', fd)
-            // console.log(data)
-
-
-            toast.success('Upload Payment Proof Success!', {
-                style: {
-                    background: "black",
-                    color: 'white'
-                }
-            })
-
-                setModal(false)
-
-            // setTimeout(() => {
-            //     window.location.reload(false)
-            // }, 3000)
-        } catch (error) {
-            // console.log(error)
         }
     }
 
@@ -176,7 +141,7 @@ export default function DetailTransaction() {
                                     <Badge
                                         color="info"
                                         size="sm"
-                                        className={transactionDetail.statusID === 6 ? "text-center bg-red-200 font-semibold text-red-600 w-max px-3 rounded-sm" : transactionDetail.statusID === 4 || transactionDetail.statusID === 5 ? "text-center bg-green-200 font-semibold text-green-600 w-max px-3 rounded-sm" : "text-center bg-blue-200 font-semibold text-sky-600 w-max px-3 rounded-sm"}
+                                        className={shotgunStatus[transactionDetail.statusID - 1]}
                                     >
                                         {transactionDetail.status}
                                     </Badge>
@@ -190,78 +155,71 @@ export default function DetailTransaction() {
                                             {transactionDetail.statusID === 6 ? "Order Canceled" : transactionDetail.statusID === 1 ? "Waiting for Payment" : transactionDetail.statusID === 2 ? "Waiting for Confirmation Payment" : "Payment Success"}
                                         </p>
                                         {
-                                            transactionDetail.statusID === 1 ?
-                                                <>
-                                                    <button onClick={() => {
-                                                        setModal(!modal)
-                                                    }} className="rounded-sm border border-black mt-2 w-full py-2 hover:bg-black hover:text-white">
-                                                        Upload Payment
-                                                    </button>
-                                                    <Modal
-                                                        show={modal}
-                                                        size="md"
-                                                        onClose={() => {
-                                                            setModal(!modal)
-                                                        }}
-                                                    >
-                                                        <Modal.Header>
-                                                            Upload Payment
-                                                        </Modal.Header>
-                                                        <Modal.Body>
-                                                            <div>
-                                                                <input onChange={(e) => onImageValidation(e)} type="file" />
-                                                                {message}
-                                                            </div>
-                                                        </Modal.Body>
-                                                        <Modal.Footer>
-                                                            <button onClick={() => uploadPayment(transactionDetail.id)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm px-10 py-2">
-                                                                Upload
-                                                            </button>
-                                                            <button onClick={() => setModal(false)} className="bg-white text-black hover:bg-black hover:text-white border border-black rounded-sm px-10 py-2">
-                                                                Decline
-                                                            </button>
-                                                        </Modal.Footer>
-                                                    </Modal>
-                                                </>
+                                            transactionDetail.statusID === 6 || transactionDetail.statusID === 1 || transactionDetail.statusID === 2 ?
+                                                <p className="text-sm mt-3 text-center">
+                                                    {date}
+                                                </p>
                                                 :
                                                 null
                                         }
-                                        {/* <p className="text-sm mt-3">
-                                            {`${transactionDetail.updatedAt.split('T')[0]} ${transactionDetail.updatedAt.split('T')[1].split('.')[0]}`}
-                                        </p> */}
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex rotate-90 md:rotate-0 items-center py-5">
                                         <MdArrowForwardIos />
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <div className={transactionDetail.statusID === 6 ? "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : transactionDetail.statusID >= 3 ? "bg-black text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center"}>
                                             <BsArrowRepeat />
                                         </div>
-                                        <p className="mt-5 font-semibold">
+                                        <p className="mt-5 font-semibold text-center">
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 3 ? "Process" : null}
                                         </p>
+                                        {
+                                            transactionDetail.statusID === 6 ? null : transactionDetail.statusID === 3 ?
+                                                <p className="text-sm mt-3 text-center">
+                                                    {date}
+                                                </p>
+                                                :
+                                                null
+                                        }
+
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex rotate-90 md:rotate-0 items-center py-5">
                                         <MdArrowForwardIos />
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <div className={transactionDetail.statusID === 6 ? "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : transactionDetail.statusID >= 4 ? "bg-black text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center"}>
                                             <FaShippingFast />
                                         </div>
-                                        <p className="mt-5 font-semibold">
+                                        <p className="mt-5 font-semibold text-center">
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 4 ? "Shipped" : null}
                                         </p>
+                                        {
+                                            transactionDetail.statusID === 6 ? null : transactionDetail.statusID === 4 ?
+                                                <p className="text-sm mt-3 text-center">
+                                                    {date}
+                                                </p>
+                                                :
+                                                null
+                                        }
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex rotate-90 md:rotate-0 items-center py-5">
                                         <MdArrowForwardIos />
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <div className={transactionDetail.statusID === 6 ? "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : transactionDetail.statusID >= 5 ? "bg-black text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center" : "bg-gray-300 text-white text-3xl rounded-full w-20 h-20 flex justify-center items-center"}>
                                             <ImLocation2 />
                                         </div>
-                                        <p className="mt-5 font-semibold">
+                                        <p className="mt-5 font-semibold text-center">
                                             {transactionDetail.statusID === 6 ? null : transactionDetail.statusID >= 5 ? "Order Success" : null}
                                         </p>
+                                        {
+                                            transactionDetail.statusID === 6 ? null : transactionDetail.statusID === 5 ?
+                                                <p className="text-sm mt-3 text-center">
+                                                    {date}
+                                                </p>
+                                                :
+                                                null
+                                        }
                                         {transactionDetail.statusID === 4 ?
                                             <>
                                                 <button onClick={() => setModalConfirm(!modalConfirm)} className="bg-black text-white hover:bg-white hover:text-black border border-black rounded-sm mt-2 px-2 py-1">
@@ -315,7 +273,7 @@ export default function DetailTransaction() {
                                     <p>{transactionDetail.name}</p>
                                     <p>{transactionDetail.address}</p>
                                     <p>{transactionDetail.subdistrict}, {transactionDetail.city}, {transactionDetail.province}</p>
-                                    <p>{`0${transactionDetail.phone_number}`}</p>
+                                    <p>{`${transactionDetail.phone_number}`}</p>
                                 </div>
                             </div>
 

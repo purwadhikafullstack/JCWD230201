@@ -30,7 +30,7 @@ export default function ResetPassword() {
             // let inputPassword = password.current.value
             let inputConfirmPassword = confirmPassword.current.value
 
-            if (inputPassword.length === 0 || inputConfirmPassword.length === 0) throw { message: 'Input not complete' }
+            if (inputPassword.length === 0 || inputConfirmPassword.length === 0) throw { message: 'Please input your password' }
 
             if (inputPassword.length < 8) throw { message: 'Password at least has 8 characters' }
 
@@ -38,7 +38,7 @@ export default function ResetPassword() {
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
-            let result = await axios.patch(`http://localhost:8000/users/reset-password/${id}`, { password: inputPassword })
+            let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/reset-password/${id}`, { password: inputPassword })
 
             password.current.value = ''
             confirmPassword.current.value = ''
@@ -53,13 +53,11 @@ export default function ResetPassword() {
 
             setTimeout(() => {
                 navigate('/login')
-            }, 3000)
+            }, 2000);
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast.error(error.message)
-            password.current.value = ''
-            confirmPassword.current.value = ''
         }
     }
 
@@ -90,7 +88,7 @@ export default function ResetPassword() {
     return (
         <>
             <div className="pt-28 flex justify-center items-center h-screen">
-                <div className="flex flex-col h-max w-max px-5 py-3 border-2 border-gray-200 shadow-xl rounded-sm">
+                <div className="flex flex-col h-max w-max px-5 py-3 border-2 border-gray-200 rounded-sm">
                     <div className="flex justify-center font-bold text-3xl py-2 border-b-2 border-gray-500">
                         Reset Password
                     </div>

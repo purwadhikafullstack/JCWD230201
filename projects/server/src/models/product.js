@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
       }),
       this.hasMany(models.product_image,{
         foreignKey:'product_id'
+      }),
+      this.hasMany(models.transaction_detail,{
+        foreignKey:'product_id'
+      }),
+      this.hasMany(models.log_stock,{
+        foreignKey:'product_id'
       })
     }
   }

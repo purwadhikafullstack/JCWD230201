@@ -12,6 +12,8 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 //import jwt
 const { createToken } = require('../lib/jwt');
 
+const deleteFiles = require('./../helpers/deleteFiles')
+
 
 module.exports = {
     register: async (req, res) => {
@@ -43,14 +45,21 @@ module.exports = {
         }
     },
     getAllAdmin: async (req, res) => {
+        let {page} = req.query
+        const page_size = 5;
+        const offset = (page - 1) * page_size;
+        const limit = page_size;
+
+        const total_count = await db.admin.count({where:{role:2}})
+        const total_pages = Math.ceil(total_count / page_size)
+
         try {
             let allData = await db.admin.findAll({
                 where: {
                     role: 2
                 },
-                include: [{ model: db.location_warehouse }]
+                include: [{ model: db.location_warehouse }],offset,limit
             })
-            console.log(allData[4].dataValues.role)
             let loader = allData.map((item, index) => {
                 return (
                     {
@@ -65,15 +74,14 @@ module.exports = {
                     }
                 )
             })
-            // console.log(loader)
-            // console.log(allData[1].dataValues.location_warehouse)
 
             res.status(201).send({
                 isError: false,
                 message: 'Get Data Success!',
                 data: {
-                    loader
-
+                    loader,
+                    total_count,
+                    total_pages
                 }
             })
         } catch (error) {
@@ -129,21 +137,37 @@ module.exports = {
         }
     },
     getAllUser: async (req, res) => {
+        let {page,code} = req.query
+        const page_size = 5;
+        const offset = (page - 1) * page_size;
+        const limit = page_size;
 
-        let allUser = await db.user.findAll()
+        if(code==1){
+            
+            var total_count = await db.user.count()
+            var total_pages = Math.ceil(total_count / page_size)
+            var allUser = await db.user.findAll({
+              offset,limit
+            })
 
-        let allAdmin = await db.admin.findAll({
-            where: {
-                role: 2
-            }
-        })
-
+        }else if(code==2){
+           
+            var total_count = await db.admin.count({where:{role: 2}})
+            var total_pages = Math.ceil(total_count / page_size)
+            var allAdmin = await db.admin.findAll({ 
+                where: {
+                    role: 2
+                },
+                offset,limit
+            })
+        }
         res.status(201).send({
             isError: false,
             message: 'get data success',
             data: {
-                'user': allUser,
-                'admin': allAdmin
+                response:allUser?allUser:allAdmin,
+                total_count,
+                total_pages
             }
         })
     },
@@ -270,5 +294,35 @@ module.exports = {
                     getDataUser.location_warehouse.city : null
             }
         })
-    }
+    },
+    updateAdminPhoto: async (req, res) => {
+        const t = await sequelize.transaction()
+        try {
+            let getToken = req.dataToken
+            // console.log(getToken)
+
+            let profilePicture = await db.admin.update({ photo_profile: req.files.images[0].path }, {
+                where: {
+                    id: getToken.id
+                }
+            }, { transaction: t })
+
+            await t.commit()
+            res.status(201).send({
+                isError: false,
+                message: 'Update Photo Profile Success!',
+                data: profilePicture
+            })
+
+        } catch (error) {
+            await t.rollback()
+            deleteFiles(req.files)
+            console.log(error)
+            res.status(404).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
 }

@@ -72,7 +72,7 @@ export default function SalesProduct(data) {
                                         {index + 1}
                                     </td>
                                     <td className="px-6 py-4">
-                                        220301/MMX/{Math.floor(Math.random() * 10000)}{item.transaction.id}
+                                       {item.transaction.id}
                                     </td>
                                     <td class="px-6 py-4">
                                         {item.product_name}

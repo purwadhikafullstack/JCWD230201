@@ -60,7 +60,7 @@ export default function MyAccountAddress() {
 
     let getProvince = async () => {
         try {
-            let response = await axios.get('http://localhost:8000/rajaongkir/province', {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/province`, {
                 headers: {
                     key: "8d832179b0e66fb5dea1f75c477eca34"
                 }
@@ -77,12 +77,12 @@ export default function MyAccountAddress() {
         try {
             console.log(input.split(',')[2])
 
-            let response = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${input.split(',')[0]}`, {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${input.split(',')[0]}`, {
                 headers: {
                     key: "8d832179b0e66fb5dea1f75c477eca34"
                 }
             })
-            console.log(response.data.data.results)
+            // console.log(response.data.data.results)
             if (input.split(',')[2] == 'Edit') {
                 setProfile({ ...profile, cityEdit: response.data.data.results })
             } else {
@@ -91,13 +91,13 @@ export default function MyAccountAddress() {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
     let getAddressUser = async () => {
         try {
-            let response = await axios.get('http://localhost:8000/shipping', {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/shipping`, {
                 headers: {
                     "token": localStorage.getItem('token')
                 }
@@ -105,14 +105,14 @@ export default function MyAccountAddress() {
             // console.log(response.data.data)
             setAddressDB(response.data.data)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
     let updateAddressUser = async () => {
         try {
             console.log(choosenUser.receiver_name)
-            let response = await axios.post('http://localhost:8000/users/update-user_address', {
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/update-user_address`, {
                 id: choosenUser.id,
                 receiver_name: choosenUser.receiver_name,
                 user_address: choosenUser.user_address,
@@ -121,7 +121,7 @@ export default function MyAccountAddress() {
                 city: choosenUser.city,
                 subdistrict: choosenUser.subdistrict
             })
-            console.log(response)
+            // console.log(response)
             getAddressUser()
 
             setChoosenUser({ ...choosenUser, receiver_name: '' })
@@ -148,14 +148,14 @@ export default function MyAccountAddress() {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
     let deleteAddressUser = async () => {
         try {
             // console.log(userToDelete.id)
-            await axios.post('http://localhost:8000/users/delete-address', { id: userToDelete.id })
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/delete-address`, { id: userToDelete.id })
 
             toast.success('Delete Address Success')
 
@@ -170,7 +170,7 @@ export default function MyAccountAddress() {
     let changeMain = async (value) => {
         try {
             // console.log(value)
-            await axios.post('http://localhost:8000/users/change-main', {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/change-main`, {
                 id: value.id, user_id: value.user_id
             })
 
@@ -190,7 +190,7 @@ export default function MyAccountAddress() {
         try {
             // console.log(provinceAdd.current.value.split(',')[1])
             setDisable(true)
-            let response = await axios.post('http://localhost:8000/users/add-address', {
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/add-address`, {
                 user_id: user.id.id,
                 receiver_name: profile.name,
                 phone_number: profile.phone_number,
@@ -229,7 +229,7 @@ export default function MyAccountAddress() {
             // setModal(false)
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             // toast.error(error.response.data.message)
         } finally {
             setDisable(false)
@@ -248,7 +248,7 @@ export default function MyAccountAddress() {
                     {
                         addressDB.length === 0 ?
                             <>
-                                <div className="border-2">
+                                <div className="border-2 rounded-sm">
                                     <div className="border-b-2 text-2xl font-bold px-5 py-2">
                                         Add Address
                                     </div>
@@ -388,7 +388,7 @@ export default function MyAccountAddress() {
                             </>
                             :
                             <>
-                                <div className="border-2 border-black">
+                                <div className="border-2 border-black rounded-sm">
                                     <div className="border-b-2 border-black text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 bg-neutral-200">
                                         Main Address
                                     </div>
@@ -538,7 +538,7 @@ export default function MyAccountAddress() {
                                     }
 
                                 </div>
-                                <div className="border-2 mt-5">
+                                <div className="border-2 mt-5 rounded-sm">
                                     <div className="border-b-2 text-lg md:text-xl lg:text-2xl font-semibold px-5 py-2 flex justify-between items-center ">
                                         Additional Address
                                         <div>
@@ -862,9 +862,9 @@ export default function MyAccountAddress() {
                             </>
                     }
                 </div>
-                    <Toaster />
+                <Toaster />
             </>
             :
-            <Loading/>
+            <Loading />
     )
 }
