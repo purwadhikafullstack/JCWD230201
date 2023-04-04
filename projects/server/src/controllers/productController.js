@@ -243,16 +243,16 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let dataToCreate = JSON.parse(req.body.data)
-            console.log(dataToCreate);
+            // console.log(dataToCreate);
             let response = await db.product.create({ ...dataToCreate, name: dataToCreate.name, description: dataToCreate.description, category_id: dataToCreate.category_id })
-            console.log(response);
+            // console.log(response);
 
             let find = await db.product.findOne({
                 where: {
                     name: dataToCreate.name
                 }
             }, { transaction: t })
-            console.log(find.dataValues.id, "INI ID PRODUCT")
+            // console.log(find.dataValues.id, "INI ID PRODUCT")
 
             // let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
             let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[2], product_id: find.dataValues.id })
@@ -265,7 +265,7 @@ module.exports = {
         } catch (error) {
             await t.rollback()
             deleteFiles(req.files)
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -282,21 +282,21 @@ module.exports = {
                 }
             })
 
-            console.log(find.dataValues.product_id);
+            // console.log(find.dataValues.product_id);
 
             let findTwo = await db.product.findOne({
                 where: {
                     id: find.dataValues.product_id
                 }
             })
-            console.log(findTwo.dataValues.category_id);
+            // console.log(findTwo.dataValues.category_id);
 
             let findThree = await db.category.findOne({
                 where: {
                     id: findTwo.dataValues.category_id
                 }
             })
-            console.log(findThree.dataValues.name);
+            // console.log(findThree.dataValues.name);
             res.status(201).send({
                 isError: false,
                 message: "Get Id success",
@@ -338,7 +338,7 @@ module.exports = {
                 message: "Update Product Detail Success"
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -369,7 +369,7 @@ module.exports = {
         } catch (error) {
             await t.rollback()
             deleteFiles(req.files)
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -435,7 +435,7 @@ module.exports = {
     getProducts: async(req, res)=>{
         try {
             let { page } = req.query
-            console.log(page);
+            // console.log(page);
             let data = await db.product_detail.findAll({
                 // include:{
                 //     model: db.product_detail
@@ -590,7 +590,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -616,7 +616,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -684,7 +684,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -718,7 +718,7 @@ module.exports = {
                     arr.push(data[i].color)
                 }
             }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             res.status(201).send({
                 isError: false,
                 message: "Get Color Success",

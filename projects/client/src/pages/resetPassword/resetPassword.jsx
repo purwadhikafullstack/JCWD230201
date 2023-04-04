@@ -5,7 +5,7 @@ import { toast, Toaster } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Spinner } from "flowbite-react"
 
-export default function ResetPassword() {
+export default function ResetPassword(props) {
 
     let password = useRef()
     let confirmPassword = useRef()
@@ -17,6 +17,8 @@ export default function ResetPassword() {
     const [typeConfirmPassword, setTypeConfirmPassword] = useState('password')
 
     const [inputPassword, setInputPassword] = useState()
+
+    const [disable, setDisable] = useState(false)
 
     let navigate = useNavigate()
 
@@ -37,13 +39,18 @@ export default function ResetPassword() {
             if (!characterNumber.test(inputPassword)) throw { message: 'Password must contains number' }
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
+            setDisable(true)
+            let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/reset-password/${id}`, { password: inputPassword })
 
-            let result = await axios.patch(`http://localhost:8000/users/reset-password/${id}`, { password: inputPassword })
 
             password.current.value = ''
             confirmPassword.current.value = ''
 
             toast.success('Change Password Success')
+
+            setDisable(false)
+
+            props.data.setChance(false)
 
             setTimeout(() => {
                 toast('redirecting...', {
@@ -55,9 +62,15 @@ export default function ResetPassword() {
                 navigate('/login')
             }, 2000);
 
+            props.data.setConditionPage(true)
+
         } catch (error) {
             // console.log(error)
-            toast.error(error.message)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -116,13 +129,23 @@ export default function ResetPassword() {
                         {/*  */}
                         <li className={(!inputPassword ? '' : characterNumber.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>Must contain Number</li>
                     </div>
-                    <button onClick={() => onResetPassword()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                        Submit
-                    </button>
+                    {
+                        disable ?
+                            <button disabled={disable} onClick={() => onResetPassword()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                <Spinner
+                                    aria-label="Medium sized spinner example"
+                                    size="md"
+                                /> Loading . . .
+                            </button>
+                            :
+                            <button disabled={disable} onClick={() => onResetPassword()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                Submit
+                            </button>
+                    }
 
                 </div>
             </div>
-                <Toaster />
+            <Toaster />
         </>
     )
 }

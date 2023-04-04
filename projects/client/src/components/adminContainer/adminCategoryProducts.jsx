@@ -34,7 +34,7 @@ export default function AdminCategoryProducts(){
 
     let getCategory = async () => {
         try {
-            let response = await axios.get(`http://localhost:8000/product/category`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/category`)
             setCategory(response.data.data)
             console.log(response.data.data);
         } catch (error) {
@@ -45,7 +45,7 @@ export default function AdminCategoryProducts(){
     let addCategory = async()=>{
         try {
             let inputCategory = onPostCategory.current.value
-            let response = await axios.post('http://localhost:8000/product/post-category',{name:inputCategory})
+            let response = await axios.post('${process.env.REACT_APP_API_BASE_URL}/product/post-category',{name:inputCategory})
             setTimeout(() => {
                 toast.success('Add Category Success', {
                     duration: 3000
@@ -84,7 +84,7 @@ export default function AdminCategoryProducts(){
             console.log(editId);
             let updateCategoryName = onUpdateCategory.current.value
             console.log(updateCategoryName);
-            let response = await axios.patch('http://localhost:8000/product/edit-category',{id:editId, name: updateCategoryName })
+            let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/edit-category`,{id:editId, name: updateCategoryName })
             setTimeout(() => {
                 toast.success('Add Category Success', {
                     duration: 3000
@@ -115,7 +115,7 @@ export default function AdminCategoryProducts(){
     let deletePostCategory = async()=>{
         try {
             console.log(deleteId);
-            let response = await axios.post('http://localhost:8000/product/delete-category',{id:deleteId})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-category`,{id:deleteId})
             setTimeout(() => {
                 toast.success('Delete Category Success', {
                     duration: 3000
@@ -134,7 +134,7 @@ export default function AdminCategoryProducts(){
             // console.log(showPagePro);
             // console.log( _pagePro);
             // _pagePro = Number(_pagePro) + 1
-            let {data} = await axios.get(`http://localhost:8000/product/products/${id}`)
+            let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/${id}`)
             // let {data} = await axios.get(`http://localhost:8000/product/products/${id}?page=${_pagePro?_pagePro:showPagePro}`)
             // let {data} = await axios.get(`http://localhost:8000/product/${id}?page=${_page? _page:showPage}`)
             setShowProduct(data.data)
@@ -150,7 +150,7 @@ export default function AdminCategoryProducts(){
       let getProductDetail = async(id)=>{
         try {
             // console.log(id);
-            let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/productdetail/${id}`)
             // console.log(response.data.data[0].product_images[0].img);
             setCoba(response)
             console.log(response);

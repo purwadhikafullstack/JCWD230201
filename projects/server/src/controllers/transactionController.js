@@ -589,9 +589,9 @@ module.exports = {
 
             // console.log(Math.min(...closestWH))
             const x = new Date().toJSON()
-            console.log(x)
+            // console.log(x)
             const date = new Date().toJSON().slice(0, 10).split('-');
-            console.log(date)
+            // console.log(date)
             // console.log(`${date[0]}${date[1]}${date[2]}`);
 
             let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random()*1000) + Date.now().toString().slice(10)}`
@@ -611,7 +611,7 @@ module.exports = {
             console.log(words)
 
             await sequelize.query(`
-            CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 10 SECOND
+            CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 2 HOUR
             DO BEGIN
             UPDATE transactions SET order_status_id = 6 WHERE id = "${kreat.dataValues.id}" AND upload_payment IS NULL;
             INSERT INTO status_transaction_logs (order_status_id,transaction_id)
@@ -866,7 +866,7 @@ module.exports = {
                     await db.log_stock.create({
                         qty: item.qty,
                         location_warehouse_id: warehouse_id,
-                        status: 'Sold',
+                        status: 'Reduction',
                         product_detail_id: item.product_detail_id,
                         product_id:item.product_id
                     })
@@ -957,7 +957,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
             let { id } = req.query
-            console.log(id)
+            // console.log(id)
             let data = await db.transaction.findOne({
                 where: {
                     user_id: getToken.id,

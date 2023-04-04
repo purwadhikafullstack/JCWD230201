@@ -28,5 +28,4 @@ Router.post('/namedetail', locationProductController.getNameDetail)
 Router.post('/locationwarehouse', locationProductController.postProductWarehouse)
 Router.get('/all-mutation/:location_warehouse_id_origin/:order_status_id', locationProductController.getFilterMutation)
 
-
 module.exports = Router

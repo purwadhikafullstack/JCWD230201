@@ -12,11 +12,11 @@ export default function Product(props){
     },[])
     return(
         <div className="pt-28">
-            <div className="flex justify-between pl-24 pr-24">
-                <div className="flex justify-start text-2xl font-semibold">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center px-5 md:px-24 w-full">
+                <div className="flex text-xl md:text-2xl font-semibold">
                     All Products ({props.data.show.length})
                 </div>
-                <div className='flex justify-end'>
+                <div className='flex mt-5'>
                     <div className='mx-5'>
                         <Dropdown
                             className=''
@@ -94,22 +94,22 @@ export default function Product(props){
                                                     <div className="gap-1 flex-col justify-center text-sm">
                                                         <div className='text-md'>
                                                             <s>
-                                                                Rp {value.product_details[0].price}
+                                                                Rp {value.product_details[0].price.toLocaleString()}
                                                             </s>
                                                         </div>
                                                         <div className="text-red-600 font-bold text-lg">
-                                                            Rp {value.product_details[0].price}
+                                                            Rp {value.product_details[0].price.toLocaleString()}
                                                         </div>
                                                     </div>
                                                     :
                                                     <div className="gap-1 flex-col justify-center text-sm">
                                                         <div className='text-md'>
                                                             <s>
-                                                            Rp {value.price}
+                                                                Rp {value.price.toLocaleString()}
                                                             </s>
                                                         </div>
                                                         <div className="text-red-600 font-bold text-lg">
-                                                            Rp {value.price}
+                                                            Rp {value.price.toLocaleString()}
                                                         </div>
                                                     </div>
                                                 }

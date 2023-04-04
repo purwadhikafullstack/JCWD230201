@@ -28,7 +28,7 @@ export default function ProductDetail(props) {
 
     let getSelected = async (mem) => {
         try {
-            let response = await axios.get(`http://localhost:8000/product/${id}/${colors}/${mem}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${colors}/${mem}`)
             setMemory(mem)
             setSelected(response.data.data[0]);
         } catch (error) {
@@ -38,7 +38,15 @@ export default function ProductDetail(props) {
 
     let addToCart = async () => {
         try {
-            await axios.post('http://localhost:8000/cart/add-to-cart', { qty: quantity, product_id: selected.product_id, product_detail_id: selected.id }, {
+            if (props.data.verifyStatus === 'Unverified') throw { message: "Your account not verified" }
+
+            if (!localStorage.getItem("token")) throw { message: "Please login first" }
+
+            if (selected.qty === 0) throw { message: "Out of stock" }
+
+            if (!selected) throw { message: "Please choose product variant" }
+
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/cart/add-to-cart`, { qty: quantity, product_id: selected.product_id, product_detail_id: selected.id }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -49,16 +57,20 @@ export default function ProductDetail(props) {
             props.func.getCart()
         } catch (error) {
             // console.log(error)
-            toast.error(error.response.data.message)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
 
-    var arrColor=[]
-    var arrColorHex=[]
+    var arrColor = []
+    var arrColorHex = []
     props.data.detailProduct.forEach((item, index) => {
-        if(!arrColor.includes(item.color)) arrColor.push(item.color)
-        if(!arrColorHex.includes(item.colorhex)) arrColorHex.push(item.colorhex)
+        if (!arrColor.includes(item.color)) arrColor.push(item.color)
+        if (!arrColorHex.includes(item.colorhex)) arrColorHex.push(item.colorhex)
     });
     // console.log(arrColor);
 
@@ -77,7 +89,7 @@ export default function ProductDetail(props) {
     if (props.data.detail.length == 0) {
         return (
             <div>
-                <Loading/>
+                <Loading />
             </div>
         )
     }
@@ -96,6 +108,7 @@ export default function ProductDetail(props) {
                     <div className="grid h-[500px] md:h-[300px] lg:h-96">
                         <Carousel>
                             <img src={require(`../../../../server/src/Public/images/${props.data.detail.product_images[0].img}`)} alt="...."  className="w-44 md:w-80 lg:w-96"/>
+
                         </Carousel>
                     </div>
                 </div>
@@ -156,7 +169,7 @@ export default function ProductDetail(props) {
                         <button onClick={() => {
                             addToCart()
                         }}
-                            className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                            className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm" >
                             Add to cart
                         </button>
                     </div>
@@ -177,7 +190,7 @@ export default function ProductDetail(props) {
                     <button onClick={() => {
                         addToCart()
                     }}
-                        className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                        className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white w-full font-semibold py-2 mt-3 rounded-sm">
                         Add to cart
                     </button>
                 </div>
@@ -190,13 +203,13 @@ export default function ProductDetail(props) {
                         Rp. 19.999.000
                     </div>
                     <div className="flex items-center mt-3">
-                        <button onClick={decrementQuantity} disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false} className="disabled:hidden mr-4 text-xl">
+                        <button onClick={decrementQuantity} className="disabled:cursor-not-allowed mr-4 text-xl">
                             -
                         </button>
                         <div className="border text-center w-24 hidden md:block">
                             {quantity}
                         </div>
-                        <button onClick={incrementQuantity} disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false} className="disabled:hidden ml-4 text-xl">
+                        <button onClick={incrementQuantity} className="disabled:cursor-not-allowed ml-4 text-xl">
                             +
                         </button>
                     </div>
@@ -212,8 +225,8 @@ export default function ProductDetail(props) {
                     }
                     <button onClick={() => {
                         addToCart()
-                        }}
-                        className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white font-semibold px-3 py-1 mt-3 rounded-sm" disabled={localStorage.getItem("token") == null ? true : selected.qty === 0 ? true : !selected ? true : false}>
+                    }}
+                        className="bg-[#113F90] disabled:bg-[#6a9ffb] disabled:cursor-not-allowed text-white font-semibold px-3 py-1 mt-3 rounded-sm">
                         Add to cart
                     </button>
                 </div>

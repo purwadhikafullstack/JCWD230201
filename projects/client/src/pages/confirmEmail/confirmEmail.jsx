@@ -5,7 +5,7 @@ import { toast, Toaster } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Spinner } from "flowbite-react"
 
-export default function ConfirmEmail() {
+export default function ConfirmEmail(props) {
 
     let email = useRef()
 
@@ -15,23 +15,30 @@ export default function ConfirmEmail() {
         try {
             let inputEmail = email.current.value
 
-            if (!inputEmail) throw { message: 'Incomplete Input' }
+            if (props.data.chance === true) throw { message: "Only once times per request" }
+
+            if (!inputEmail) throw { message: 'Incomplete input' }
 
             if (!inputEmail.includes('@') && !inputEmail.includes('.com')) throw { message: 'Please input a valid email' }
 
             setDisabledButton(true)
 
-            await axios.post(`http://localhost:8000/users/confirm-email`, { email: inputEmail })
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/confirm-email`, { email: inputEmail })
 
             toast.success(`Please check your email`)
+            setDisabledButton(false)
 
-            email.current.value=''
+            email.current.value = ''
+
+            props.data.setChance(true)
 
         } catch (error) {
             // console.log(error)
-            toast.error(error.response.data.message)
-        } finally {
-            setDisabledButton(false)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -58,10 +65,15 @@ export default function ConfirmEmail() {
                         <input ref={email} type='text' placeholder="Input your email" className="focus:border-black focus:ring-transparent w-full md:w-96" />
                     </div>
                     <button disabled={disabledButton} onClick={() => onConfirmEmail()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                        {disabledButton ? <Spinner
-                            aria-label="Medium sized spinner example"
-                            size="md"
-                        /> : 'Submit'}
+                        {disabledButton ?
+                            <>
+                                <Spinner
+                                    aria-label="Medium sized spinner example"
+                                    size="md"
+                                />Loading . . .
+                            </>
+                            :
+                            'Submit'}
                     </button>
 
                 </div>
