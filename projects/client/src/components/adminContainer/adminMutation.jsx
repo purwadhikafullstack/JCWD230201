@@ -47,6 +47,7 @@ export default function AdminMutation(){
     let [showCancel, setShowCancel] = useState(false)
     let [forId, setForId] = useState("") 
     let [forOrigin, setForOrigin] = useState("") 
+    let [forTarget, setForTarget] = useState("") 
     let [forQty, setForQty] = useState("") 
     let [forCancel, setForCancel] = useState("") 
     let [forImg, setForImg] = useState("") 
@@ -54,6 +55,10 @@ export default function AdminMutation(){
     let [forColor, setForColor] = useState("") 
     let [forStorage, setForStorage] = useState("") 
     let [forPrice, setForPrice] = useState("") 
+    let [forProDetId, setForProDetId] = useState("") 
+    let [forProId, setForProId] = useState("") 
+    let [forLocTarget, setForLocTarget] = useState("") 
+    let [forLocOrigin, setForLocOrigin] = useState("") 
     
     let getLocation = async()=>{
         try {
@@ -206,11 +211,31 @@ export default function AdminMutation(){
         }
     }
 
-    let getMutation = async()=>{
+    let getMutation = async(status)=>{
         try {
+            console.log(status);
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}`)
-            console.log(response.data.data);
-            setMyMutation(response.data.data);
+                console.log(response.data.data);
+                setMyMutation(response.data.data);
+            if(status==='all'){
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}`)
+                console.log(response.data.data);
+                setMyMutation(response.data.data);
+            }else if(status==7){
+                console.log(status);
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
+                console.log(response.data.data);
+                setMyMutation(response.data.data);
+            }else if(status==5){
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
+                console.log(response.data.data);
+                setMyMutation(response.data.data);
+            }else if(status==6){
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
+                console.log(response.data.data);
+                setMyMutation(response.data.data);
+            }
+
         } catch (error) {
             
         }
@@ -226,16 +251,21 @@ export default function AdminMutation(){
         }
     }
 
-    let simpanConfirm = async(valueid, valuelocation_product_id_origin, valueqty, valueimg, valuename, valuecolor, valuestorage, valueprice)=>{
+    let simpanConfirm = async(valueid, valuelocation_product_id_origin, valueqty, valueimg, valuename, valuecolor, valuestorage, valueprice, valueproduct_detailid, valueproduct_detailproductid, valuelocation_warehouse_id_target, valuelocation_warehouse_id_origin, valuelocation_product_id_target)=>{
         try {
             setForId(valueid)
             setForOrigin(valuelocation_product_id_origin)
+            setForTarget(valuelocation_product_id_target)
             setForQty(valueqty)
             setForImg(valueimg)
             setForName(valuename)
             setForColor(valuecolor)
             setForStorage(valuestorage)
             setForPrice(valueprice)
+            setForProDetId(valueproduct_detailid)
+            setForProId(valueproduct_detailproductid)
+            setForLocTarget(valuelocation_warehouse_id_target)
+            setForLocOrigin(valuelocation_warehouse_id_origin)
         } catch (error) {
             
         }
@@ -254,10 +284,11 @@ export default function AdminMutation(){
             let a = Number(forId)
             let b = Number(forOrigin)
             let c = Number(forQty)
-            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/confirm`, {id: a, order_status_id: 5})
-            console.log(response.data.data)
-            let response2 = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/updateqty`, {id: b, qty: c})
-            console.log(response2.data.data)
+            let e = Number(forTarget)
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/confirm`, {id: a, order_status_id: 5, qty: forQty, location_warehouse_id: forLocTarget, product_detail_id: forProDetId, product_id: forProId, location_warehouse_id_target: forLocOrigin })
+     
+            let response2 = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/updateqty`, {id: b, qty: c, id_target: e})
+
             getMutation()
             getRequest()
             setShowConfirm(false)
@@ -360,7 +391,18 @@ export default function AdminMutation(){
                             }
                         </div>
                     </div>
-                    <div className=' mt-5 mb-5'>
+                    <div className='flex mt-5 mb-5 gap-4'>
+                        <select className=' text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
+                            onChange={(e) => {getMutation(e.target.value)}}
+                            id="bulan"
+                            required={true}
+                        >
+                            <option value={'all'}>All Status</option>
+                            <option value={7}>Waiting</option>
+                            <option value={5}>Confirmed</option>
+                            <option value={6}>Canceled</option>
+                            
+                            </select>
                         <Button onClick={()=>{setShowReq(!showReq)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[150px] h-[40px]"> 
                             <div className='text-md'>
                                 Request Product
@@ -696,7 +738,7 @@ export default function AdminMutation(){
                                                     </div>
                                                 </div>
                                                 <div className='flex gap-2'>
-                                                    <Button onClick={()=>{simpanConfirm(value.id, value.location_product_id_origin, value.qty, value.product_detail.product.product_images[0].img, value.product_detail.product.name, value.product_detail.color, value.product_detail.memory_storage, value.product_detail.price);setShowConfirm(true)}} color="success" className="w-[80px] h-[30px]">
+                                                    <Button onClick={()=>{console.log(value.location_warehouse_id_target);simpanConfirm(value.id, value.location_product_id_origin, value.qty, value.product_detail.product.product_images[0].img, value.product_detail.product.name, value.product_detail.color, value.product_detail.memory_storage, value.product_detail.price, value.product_detail.id, value.product_detail.product.id, value.location_warehouse_id_target, value.location_warehouse_id_origin, value.location_product_id_target);setShowConfirm(true)}} color="success" className="w-[80px] h-[30px]">
                                                         <div className="text-md font-bold">
                                                             Confirm
                                                         </div>

@@ -30,7 +30,7 @@ export default function NavbarUser(props) {
 
     useEffect(() => {
         getCategory()
-        // props.func.getCart()
+        props.func.getCart()
     }, [])
 
     // if (!props.data.itemCart) {
@@ -52,7 +52,7 @@ export default function NavbarUser(props) {
 
     return (
         <>
-            <div className="flex justify-between px-5 md:px-10 lg:justify-around items-center bg-black text-white font-semibold fixed w-full z-10 h-20">
+            <div className="flex justify-between px-5 md:px-10 lg:justify-around items-center bg-black text-white font-semibold fixed w-full z-20 h-20">
                 <div className="items-center flex lg:hidden text-2xl z-10">
                     {showSidebar ?
                         <>
@@ -90,13 +90,13 @@ export default function NavbarUser(props) {
                     </Link>
                     {category.map((value, index) => {
                         return (
-                            <button className="px-3 hover:bg-neutral-500" onClick={() => {props.func.getProduct(value.id);props.func.getColor(value.id)}}>
+                            <button className="hidden lg:block lg:px-3 hover:bg-neutral-500" onClick={() => {props.func.getProduct(value.id);props.func.getColor(value.id)}}>
                                 <Link to={`/product/${value.id}`}>
                                     <div className="group relative dropdown px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
                                         <div>{value.name}</div>
                                         <div className="group-hover:block dropdown-menu absolute hidden h-auto">
                                             <ul className="mt-7 w-48 -ml-7 bg-white shadow py-5 px-3 bg-opacity-80 rounded-b">
-                                                {value.products ? value.products.map((val) => {
+                                                {value.products ? value.products.map((val,idx) => {
                                                     return (
                                                         <Link to={`/product/productdetail/${val.id}`}>
                                                             <li onClick={() => props.func.getProductDetail(val.id)} className="py-3">
@@ -117,7 +117,7 @@ export default function NavbarUser(props) {
                     })}
                 </div>
                 <div className="flex items-center gap-5 text-2xl">
-                    <button>
+                    <button className="hidden lg:inline">
                         <Tooltip
                             content="Search"
                             placement="bottom"
@@ -126,7 +126,7 @@ export default function NavbarUser(props) {
                             <MdSearch />
                         </Tooltip>
                     </button>
-                    <button>
+                    <button className="hidden lg:inline">
                         <Tooltip
                             content="Wishlist"
                             placement="bottom"

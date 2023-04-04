@@ -64,7 +64,6 @@ export default function MyAccountInfo() {
             }
         } catch (error) {
             setMessage(error.message)
-
         }
     }
 
@@ -78,7 +77,6 @@ export default function MyAccountInfo() {
                     "token": localStorage.getItem('token')
                 }
             })
-
 
             toast.success('Update Profile Picture Success!', {
                 style: {
@@ -141,7 +139,12 @@ export default function MyAccountInfo() {
             }, 2000)
 
         } catch (error) {
-            toast.error(error.message)
+            // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -151,7 +154,7 @@ export default function MyAccountInfo() {
 
     return (
         user ?
-            <div className="w-full h-max">
+            <div className="w-full h-max bg-white">
                 <div className="border text-base lg:text-xl font-bold px-5 py-2">
                     Change Account Information
                 </div>

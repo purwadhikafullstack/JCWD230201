@@ -5,7 +5,7 @@ import { Modal, Button, TextInput, Label } from 'flowbite-react'
 import { toast, Toaster } from "react-hot-toast";
 import iPhone14pro from './../../Assets/iphone_14_pro.jpg'
 
-import LogoBCA from './../../Assets/bca.png'
+// import LogoBCA from './../../Assets/bca.png'
 
 export default function Shipping(props) {
 
@@ -31,6 +31,7 @@ export default function Shipping(props) {
     const [arrCity, setArrCity] = useState([])
     const [arrInitial, setArrInitial] = useState([])
     const [arrInitialCity, setArrInitialCity] = useState(0)
+    const [initialID, setInitialID] = useState(0)
 
     const [selectedCity, setSelectedCity] = useState("")
     const [selectedCityId, setSelectedCityId] = useState(0)
@@ -74,6 +75,7 @@ export default function Shipping(props) {
             })
             // console.log(aa[0]);
             setArrInitial(aa[0])
+            setInitialID(aa[0].id)
             setArrInitialCity(aa[0].city_id)
             setValueDefault(response.data.data);
             setAddress(response.data.data)
@@ -82,7 +84,7 @@ export default function Shipping(props) {
             setInitialUserAddress(aa[0].user_address)
             setInitialProvince(aa[0].province)
             setInitialSubdistrict(aa[0].subdistrict)
-            setInitialNumber(aa[0].phone_umber)
+            setInitialNumber(aa[0].phone_number)
         } catch (error) {
             // console.log(error.message)
         }
@@ -214,7 +216,7 @@ export default function Shipping(props) {
 
     let newOrder = async () => {
         try {
-            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/createOrder`, { ongkir: priceShipping, receiver: !selectedName ? initialName : selectedName, address: !selectedUserAddress ? initialUserAddress : selectedUserAddress, subdistrict: !selectedSubdistrict ? initialSubdistrict : selectedSubdistrict, city: !selectedCity ? initialCity : selectedCity, province: !selectedProvince ? initialProvince : selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !selectedNumber ? initialNumber : selectedNumber, user_name: selectedName, cart: dataCart, user_address_id: selectedID }, {
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/createOrder`, { ongkir: priceShipping, receiver: !checkValue ? initialName : selectedName, address: !checkValue ? initialUserAddress : selectedUserAddress, subdistrict: !checkValue ? initialSubdistrict : selectedSubdistrict, city: !checkValue ? initialCity : selectedCity, province: !checkValue ? initialProvince : selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !checkValue ? initialNumber : selectedNumber, user_name: !checkValue ? initialName : selectedName, cart: dataCart, user_address_id: !checkValue ? initialID : selectedID }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }
@@ -240,16 +242,16 @@ export default function Shipping(props) {
 
     return (
         <>
-            <div className="pt-20 flex flex-col md:px-5 lg:p-36">
+            <div className="pt-20 flex flex-col md:px-5">
                 <div className='font-bold text-3xl flex justify-start py-5 px-3 md:px-0'>
                     Shipping
                 </div>
-                <div className='grid md:grid-cols-6 lg:gap-9'>
-                    <div className='flex justify-end col-span-3 md:mr-3 lg:mr-0'>
+                <div className='grid md:grid-cols-6'>
+                    <div className='flex justify-end col-span-3 md:mr-3 lg:mr-5'>
                         <div className='flex-col items-end w-full'>
                             <div className='flex-col items-end border mb-5 md:mb-0'>
                                 <div className='flex justify-between border-b-2 py-3 px-3'>
-                                    <div className='flex items-center font-bold'>
+                                    <div className='flex items-center font-bold text-xl'>
                                         Shipping Address
                                     </div>
                                 </div>
@@ -331,7 +333,7 @@ export default function Shipping(props) {
                                             >
                                                 <Modal.Header />
                                                 <Modal.Body>
-                                                    <div className='text-2xl font-bold flex justify-center py-5'>
+                                                    <div className='text-lg md:text-2xl font-bold flex justify-center py-5'>
                                                         Choose Your Address
                                                     </div>
                                                     <div className=''>
@@ -447,30 +449,30 @@ export default function Shipping(props) {
                                                             </Modal>
                                                         </>
                                                     </div>
-                                                    <div className='p-2'>
-                                                        <div className='p-2 overflow-x-hidden h-96'>
+                                                    <div className='p-0 md:p-2'>
+                                                        <div className='p-0 md:p-2 overflow-x-hidden h-96'>
                                                             {address.map((value, index) => {
                                                                 return (
                                                                     <div className='p-2'>
                                                                         {value.value == 1 ?
                                                                             <button onClick={() => getSelected(value)} className='p-2 border w-full  hover:bg-neutral-700 hover:text-white hover:border-lg-white focus:bg-neutral-700 focus:text-white'>
-                                                                                <div className='grid grid-cols-7'>
-                                                                                    <div className=' col-span-5'>
-                                                                                        <div className='text-xl px-4 font-bold pt-3 flex justify-start'>
+                                                                                <div className='flex justify-between items-center'>
+                                                                                    <div className=''>
+                                                                                        <div className='text-base md:text-xl px-2 md:px-4 font-bold flex justify-start'>
                                                                                             {value.receiver_name}
                                                                                         </div>
-                                                                                        <div className='text-md px-4 flex justify-start'>
+                                                                                        <div className='text-xs md:text-base px-2 md:px-4 flex justify-start'>
                                                                                             {value.user.phone_number}
                                                                                         </div>
-                                                                                        <div className='text-md px-4 flex justify-start'>
+                                                                                        <div className='text-xs md:text-base px-2 md:px-4 flex text-start justify-start'>
                                                                                             {value.user_address}
                                                                                         </div>
-                                                                                        <div className='text-md px-4 flex justify-start'>
+                                                                                        <div className='text-xs md:text-base px-2 md:px-4 flex text-start justify-start'>
                                                                                             {value.province}, {value.subdistrict}, {value.city}
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className='flex justify-end items-center'>
-                                                                                        <div className='border px-3 py-1 font-bold'>
+                                                                                    <div className=''>
+                                                                                        <div className='border px-3 py-1 font-bold text-sm md:text-base'>
                                                                                             Default
                                                                                         </div>
                                                                                     </div>
@@ -479,16 +481,16 @@ export default function Shipping(props) {
                                                                             :
                                                                             <button onClick={() => getSelected(value)} className='p-2 border w-full  hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white'>
                                                                                 <div className=''>
-                                                                                    <div className='text-lg px-4 font-bold pt-3 flex justify-start'>
+                                                                                    <div className='text-base md:text-xl px-2 md:px-4 font-bold flex justify-start'>
                                                                                         {value.receiver_name}
                                                                                     </div>
-                                                                                    <div className='text-md px-4 flex justify-start'>
+                                                                                    <div className='text-xs md:text-base px-2 md:px-4 flex text-start justify-start'>
                                                                                         {value.user.phone_number}
                                                                                     </div>
-                                                                                    <div className='text-md px-4 flex justify-start'>
+                                                                                    <div className='text-xs md:text-base px-2 md:px-4 flex text-start justify-start'>
                                                                                         {value.user_address}
                                                                                     </div>
-                                                                                    <div className='text-md px-4 flex justify-start'>
+                                                                                    <div className='text-xs md:text-base px-2 md:px-4 flex text-start justify-start'>
                                                                                         {value.province}, {value.subdistrict}, {value.city}
                                                                                     </div>
                                                                                 </div>
@@ -548,7 +550,7 @@ export default function Shipping(props) {
                             </div>
 
                             <div className='w-full border mt-5 rounded-sm mb-5 md:mb-0'>
-                                <div className='font-bold py-5 border-b-2 px-4'>
+                                <div className='font-bold py-5 border-b-2 px-4 text-xl'>
                                     Shipping from iFrit Warehouse
                                 </div>
                                 {
@@ -575,10 +577,10 @@ export default function Shipping(props) {
                             </div>
                         </div>
                     </div>
-                    <div className='grid col-span-3 mb-32 md:ml-2 lg:ml-0'>
-                        <div className='hidden md:block w-full border h-max '>
+                    <div className='grid col-span-3 md:ml-2 lg:ml-0'>
+                        <div className='hidden md:block w-full border h-max mb-5'>
                             <div className='flex justify-between border-b-2 py-3 px-3'>
-                                <div className='flex items-center font-bold'>
+                                <div className='flex items-center font-bold text-xl'>
                                     Shipping Courier
                                 </div>
                             </div>
@@ -721,7 +723,7 @@ export default function Shipping(props) {
                                                             </button>
                                                         </div>
                                                         <div className='flex items-center py-3 px-7'>
-                                                            <img src={LogoBCA} alt='Logo BCA' className='w-2/12' />
+                                                            <img src={`http://localhost:8000/Public/images/Bank_Central_Asia.webp`} alt='Logo BCA' className='w-2/12' />
                                                             <p className='ml-8 text-sm'>
                                                                 BCA Virtual Account
                                                             </p>

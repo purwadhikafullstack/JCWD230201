@@ -1,4 +1,4 @@
-import { Breadcrumb,Dropdown } from "flowbite-react";
+import { Breadcrumb, Dropdown, Button } from "flowbite-react";
 import { toast, Toaster } from "react-hot-toast";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ export default function MyAccount() {
 
     return (
         <>
-            <div className="pt-20 grid grid-cols-8 lg:grid-cols-10 gap-1 px-5 lg:px-32">
+            <div className="pt-20 grid grid-cols-8 lg:grid-cols-10 gap-1 px-5 lg:px-24">
 
                 <div className="col-start-1 col-end-8 hidden lg:block lg:col-start-2 lg:col-end-9 py-3">
                     <Breadcrumb aria-label="Default breadcrumb example">
@@ -38,7 +38,7 @@ export default function MyAccount() {
                     </Breadcrumb>
                 </div>
 
-                <div className="col-start-1 col-end-9 hidden lg:block lg:col-start-2 lg:col-end-4 w-60">
+                <div className="col-start-1 col-end-9 hidden lg:block lg:col-start-2 lg:col-end-4 w-56">
 
                     <Link to='/my-account/information'>
                         <div className="border-b-2 border-gray-300 py-2 px-3">
@@ -64,10 +64,29 @@ export default function MyAccount() {
 
                 </div>
 
-                <div className=" lg:hidden">
-                    <div className="my-5">
+                <div className="flex justify-center w-max lg:hidden">
+                    <div className="ml-2 md:ml-10 my-5 flex justify-center text-sm">
+                        <Button.Group>
+                            <Button className="w-20 md:w-44" color="gray" onClick={() => navigate('/my-account')}>
+                                My Account
+                            </Button>
+                            <Button className="w-20 md:w-44" color="gray" onClick={() => navigate('/my-account/information')}>
+                                Account Information
+                            </Button>
+                            <Button className="w-20 py-3 md:py-0 md:w-44" color="gray" onClick={() => navigate('/my-account/address')}>
+                                Address
+                            </Button>
+                            <Button className="w-20 md:w-44" color="gray" onClick={() => navigate('/my-account/history')}>
+                                Transaction History 
+                            </Button>
+                        </Button.Group>
+                    </div>
+                </div>
+
+                <div className="hidden">
+                    <div className="my-5 flex text-sm">
                         <Dropdown
-                            label="Dashboard"
+                            label="My Account"
                             inline={true}
                         >
                             <Dropdown.Item onClick={() => navigate('/my-account')}>

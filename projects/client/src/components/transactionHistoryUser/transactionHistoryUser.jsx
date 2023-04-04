@@ -151,9 +151,9 @@ export default function TransactionHistory() {
     }
 
     return (
-        transaction ?
+        transaction.length !==0 ?
             <>
-                <div className="border rounded-sm">
+                <div className="border rounded-sm bg-white">
                     <div className="px-5 py-3 border-b">
                         <h2 className="font-semibold text-2xl">
                             Transaction History
@@ -224,7 +224,7 @@ export default function TransactionHistory() {
                                                             </Modal.Header>
                                                             <Modal.Body>
                                                                 <div>
-                                                                    <input onChange={(e) => onImageValidation(e)} type="file" />
+                                                                    <input onChange={(e) => onImageValidation(e)} type="file" accept="image/*" />
                                                                     {message}
                                                                 </div>
                                                             </Modal.Body>
@@ -267,7 +267,7 @@ export default function TransactionHistory() {
             :
             <div className="w-full flex flex-col items-center justify-center h-full ">
                 <IoReceiptOutline className="text-6xl text-neutral-400" />
-                <p className="font-semibold text-xl text-neutral-700">You dont have any transaction history</p>
+                <p className="font-semibold text-center text-xl text-neutral-700">You dont have any transaction history</p>
             </div>
     )
 }

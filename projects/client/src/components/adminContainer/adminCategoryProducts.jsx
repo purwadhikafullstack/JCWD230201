@@ -157,9 +157,16 @@ export default function AdminCategoryProducts(){
                 {category.map((value, index)=>{
                     return(
                         <Link to={`/admin/products/${value.id}`}>
-                            <button onClick={()=>{getProduct(value.id);setOperId(value.id)}} className="border border-gray-400 px-3 py-2 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px] ">
+                            <div className='gap-5 px-4 py-3 bg-stone-800 flex border-b-4 border-lime-300 rounded-md group'>                            
+                                <div className='flex flex-col items-end'>
+                                    <button onClick={()=>{getProduct(value.id);setOperId(value.id)}} className=" rounded text-white min-w-[100px] ">
+                                        <p className='text-xl font-semibold'>{value.name} </p>
+                                    </button>
+                                </div>
+                            </div>
+                            {/* <button onClick={()=>{getProduct(value.id);setOperId(value.id)}} className="border border-gray-400 px-3 py-2 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px] ">
                                 {value.name} 
-                            </button>
+                            </button> */}
                         </Link>
                     )
                 })}

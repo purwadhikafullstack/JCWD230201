@@ -74,7 +74,7 @@ export default function MyAccountAddress() {
 
     let getCity = async (input) => {
         try {
-            console.log(input.split(',')[2])
+            // console.log(input.split(',')[2])
 
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${input.split(',')[0]}`, {
                 headers: {
