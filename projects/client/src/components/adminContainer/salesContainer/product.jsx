@@ -1,14 +1,10 @@
 import LoadingIcon from "../../core/loading"
 
-
-
-
 export default function SalesProduct(data) {
-    console.log(data.data)
     return (
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left bg-stone-800 text-white dark:text-white">
-                <thead class="text-xs text-gray-400  uppercase dark:bg-white  dark:text-white">
+           <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">
+                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             No
@@ -45,29 +41,29 @@ export default function SalesProduct(data) {
                             <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
-                            <td class="px-6 py-4">
+                            <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
-                            <th scope="row" class="px-6 py-4 font-medium text-white  whitespace-nowrap dark:text-white">
+                            <th className="px-6 py-4">
                             <LoadingIcon/>
                             </th>
-                            <td class="px-6 py-4 text-center">
+                            <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
-                            <td class="px-6 py-4">
+                            <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
-                            <td class="px-6 py-4 text-center">
+                            <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
-                            <td class="px-6 py-4">
+                            <td className="px-6 py-4">
                             <LoadingIcon/>
                             </td>
 
                         </tr> :
                         data.data.category.map((item, index) => {
                             return (
-                                <tr class="bg-stone-500 border-b dark:bg-white  dark:border-white ">
+                                <tr className='border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
                                     <td className="px-6 py-4">
                                         {index + 1}
                                     </td>
@@ -77,9 +73,9 @@ export default function SalesProduct(data) {
                                     <td class="px-6 py-4">
                                         {item.product_name}
                                     </td>
-                                    <th scope="row" class="px-6 py-4 font-medium text-white  whitespace-nowrap dark:text-white">
+                                    <td class="px-6 py-4">
                                         {(item.price).toLocaleString()}
-                                    </th>
+                                    </td>
                                     <td class="px-6 py-4 text-center">
                                         {item.qty}
                                     </td>

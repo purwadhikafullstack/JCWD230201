@@ -4,7 +4,7 @@ import { LoginAccount } from "../../utils/login";
 import { userData } from "../../data/userData";
 import toast, { Toaster } from "react-hot-toast";
 import {AiOutlineLoading3Quarters} from 'react-icons/ai'
-
+import Loading from '../../components/loading/loading'
 
 
 export default function AdminLogin() {
@@ -17,7 +17,6 @@ export default function AdminLogin() {
             toast.error(data.response)
             setDisable(false)
         } else {
-            setUser(data)
             localStorage.setItem('token', data.id)
             setDisable(false)
             toast.success(data.response, {
@@ -35,17 +34,22 @@ export default function AdminLogin() {
 
             setTimeout(() => {
                 navigate('/admin')
+                setUser(data)
             }, 3000)
         }
-
-
     }
 
     let email = useRef()
     let password = useRef()
 
     return (
-        <>
+           !user?
+           <Loading/>
+           :
+           user.id?
+           navigate('/admin')
+           :
+            <>  
             {/* Main */}
             <div className="flex relative justify-center items-center h-screen">
 
@@ -85,5 +89,6 @@ export default function AdminLogin() {
                 <Toaster />
             </div>
         </>
+        
     )
 }

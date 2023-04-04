@@ -19,12 +19,11 @@ import Category from './salesContainer/category'
 
 export default function SalesReport() {
     let { user } = useContext(userData)
-    console.log(user)
     let [sekarang, setSekarang] = useState('')
     // let yir = date.getFullYear()
     let [year, setYear] = useState([
         // yir, yir - 1, yir - 2, yir - 3
-        2023, 2022, 2021, 2020
+        new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2, new Date().getFullYear() - 3
     ])
     let [pickM, setPickM] = useState(''), [pickY, setPickY] = useState(year[0]), [pickWH, setPickWH] = useState(0), [pickT, setPickT] = useState(1)
 
@@ -59,12 +58,14 @@ export default function SalesReport() {
         'transaction': 0,
         'qty': 0,
         'category': [],
-        'total_qty': 0
+        'total_qty': 0,
+        'page': 1,
+        'total_count': 0,
+        'total_pages': 0,'totalMoney' : 0, loading:true
     })
 
     let depault = async () => {
-        console.log(user.warehouse_id)
-        setPickWH(user.warehouse_id?user.warehouse.id:0)
+        setPickWH(user.warehouse_id ? user.warehouse.id : 0)
         try {
             toast('Welcome to sales report Sir!', {
                 style: {
@@ -72,9 +73,8 @@ export default function SalesReport() {
                     color: 'white'
                 }
             })
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id?user.warehouse_id:0}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id ? user.warehouse_id : 0}&page=${1}`)
             let total_price = 0, total_tr = 0, total_ongkir = 0, total_discount = 0
-            console.log(response)
             response.data.data.forEach((item, index) => {
                 total_ongkir += item.ongkir
                 item.transaction_details.forEach((item) => {
@@ -82,37 +82,33 @@ export default function SalesReport() {
                     total_tr += item.qty
                 })
             })
-            // console.log(total_price)
             let date = new Date()
 
             setSekarang(date.toJSON())
 
             setVisible({
                 ...visible, list_wh: response.data.list_wh, total: total_price, ongkir: total_ongkir, WH: response.data.wh,
-                users: response.data.users, usersUV: response.data.userUV, trans_s: response.data.tr_success,
-                trans_c: response.data.tr_cancel, transaction: response.data.data.length, qty: total_tr
+                users: response.data.users, usersUV: response.data.userUV, trans_s: response.data.tr_success,loading:false,
+                trans_c: response.data.tr_cancel, transaction: response.data.data.length, qty: total_tr,totalMoney:response.data.totalMoney
             })
-            // console.log(total_ongkir)
-            // console.log(tank)
         } catch (error) {
-            console.log(error)
         }
     }
 
-    let getSales = async (Y, M, T, WH) => {
+    let getSales = async (Y, M, T, WH, page) => {
         setPickWH(WH)
         setPickT(T)
         try {
-            // console.log(M)
+         
             if (!M) {
-                var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
+                var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
 
 
             } else if (M) {
                 if (M.split(',')[0] == 12) {
-                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
                 } else {
-                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}&page=${page}`)
                 }
 
             }
@@ -128,11 +124,11 @@ export default function SalesReport() {
                         total_product += item.qty
                     })
                 })
-                // console.log(response)
-                setVisible({ ...visible, total: total_price, ongkir: total_ongkir, transaction: total_transaction, qty: total_product })
-                // console.log(total_ongkir)
+            
+                setVisible({ ...visible, total: total_price, ongkir: total_ongkir,loading:false, transaction: total_transaction, qty: total_product })
+           
             } else if (T == 2) {
-                // console.log('masuk')
+         
                 let price = 0
                 let loader = [], items = 0, total_items = 0, price_product = 0
                 response.data.data.forEach((item, index) => {
@@ -146,15 +142,15 @@ export default function SalesReport() {
                     items = 0
                 })
 
-                setVisible({ ...visible, category: loader, total_qty: total_items })
+                setVisible({ ...visible, category: loader, total_qty: total_items, loading:false })
                 total_items = 0
             } else if (T == 3) {
-                setVisible({ ...visible, category: response.data.data })
+                setVisible({ ...visible, category: response.data.data,loading:false, page, total_count: response.data.total_count, total_pages: response.data.total_pages })
             }
-            console.log(response)
+         
             toast.success(`Get Sales data Success!`)
         } catch (error) {
-            console.log(error)
+         
         }
     }
 
@@ -164,7 +160,9 @@ export default function SalesReport() {
 
 
     return (
-        visible.list_wh ?
+        visible.loading?
+        <Loading/>
+        :
             <div className="min-h-screen px-10 pt-5 pb-10">
 
                 <div className="flex flex-col mt-2 mb-10 ">
@@ -172,9 +170,9 @@ export default function SalesReport() {
                         Summary Records
                     </div>
                     <Moment className='text-gray-500 text-sm mb-8'
-                    format='dddd DD MMMM YYYY'
+                        format='dddd DD MMMM YYYY'
                     >
-                        {sekarang}
+                       until {sekarang}
                     </Moment>
                     <div className='flex justify-between mb-5 text-white '>
                         <div className='h-20 gap-5 px-4 py-3 bg-stone-800 flex rounded-md border-b-4 border-yellow-300 group'>
@@ -187,7 +185,7 @@ export default function SalesReport() {
                                 </div>
 
                                 <div className='flex items-center text-sm gap-1 text-slate-400 '>
-                                    {visible.usersUV?visible.usersUV:'0'}  <FiUserX />
+                                    {visible.usersUV ? visible.usersUV : '0'}  <FiUserX />
                                 </div>
                             </div>
                         </div>
@@ -197,7 +195,7 @@ export default function SalesReport() {
                             </div>
                             <div className='flex flex-col items-end'>
                                 <div className='flex items-center gap-2'>
-                                    <p className='text-xl font-semibold'>{visible.trans_s?visible.trans_s:0}</p> <p>Orders</p>
+                                    <p className='text-xl font-semibold'>{visible.trans_s ? visible.trans_s : 0}</p> <p>Orders</p>
                                 </div>
 
                                 <div className='flex text-slate-400 items-center text-sm gap-1'>
@@ -224,7 +222,7 @@ export default function SalesReport() {
                                 <AiOutlineStock color='black' size={'24px'} />
                             </div>
                             <div className='flex flex-col items-end'>
-                                <p className='text-xl font-semibold'>Rp. {(visible.balances).toLocaleString()}</p>
+                                <p className='text-xl font-semibold'>Rp. {(visible.totalMoney).toLocaleString()}</p>
                                 <div className='flex text-white items-center text-sm gap-1'>
                                     Balances
                                 </div>
@@ -234,31 +232,14 @@ export default function SalesReport() {
 
                     <div className='flex justify-between'>
                         <div className='flex gap-5'>
-                            <div className='sm:min-w-fit'>
-                                <div className="mb-2 block ">
-                                    <Label
-                                        value="Period"
-                                    />
-                                </div >
-                                <select className='w-full text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
-                                    onChange={(e) => e.target.value == '2' ? setVisible({ ...visible, month: true }) : setVisible({ ...visible, month: false })}
-                                    id="periode"
-                                    required={true}
-                                >
-                                    <option value="1">Yearly</option>
-                                    <option value="2">Monthly</option>
-
-
-                                </select>
-                            </div>
-                            <div className={`sm:min-w-fit ${visible.month ? 'block' : 'hidden'}`}>
+                            <div className={`sm:min-w-fit block}`}>
                                 <div className="mb-2 block sm:min-w-fit">
                                     <Label
                                         value="Month"
                                     />
                                 </div >
                                 <select className='w-full text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
-                                    onChange={(e) => getSales(pickY, e.target.value, pickT, pickWH)}
+                                    onChange={(e) => getSales(pickY, e.target.value, pickT, pickWH,visible.page)}
                                     id="bulan"
                                     required={true}
                                 >
@@ -280,7 +261,7 @@ export default function SalesReport() {
                                 </div >
                                 <select className='w-full text-gray-600 p-1 rounded-sm border border-black focus:ring-transparent focus:border-black'
                                     onChange={(e) => {
-                                        getSales(e.target.value, pickM, pickT, pickWH)
+                                        getSales(e.target.value, pickM, pickT, pickWH,visible.page)
                                     }}
                                     id="tahun"
                                     required={true}
@@ -298,31 +279,31 @@ export default function SalesReport() {
                         </div>
 
                         {
-                            user.warehouse_id>0? 
-                            <p className='text-xl flex items-end'>Sales Reports : Warehouse {user.warehouse}</p> : <div className='sm:min-w-fit'>
-                                <div className="mb-2">
-                                    <Label
-                                        value="Warehouse List :"
-                                    />
-                                </div >
-                                <select className='w-full text-gray-600 px-3 py-1 border rounded-md border-[#DBDBDB] focus:ring-transparent focus:border-black'
-                                    onChange={(e) => {
-                                        getSales(pickY, pickM, pickT, e.target.value)
-                                    }}
-                                    id="warehouse"
-                                    required={true}
-                                >
-                                    <option value="0">All Warehouse</option>
-                                    {
-                                        visible.list_wh.map((item, index) => {
-                                            return (
-                                                <option value={item.id}>{item.city}</option>
-                                            )
-                                        })
-                                    }
+                            user.warehouse_id > 0 ?
+                                <p className='text-xl flex items-end'>Sales Reports : Warehouse {user.warehouse}</p> : <div className='sm:min-w-fit'>
+                                    <div className="mb-2">
+                                        <Label
+                                            value="Warehouse List :"
+                                        />
+                                    </div >
+                                    <select className='w-full text-gray-600 px-3 py-1 border rounded-md border-[#DBDBDB] focus:ring-transparent focus:border-black'
+                                        onChange={(e) => {
+                                            getSales(pickY, pickM, pickT, e.target.value,visible.page)
+                                        }}
+                                        id="warehouse"
+                                        required={true}
+                                    >
+                                        <option value="0">All Warehouse</option>
+                                        {
+                                            visible.list_wh.map((item, index) => {
+                                                return (
+                                                    <option value={item.id}>{item.city}</option>
+                                                )
+                                            })
+                                        }
 
-                                </select>
-                            </div>
+                                    </select>
+                                </div>
                         }
 
                     </div>
@@ -331,18 +312,18 @@ export default function SalesReport() {
                 <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
 
                     <div className='flex gap-4'>
-                        <button onClick={() => getSales(pickY, pickM, 1, pickWH)} disabled={pickT == 1 ? true : false} className={`font-semibold ${pickT == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
+                        <button onClick={() => getSales(pickY, pickM, 1, pickWH,visible.page)} disabled={pickT == 1 ? true : false} className={`font-semibold ${pickT == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
                             Summary
                         </button>
                         <button onClick={() => {
                             setVisible({ ...visible, category: [] })
-                            getSales(pickY, pickM, 2, pickWH)
+                            getSales(pickY, pickM, 2, pickWH,visible.page)
                         }} disabled={pickT == 2 ? true : false} className={`font-semibold ${pickT == 2 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
                             Product Category
                         </button>
                         <button onClick={() => {
                             setVisible({ ...visible, category: [] })
-                            getSales(pickY, pickM, 3, pickWH)
+                            getSales(pickY, pickM, 3, pickWH,visible.page)
                         }} disabled={pickT == 3 ? true : false} className={`font-semibold ${pickT == 3 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
                             Products
                         </button>
@@ -357,15 +338,37 @@ export default function SalesReport() {
                                 pickT == 2 ?
                                     <Category data={visible} />
                                     : pickT == 3 ?
-                                        <SalesProduct data={visible} />
+                                        <div className='flex flex-col'>
+                                            <SalesProduct data={visible} />
+                                            <div className='flex justify-center p-5 gap-2'>
+                                                <button
+                                                    disabled={(visible.page -1) < visible.total_pages}
+                                                    onClick={() => {
+                                                        getSales(pickY, pickM, pickT, pickWH,visible.page-1)
+                                                    }}
+                                                    className='font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white'>
+                                                    Previous
+                                                </button>
+                                                <div>
+                                                    Page {visible.page} of {visible.total_pages}
+                                                </div>
+                                                <button
+                                                    disabled={(visible.page + 1) > visible.total_pages}
+                                                    onClick={() => {
+                                                        getSales(pickY, pickM, pickT, pickWH,visible.page+1)
+                                                    }}
+                                                    className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
                                         : null
                         }
                     </div>
+
                 </div>
 
                 <Toaster />
             </div>
-            :
-            <Loading />
     )
 }

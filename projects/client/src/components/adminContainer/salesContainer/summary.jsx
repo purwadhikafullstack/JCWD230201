@@ -1,7 +1,6 @@
 import Loading from '../../core/loading'
 
 export default function Summary(data) {
-    console.log(data.data)
     return (
         <div className="w-full h-full">
             <div className='flex justify-between w-full'>
@@ -35,7 +34,7 @@ export default function Summary(data) {
                         {(data.data.ongkir).toLocaleString()}
                     </div>
                     <div>
-                        -{(data.data.discount).toLocaleString()}
+                        {(data.data.discount).toLocaleString()}
                     </div>
                     <div>
                         0

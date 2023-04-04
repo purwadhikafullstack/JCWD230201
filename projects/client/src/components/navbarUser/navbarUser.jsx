@@ -23,10 +23,8 @@ export default function NavbarUser(props) {
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/category`)
             // setCategory(data.data)
-            // console.log(response.data.data)
             setCategory(response.data.data)
         } catch (error) {
-            // console.log(error)
         }
     }
 

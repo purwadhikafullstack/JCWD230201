@@ -26,7 +26,6 @@ import NavbarUser from './components/navbarUser/navbarUser';
 import Footer from './components/homeUser/footer/footer';
 import AdminSetting from './components/adminContainer/adminsetting';
 import Dashboard from './components/adminContainer/dashboard';
-import AdminSettingProfile from './components/adminContainer/adminsettingprofile';
 import GetAllAccount from './components/adminContainer/getallaccount';
 import Error from './components/error404/error';
 import ErrorAdmin from './components/error404/erroradmin';
@@ -79,7 +78,6 @@ function App() {
 
   let keepLogin = async () => {
     let response = await CheckLogin()
-    // console.log(response)
     if (!response) {
       localStorage.removeItem('token')
       setUser(null)
@@ -91,21 +89,17 @@ function App() {
 
   let getProductDetail = async (id) => {
     try {
-      // console.log(id);
-      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/productdetail/${id}`)
       let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/productdetail/${id}`)
       setDetail(response.data.data[0])
       setDetailProduct(response.data.data[0].product_details)
       setDetailQty(response.data.data2);
     } catch (error) {
-      // console.log(error)
     }
   }
 
   let getColor = async (id) => {
     try {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/color/${id}`)
-        console.log(response.data.data);
         setAdaSort(response.data.data);
     } catch (error) {
 
@@ -117,7 +111,6 @@ function App() {
         if(ada==undefined){
         let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}`)
         setShow(data.data)
-        // console.log(show);
         setNyow();
         var arrColor = []
         var arrColor2 = []
@@ -132,7 +125,6 @@ function App() {
         // getColor()
     }else if(ada === "az"){
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
-        console.log(response.data.data);
         setShow(response.data.data);
         setNyow();
         var arrColor = []
@@ -147,7 +139,6 @@ function App() {
         setArrColor(arrColor2);
     }else if(ada === "za"){
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
-        console.log(response.data.data);
         setShow(response.data.data);
         setNyow();
         var arrColor = []
@@ -162,7 +153,6 @@ function App() {
         setArrColor(arrColor2);
     }else if(ada === "lohi"){
       let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
-      //console.log(response.data.data);
       setShow(response.data.data);
       setNyow(response.data.data);
       var arrColor = []
@@ -200,7 +190,6 @@ function App() {
       }
 
     } catch (error) {
-      // console.log(error)
     }
   }
   // let loginKeep = async () => {
@@ -249,7 +238,6 @@ function App() {
           token: localStorage.getItem('token')
         }
       })
-      // console.log(response.data.data)
       setItemCart(response.data.data)
 
       let sum = 0
@@ -259,7 +247,6 @@ function App() {
       setLoading(false)
 
     } catch (error) {
-      // console.log(error)
     }
   }
 
@@ -280,7 +267,6 @@ function App() {
                   <Route path='' element={<Dashboard />} />
                   <Route path='all-user' element={<GetAllAccount />} />
                   <Route path='setting' element={<AdminSetting />} />
-                  <Route path='profile/:id' element={<AdminSettingProfile />} />
                   <Route path='Transaction' element={<Transaction />} />
                   <Route path='log-product' element={<LogProduct />} />
                   <Route path='warehouse' element={<Warehouse />} />

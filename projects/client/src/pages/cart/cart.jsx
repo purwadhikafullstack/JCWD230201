@@ -50,7 +50,6 @@ export default function Cart(props) {
 
 
         } catch (error) {
-            // console.log(error)
         }
     }
 
@@ -64,7 +63,6 @@ export default function Cart(props) {
 
             // props.func.getCart()
         } catch (error) {
-            // console.log(error)
         }
     }
 
