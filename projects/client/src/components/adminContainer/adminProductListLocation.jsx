@@ -22,12 +22,14 @@ export default function AdminProductListLocation(props){
     const [defaultQty, setDefaultQty] = useState("")
     const [loc, setLoc] = useState(0)
     const [proId, setProId] = useState(0)
+    const [detailProId, setDetailProId] = useState(0)
     
-    let getQuantity = (valueid, valueqty, valueloc, valueproductid)=>{
+    let getQuantity = (valueid, valueqty, valueloc, valueproductid, valuedetailproductid)=>{
         setQuantity(valueid);
         setDefaultQty(valueqty)
         setLoc(valueloc)
         setProId(valueproductid)
+        setDetailProId(valuedetailproductid)
     }
 
     let updateQty = async()=>{
@@ -46,7 +48,8 @@ export default function AdminProductListLocation(props){
                 // console.log("Masuk Pertama")
                 let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: a})
                 console.log(response);
-                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateInc.current.value, status: "Additional", location_warehouse_id: loc, product_detail_id: proId})
+
+                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateInc.current.value, status: "Additional", location_warehouse_id: loc, product_detail_id: proId, product_id: detailProId})
                 console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {
@@ -60,7 +63,8 @@ export default function AdminProductListLocation(props){
                 // console.log("Masuk Kedua")
                 let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: b})
                 console.log(response);
-                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateDec.current.value, status: "Reduction", location_warehouse_id: loc, product_detail_id: proId})
+                let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateDec.current.value, status: "Reduction", location_warehouse_id: loc, product_detail_id: proId, product_id: detailProId})
+
                 console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {
@@ -173,98 +177,100 @@ export default function AdminProductListLocation(props){
                 </Modal>
 
             <div className="flex justify-center">
-                <div className="flex justify-center gap-10 p-5">
-                    <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
-                        <table className="w-[1100px] text-sm text-center border text-gray-500 dark:text-gray-400">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3">
-                                        Id
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Name
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Color
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Storage
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Location
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Quantity
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Action
-                                    </th>
-                                </tr>
-                            </thead>
-                            {
-                                props.data.locationProduct.map((value, index)=>{
-                                    return(
-                                        <tbody >
-                                            <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                                <td className="px-6 py-3 font-bold">
-                                                    {value.id}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    {value.product_detail.product.name}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    {value.product_detail.color}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    {value.product_detail.memory_storage}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    {props.data.locationCity}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    {value.qty}
-                                                </td>
-                                                <td className="px-6 py-3">
-                                                    <div className="flex justify-center gap-4">
-                                                        <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id);console.log(value);console.log(value.id);setShowIncQty(!showIncQty)}} className="flex items-center"> 
-                                                            <FiPlusCircle size={'20px'}/>
-                                                        </button>
-                                                        <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id);console.log(value.id);setShowDecQty(!showDecQty)}} className="flex items-center"> 
-                                                            <FiMinusCircle size={'20px'}/>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    )
-                                })
-                            }
-                        </table>
-                            {
-                                user.role == 1?
-                        <div className='flex justify-center border p-5'>
-                                <button className='border font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "prev")}}>
-                                    Previous
-                                </button>
-                                <div>
-                                    Page {props.data.showPage.page}
+                <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
+                        <div className="flex justify-center gap-10 p-5">
+                            <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
+                                <table className="w-[1000px] text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            Id
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Color
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Storage
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Location
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Quantity
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                {
+                                    props.data.locationProduct.map((value, index)=>{
+                                        return(
+                                            <tbody >
+                                                <tr className="border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700  text-slate-200">
+                                                    <td className="px-6 py-3 font-bold">
+                                                        {value.id}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {value.product_detail.product.name}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {value.product_detail.color}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {value.product_detail.memory_storage}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {props.data.locationCity}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        {value.qty}
+                                                    </td>
+                                                    <td className="px-6 py-3">
+                                                        <div className="flex justify-center gap-4">
+                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);console.log(value.product_detail.product.id);console.log(value.id);setShowIncQty(!showIncQty)}} className="flex items-center"> 
+                                                                <FiPlusCircle size={'20px'}/>
+                                                            </button>
+                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);console.log(value.id);setShowDecQty(!showDecQty)}} className="flex items-center"> 
+                                                                <FiMinusCircle size={'20px'}/>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        )
+                                    })
+                                }
+                            </table>
+                                {
+                                    user.role == 1?
+                            <div className='flex justify-center border p-5'>
+                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "prev")}}>
+                                        Previous
+                                    </button>
+                                    <div>
+                                        Page {props.data.showPage.page}
+                                    </div>
+                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "next")}}>
+                                        Next
+                                    </button>
+                                </div>:
+                                    <div className='flex justify-center border p-5'>
+                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "prev")}}>
+                                        Previous
+                                    </button>
+                                    <div>
+                                        Page {props.data.showPage.page}
+                                    </div>
+                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "next")}}>
+                                        Next
+                                    </button>
                                 </div>
-                                <button className='border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "next")}}>
-                                    Next
-                                </button>
-                            </div>:
-                                <div className='flex justify-center border p-5'>
-                                <button className='border font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "prev")}}>
-                                    Previous
-                                </button>
-                                <div>
-                                    Page {props.data.showPage.page}
-                                </div>
-                                <button className='border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "next")}}>
-                                    Next
-                                </button>
-                            </div>
-                            }
+                                }
+                        </div>
                     </div>
                 </div>
             </div>

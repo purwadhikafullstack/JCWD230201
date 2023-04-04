@@ -14,7 +14,7 @@ export default function AdminProducts(props){
 
     let {user} = useContext(userData)
     const {id} = useParams()
-    console.log(id);
+    // console.log(id);
 
     let numInc = 1
     
@@ -25,7 +25,9 @@ export default function AdminProducts(props){
     let onAddStorage = useRef()
     let onAddColor = useRef()
     let onAddColorHex = useRef()
+    let onAddCity = useRef()
     let onAddQuantity = useRef()
+    let onAddProduct = useRef()
     let onUpdateName = useRef()
     let onUpdateDescription = useRef()
     let onUpdateCategory = useRef()
@@ -34,9 +36,15 @@ export default function AdminProducts(props){
     let onUpdateColor = useRef()
     let onUpdateColorHex = useRef()
     let onUpdateQty = useRef()
+    let onOperProduct = useRef()
+    let onOperProductName = useRef()
+    let onAddProductWarehouse = useRef()
+    let onOperQty = useRef()
     // console.log(props.data.showProduct);
     const [message, setMessage] = useState('')
     const [showAddProduct, setShowAddProduct] = useState(false)
+    const [showAddDetail, setShowAddDetail] = useState(false)
+    const [showAddWarehouse, setShowAddWarehouse] = useState(false)
     const [showEditProduct, setShowEditProduct] = useState(false)
     const [editName, setEditName] = useState("")
     const [editProductCategoryId, setEditProductCategoryId] = useState("")
@@ -57,6 +65,9 @@ export default function AdminProducts(props){
     })
     const [arrProducts, setArrProducts] = useState([])
     const [showPage, setShowPage] = useState(1)
+    const [arrName, setArrName] = useState([])
+    const [locationWarehouse, setLocationWarehouse] = useState([])
+    const [thisName, setThisName] = useState([])
 
 
     let getEveryProducts = async(_page, btn)=>{
@@ -112,23 +123,18 @@ export default function AdminProducts(props){
             let inputAddName = onAddName.current.value
             let inputAddCategory = onAddCategory.current.value
             let inputAddDescription = onAddDescription.current.value
-            let inputAddPrice = onAddPrice.current.value
-            let inputAddStorage = onAddStorage.current.value
-            let inputAddColor = onAddColor.current.value
-            let inputAddColorHex = onAddColorHex.current.value
-            let inputAddQuantity = onAddQuantity.current.value
+            
+            // let inputAddQuantity = onAddQuantity.current.value
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
-            fd.append('data', JSON.stringify({name: inputAddName, description: inputAddDescription, category_id: inputAddCategory, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex, qty: inputAddQuantity}))
-            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/add-product`,fd)
+            fd.append('data', JSON.stringify({name: inputAddName, description: inputAddDescription, category_id: inputAddCategory}))
+            let response = await axios.post('${process.env.REACT_APP_API_BASE_URL}/product/add-product',fd)
             console.log(response);
             onAddName.current.value = ""
             onAddCategory.current.value = ""
-            onAddPrice.current.value = ""
-            onAddStorage.current.value = ""
-            onAddColor.current.value = ""
-            onAddColorHex.current.value = ""
-            onAddQuantity.current.value = ""
+            onAddDescription.current.value = ""
+            
+            // onAddQuantity.current.value = ""
             setTimeout(() => {
                 toast.success('Add New Product Success', {
                     duration: 3000
@@ -263,25 +269,302 @@ export default function AdminProducts(props){
         }
     }
 
+    let getName = async()=>{
+        try {
+            let response = await axios.get(`http://localhost:8000/product/name-product/a`)
+            setArrName(response.data.data);
+        } catch (error) {
+            
+        }
+    }
+
+    let getLocation = async()=>{
+        try {
+            let response = await axios.get('http://localhost:8000/location')
+            // console.log(response.data.data);
+            setLocationWarehouse(response.data.data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    let addProductDetail = async()=>{
+        try {
+            let inputAddProduct= onAddProduct.current.value
+            let inputAddPrice = onAddPrice.current.value
+            let inputAddStorage = onAddStorage.current.value
+            let inputAddColor = onAddColor.current.value
+            let inputAddColorHex = onAddColorHex.current.value
+            let response = await axios.post(`http://localhost:8000/product/create-productdetail`, {product_id: inputAddProduct, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex})
+            setTimeout(() => {
+                toast.success('Add New Product Detail Success', {
+                    duration: 3000
+                })
+            }, 100)
+            onAddProduct.current.value = ""
+            onAddPrice.current.value = ""
+            onAddStorage.current.value = ""
+            onAddColor.current.value = ""
+            onAddColorHex.current.value = ""
+            setShowAddDetail(false)
+            props.func.getCategory()
+        } catch (error) {
+            setTimeout(() => {
+                toast.error(error.message, {
+                    duration: 3000
+                })
+            }, 100)
+        }
+    }
+
+    let getNameProduct = async()=>{
+        try {
+            // setThisQty(0)
+            let b = Number(onOperProduct.current.value)
+            // let c = Number(onOperProductName.current.value)
+            console.log(b);
+            let response = await axios.post(`http://localhost:8000/location/namedetail`, {product_id: b})
+            console.log(response.data.data);
+            setThisName(response.data.data);
+        } catch (error) {
+            setTimeout(() => {
+                toast.error(error.message, {
+                    duration: 3000
+                })
+            }, 100)
+        }
+    }
+
+    let postLocation = async()=>{
+        try {
+            let a = onAddProductWarehouse.current.value
+            let b = onOperProduct.current.value
+            let c = onOperProductName.current.value
+            let d = onOperQty.current.value
+            let response = await axios.post(`http://localhost:8000/location/locationwarehouse`, {qty: d, location_warehouse_id: a, product_detail_id: c, status: "Additional"})
+            console.log(response);
+            setTimeout(() => {
+                toast.success('Add Product to Warehouse Success', {
+                    duration: 3000
+                })
+            }, 100)
+            setShowAddWarehouse(false)
+            props.func.getCategory()
+        } catch (error) {
+            
+        }
+    }
+
     useEffect(() => {
       props.func.getCategory()
       props.func.getProduct()
       props.func.getProductDetail()
       getEveryProducts(showPage)
+      getName()
+      getLocation()
     }, [])
     
 
     return(
         <div>
+            {/* {console.log(props.data.show)} */}
             <div className='flex justify-end pr-12'>
                 
-                {/* Add Product */}
                 {user.role == 1?
-                <ButtonWithIcon handleClick={()=>{setShowAddProduct(!showAddProduct)}} label="Add Product"/>
+                    <div className='flex gap-4'>
+                        <Button onClick={()=>{setShowAddProduct(!showAddProduct)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
+                            <div className='text-md'>
+                                Add Product
+                            </div>
+                        </Button>
+                        <Button onClick={()=>{setShowAddDetail(!showAddDetail)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
+                            <div className='text-md'>
+                                Add Detail
+                            </div>
+                        </Button>
+                        <Button onClick={()=>{setShowAddWarehouse(!showAddWarehouse)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
+                            <div className='text-md'>
+                                Add to Warehouse
+                            </div>
+                        </Button>
+                    </div>
+                
                 :null}
+                {/* Add Warehouse */}
+                <Modal
+                    show={showAddWarehouse}
+                    size="xl"
+                    popup={true}
+                    onClose={()=>setShowAddWarehouse(!showAddWarehouse)  }
+                >
+                <Modal.Header/>
+                    <Modal.Body>
+                    <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
+                        Add to Warehouse
+                    </h3>
+                    <div className='gap-5 overflow-x-hidden h-80'>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label
+                                    value="Warehouse"
+                                />
+                            </div>
+                            <select
+                                onChange={() => {console.log(onAddProductWarehouse.current.value)}}
+                                ref={onAddProductWarehouse}
+                                id="category"
+                                className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                            >
+                                <option value={"chooseWarehouse"}>Choose Warehouse</option>
+                                {locationWarehouse.map((value, index) => {
+                                    return <option value={`${value.id}`}>{value.city}</option>;
+                                })}
+                            </select>
+                        </div>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label
+                                    value="Product"
+                                />
+                            </div>
+                            <select
+                                onChange={(e) => {
+                                    getNameProduct(e.target.value)
+                                    console.log(onOperProduct.current.value)
+                                onOperProductName.current.value="chooseProductDetail"}}
+                                ref={onOperProduct}
+                                id="category"
+                                className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                            >
+                                <option value={"chooseProduct"}>Choose Product</option>
+                                {arrName.map((value, index) => {
+                                    return <option value={`${value.id}`}>{value.name}</option>;
+                                })}
+                            </select>
+                        </div>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label
+                                    value="Product Detail"
+                                />
+                            </div>
+                            <select
+                                onChange={(e) => {
+                                    console.log(e.target.value)}}
+                                ref={onOperProductName}
+                                id="detail"
+                                className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                            >
+                                <option value={"chooseProductDetail"}>Choose Product Detail</option>
+                                {thisName.map((value, index) => {
+                                    return <option value={`${value.id}`}>Color: {value.color}, Storage: {value.memory_storage}GB</option>;
+                                })}
+                            </select>
+                        </div>
+                        <div className="mb-2 block">
+                            <Label
+                                value="Quantity"
+                            />
+                        </div>
+                        <input ref={onOperQty} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
+                            id="Quantity"
+                            placeholder="0"
+                            required={true}
+                        />
+                    </div>
+                    <div className=" flex justify-center py-5">
+                        <Button onClick={()=>postLocation()} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>                                                                                
+                            Submit
+                        </Button>
+                    </div>
+                </Modal.Body>
+                </Modal>
+                {/* Add Warehouse */}
+
+                {/* Add Detail */}
+                <Modal
+                    show={showAddDetail}
+                    size="xl"
+                    popup={true}
+                    onClose={()=>setShowAddDetail(!showAddDetail)  }
+                >
+                <Modal.Header/>
+                    <Modal.Body>
+                    <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
+                        Add Product Detail
+                    </h3>
+                    <div className='gap-5 overflow-x-hidden h-80'>
+                        <div>
+                            <div className="mb-2 block">
+                                <Label
+                                    value="Product"
+                                />
+                            </div>
+                            <select
+                                onChange={() => console.log(onAddProduct.current.value)}
+                                ref={onAddProduct}
+                                id="category"
+                                className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
+                            >
+                                {arrName.map((value, index) => {
+                                    return <option value={`${value.id}`}>{value.name}</option>;
+                                })}
+                            </select>
+                        </div>
+                        <div className="mb-2 block">
+                            <Label
+                                value="Price"
+                            />
+                        </div>
+                        <input ref={onAddPrice} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
+                            id="price"
+                            placeholder="899000"
+                            required={true}
+                        />
+                        <div className="mb-2 block">
+                            <Label
+                                value="Storage"
+                            />
+                        </div>
+                        <input ref={onAddStorage} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
+                            id="Storage"
+                            placeholder="128"
+                            required={true}
+                        />
+                        <div className="mb-2 block">
+                            <Label
+                                value="Color"
+                            />
+                        </div>
+                        <input ref={onAddColor} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
+                            id="Color"
+                            placeholder="White"
+                            required={true}
+                        />
+                        <div className="mb-2 block">
+                            <Label
+                                value="Color Hex"
+                            />
+                        </div>
+                        <input ref={onAddColorHex} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
+                            id="ColorHex"
+                            placeholder="#DF2E38"
+                            required={true}
+                        />
+                    </div>
+                    <div className=" flex justify-center py-5">
+                        <Button onClick={()=>addProductDetail()} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>                                                                                
+                            Submit
+                        </Button>
+                    </div>
+                </Modal.Body>
+                </Modal>
+                {/* Add Detail */}
+
+                {/* Add Product */}
                 <Modal
                     show={showAddProduct}
-                    size="2xl"
+                    size="xl"
                     popup={true}
                     onClose={()=>setShowAddProduct(!showAddProduct)  }
                 >
@@ -290,7 +573,7 @@ export default function AdminProducts(props){
                     <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
                         Add Product
                     </h3>
-                    <div className='gap-5 overflow-x-hidden h-96'>
+                    <div className='gap-5 overflow-x-hidden h-80'>
                         <div className="mb-2 block">
                             <Label
                                 value="Name"
@@ -337,7 +620,7 @@ export default function AdminProducts(props){
                             placeholder="Description"
                             required={true}
                         />
-                        <div className="mb-2 block">
+                        {/* <div className="mb-2 block">
                             <Label
                                 value="Price"
                             />
@@ -386,7 +669,7 @@ export default function AdminProducts(props){
                             id="Quantity"   
                             placeholder="24"
                             required={true}
-                        />
+                        /> */}
                     </div>
                     <div className=" flex justify-center py-5">
                         <Button onClick={()=>addProduct()} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>                                                                                
@@ -566,80 +849,130 @@ export default function AdminProducts(props){
 
             </div>
             <div className="flex justify-center p-10">
-                <div className="flex justify-center gap-10 p-5">
-                    <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
-                        <table className="w-full text-sm text-center border text-gray-500 dark:text-gray-400">
-                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3">
-                                        No
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Name
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Description
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Price
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Storage
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Color
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Color Hex
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Quantity
-                                    </th>
-                                    {user.role == 1?
-                                    <th scope="col" className="px-6 py-3">
-                                        Action
-                                    </th>:null
-                                    }
-                                </tr>
-                            </thead>
-                            {
-                                !props.data.showProduct.length==0?props.data.showProduct.map((value, index)=>{
+                <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
+                    <div className="flex justify-center gap-10 p-5">
+                        <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
+                            <table className="w-full text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3">
+                                            ID
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Name
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Description
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Price
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Storage
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Color
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Color Hex
+                                        </th>
+                                        <th scope="col" className="px-6 py-3">
+                                            Quantity
+                                        </th>
+                                        {user.role == 1?
+                                        <th scope="col" className="px-6 py-3">
+                                            Action
+                                        </th>:null
+                                        }
+                                    </tr>
+                                </thead>
+                                {
+                                    !props.data.showProduct.length==0?props.data.showProduct.map((value, index)=>{
+                                        return(
+                                            <tbody >
+                                                {value.product_details.map((val, idx)=>{
+                                                    return(
+                                                        <tr className="border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700  text-slate-200">
+                                                            <td className="px-6 py-3 font-bold">
+                                                                {numInc++}
+                                                            </td>
+                                                            <td className="px-6 py-3">
+                                                                {value.name}
+                                                            </td>
+                                                            <tr className="px-6">
+                                                                {value.description.slice(0, 100)}...
+                                                            </tr>
+                                                            <td className="px-6 py-3">
+                                                                {val.price}
+                                                            </td>
+                                                            <td className="px-6 py-3">
+                                                                {val.memory_storage}
+                                                            </td>
+                                                            <td className="px-6 py-3">
+                                                                {val.color}
+                                                            </td>
+                                                            <td className="px-6 py-3">
+                                                                {val.colorhex}
+                                                            </td>
+                                                            <td className="px-6 py-3">
+                                                                {val.qty}
+                                                            </td>
+                                                            {user.role == 1?
+                                                            <td className="px-6 py-4">
+                                                                <div className="flex gap-4">
+                                                                    <button onClick={()=>{getDetail(val.id);updateProduct(value.name, val.id, value.description, val.price, val.memory_storage, val.color, val.colorhex, val.qty, value.id, value.category_id);setShowEditProduct(!showEditProduct)}} className="flex items-center"> 
+                                                                        <BsPencil size={'15px'}/>
+                                                                    </button>
+                                                                    <button onClick={()=>{getDeleteProduct(value.id, val.id, value.name);setShowDeleteProduct(!showDeleteProduct)}} className="flex items-center">
+                                                                        <BsTrash size={'15px'} />
+                                                                    </button>
+                                                                </div>
+                                                                {/* <button onClick={()=>console.log(val.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button> */}
+                                                            </td>:null
+                                                            }
+                                                        </tr>
+                                                    )
+                                                })}
+                                            
+                                            </tbody>
+                                        )
+                                    })
+                                :
+                                arrProducts.map((value, index)=>{
                                     return(
-                                        <tbody >
-                                            {value.product_details.map((val, idx)=>{
-                                                return(
-                                                    <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+                                        <tbody>
+                                                    <tr className="border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700  text-slate-200">
                                                         <td className="px-6 py-3 font-bold">
-                                                            {numInc++}
+                                                            {value.id}
                                                         </td>
                                                         <td className="px-6 py-3">
-                                                            {value.name}
+                                                            {value.product.name}
                                                         </td>
                                                         <tr className="px-6">
-                                                            {value.description.slice(0, 100)}...
+                                                            {value.product.description.slice(0, 100)}...
                                                         </tr>
                                                         <td className="px-6 py-3">
-                                                            {val.price}
+                                                            {value.price}
                                                         </td>
                                                         <td className="px-6 py-3">
-                                                            {val.memory_storage}
+                                                            {value.memory_storage}
                                                         </td>
                                                         <td className="px-6 py-3">
-                                                            {val.color}
+                                                            {value.color}
                                                         </td>
                                                         <td className="px-6 py-3">
-                                                            {val.colorhex}
+                                                            {value.colorhex}
                                                         </td>
                                                         <td className="px-6 py-3">
-                                                            {val.qty}
+                                                            {value.qty}
                                                         </td>
                                                         {user.role == 1?
                                                         <td className="px-6 py-4">
                                                             <div className="flex gap-4">
-                                                                <button onClick={()=>{getDetail(val.id);updateProduct(value.name, val.id, value.description, val.price, val.memory_storage, val.color, val.colorhex, val.qty, value.id, value.category_id);setShowEditProduct(!showEditProduct)}} className="flex items-center"> 
+                                                                <button onClick={()=>{getDetail(value.id);updateProduct(value.product.name, value.product.id, value.product.description, value.price, value.memory_storage, value.color, value.colorhex, value.qty, value.product.id, value.prodduct.category_id);setShowEditProduct(!showEditProduct)}} className="flex items-center"> 
                                                                     <BsPencil size={'15px'}/>
                                                                 </button>
-                                                                <button onClick={()=>{getDeleteProduct(value.id, val.id, value.name);setShowDeleteProduct(!showDeleteProduct)}} className="flex items-center">
+                                                                <button onClick={()=>{getDeleteProduct(value.id, value.product.id, value.product.name);setShowDeleteProduct(!showDeleteProduct)}} className="flex items-center">
                                                                     <BsTrash size={'15px'} />
                                                                 </button>
                                                             </div>
@@ -647,71 +980,23 @@ export default function AdminProducts(props){
                                                         </td>:null
                                                         }
                                                     </tr>
-                                                )
-                                            })}
-                                        
                                         </tbody>
                                     )
                                 })
-                            :
-                            arrProducts.map((value, index)=>{
-                                return(
-                                    <tbody>
-                                                <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                                    <td className="px-6 py-3 font-bold">
-                                                        {value.id}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {value.product.name}
-                                                    </td>
-                                                    <tr className="px-6">
-                                                        {value.product.description.slice(0, 100)}...
-                                                    </tr>
-                                                    <td className="px-6 py-3">
-                                                        {value.price}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {value.memory_storage}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {value.color}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {value.colorhex}
-                                                    </td>
-                                                    <td className="px-6 py-3">
-                                                        {value.qty}
-                                                    </td>
-                                                    {user.role == 1?
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex gap-4">
-                                                            <button onClick={()=>{getDetail(value.id);updateProduct(value.product.name, value.product.id, value.product.description, value.price, value.memory_storage, value.color, value.colorhex, value.qty, value.product.id, value.prodduct.category_id);setShowEditProduct(!showEditProduct)}} className="flex items-center"> 
-                                                                <BsPencil size={'15px'}/>
-                                                            </button>
-                                                            <button onClick={()=>{getDeleteProduct(value.id, value.product.id, value.product.name);setShowDeleteProduct(!showDeleteProduct)}} className="flex items-center">
-                                                                <BsTrash size={'15px'} />
-                                                            </button>
-                                                        </div>
-                                                        {/* <button onClick={()=>console.log(val.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button> */}
-                                                    </td>:null
-                                                    }
-                                                </tr>
-                                    </tbody>
-                                )
-                            })
-                            }
-                        </table>
-                            <div className='flex justify-center border p-5'>
-                                <button className='border font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white' onClick={()=> {getEveryProducts(showPage.page, "prev");console.log(showPage)}}>
-                                    Previous
-                                </button>
-                                <div>
-                                   Page {showPage.page}
+                                }
+                            </table>
+                                <div className='flex justify-center border p-5'>
+                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {getEveryProducts(showPage.page, "prev");console.log(showPage)}}>
+                                        Previous
+                                    </button>
+                                    <div>
+                                    Page {showPage.page}
+                                    </div>
+                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {getEveryProducts(showPage.page, "next");console.log(showPage)}}>
+                                        Next
+                                    </button>
                                 </div>
-                                <button className='border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white' onClick={()=> {getEveryProducts(showPage.page, "next");console.log(showPage)}}>
-                                    Next
-                                </button>
-                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast'
 import Loading from "../loading/loading";
+import ReactImageMagnify from 'react-image-magnify'
 
 export default function ProductDetail(props) {
 
@@ -106,7 +107,8 @@ export default function ProductDetail(props) {
                 <div className="w-full h-full md:w-full md:h-full lg:w-96 lg:h-full -z-10">
                     <div className="grid h-[500px] md:h-[300px] lg:h-96">
                         <Carousel>
-                            <img src={require(`../../Assets/${props.data.detail.product_images[0].img}`)} alt="...." className="w-44 md:w-80 lg:w-96" />
+                            <img src={require(`../../../../server/src/Public/images/${props.data.detail.product_images[0].img}`)} alt="...."  className="w-44 md:w-80 lg:w-96"/>
+
                         </Carousel>
                     </div>
                 </div>
@@ -120,38 +122,44 @@ export default function ProductDetail(props) {
                         </div>
                     </div>
                     <div>
+                        {
+                            arrColor[0] == null?
+                                null
+                            :
+                                <div className="text-sm font-bold py-3 px-1 text-neutral-600">
+                                    COLOR :
+                                </div>
+                        }
                         <div className="flex gap-2">
-                            {arrColor.map((value, index) => {
-                                return (
+                            {arrColor.map((value, index)=>{
+                                return(
                                     <div>
-                                        {value ?
-                                            <div>
-                                                <div className="text-sm font-bold py-3 px-1 text-neutral-600">
-                                                    COLOR :
-                                                </div>
-                                                <button onClick={() => setColors(value)} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
-                                                    <div style={{ backgroundColor: `${arrColorHex[index]}` }} className={`w-4 h-4 border rounded-full`}></div> {value}
-                                                </button>
-                                            </div> : null
+                                        {value?
+                                            <button onClick={()=>setColors(value)} style={{backgroundColor: colors==value? "#113F90":"white", color: colors==value?"white":"black"}} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
+                                            <div style={{backgroundColor: `${arrColorHex[index]}`}} className={`w-4 h-4 border rounded-full`}></div> {value}
+                                            </button>:null
                                         }
                                     </div>
                                 )
                             })}
                         </div>
                     </div>
+                    {
+                        arrMemory[0] == null?
+                            null
+                        :
+                            <div className="text-sm font-bold py-3 px-1 text-neutral-600">
+                                CAPACITY :
+                            </div>
+                    }
                     <div className="flex gap-2">
                         {arrMemory.map((val) => {
                             return (
                                 <div>
                                     {val ?
-                                        <div>
-                                            <div className="text-sm font-bold py-3 px-1 text-neutral-600">
-                                                CAPACITY :
-                                            </div>
-                                            <button onClick={() => getSelected(val)} style={{ backgroundColor: memory == val ? "#113F90" : "white", color: memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
-                                                {val} GB
-                                            </button>
-                                        </div> : null
+                                        <button onClick={() => getSelected(val)} style={{ backgroundColor: memory == val ? "#113F90" : "white", color: memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
+                                            {val} GB
+                                        </button> : null
                                     }
                                 </div>
                             )
@@ -206,13 +214,13 @@ export default function ProductDetail(props) {
                         </button>
                     </div>
                     {
-                        props.data.detailQty == 0 ?
+                        selected.qty==0?
                             <div className=" text-red-500">
                                 Out of stock
                             </div>
                             :
                             <div className=" text-red-500">
-                                Stocks: {props.data.detailQty}
+                                Stocks: {selected ? (selected.qty) : props.data.detailProduct[0].qty}
                             </div>
                     }
                     <button onClick={() => {
