@@ -41,12 +41,12 @@ export default function AdminSetting() {
         password: ''
     })
     let getDataWHA = async (page) => {
-        let response = await axios.get(`http://localhost:8000/admin/getAdmin?page=${page}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/getAdmin?page=${page}`)
         console.log(response.data.data)
         setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, total_pages: response.data.data.total_pages, loading: false, page })
     }
     let getEmptyWH = async () => {
-        let response = await axios.get('http://localhost:8000/warehouse/AvailableWH')
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
         setDataEmptyWH(response.data.data)
         console.log(response.data.data)
     }
@@ -57,7 +57,7 @@ export default function AdminSetting() {
             setList({ ...list, pop: false })
         } else {
             try {
-                let response = await axios.post(`http://localhost:8000/admin/register`, { name: profile.name, email: profile.email, gender: profile.gender, phone_number: profile.phone_number, password: profile.password, location_warehouse_id: profile.location_warehouse_id })
+                let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/register`, { name: profile.name, email: profile.email, gender: profile.gender, phone_number: profile.phone_number, password: profile.password, location_warehouse_id: profile.location_warehouse_id })
                 toast.success(response.data.message)
                 setList({ ...list, pop: false })
                 setAdd(!add)

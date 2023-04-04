@@ -40,7 +40,7 @@ export default function MyAccountInfo() {
 
     let getProfile = async () => {
         try {
-            let { data } = await axios.get(`http://localhost:8000/users/keep-login`, {
+            let { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/keep-login`, {
                 headers: {
                     "token": localStorage.getItem('token')
                 }
@@ -77,7 +77,7 @@ export default function MyAccountInfo() {
             let fd = new FormData()
             fd.append('images', profile.photo_profile[0])
 
-            let data = await axios.post('http://localhost:8000/users/update-photo_profile', fd, {
+            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/update-photo_profile`, fd, {
                 headers: {
                     "token": localStorage.getItem('token')
                 }
@@ -119,7 +119,7 @@ export default function MyAccountInfo() {
 
             if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
 
-                await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number }, {
+                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/update-data_profile`, { name: profile.name, phone_number: profile.phone_number }, {
                     headers: {
                         "token": localStorage.getItem('token')
                     }
@@ -133,7 +133,7 @@ export default function MyAccountInfo() {
 
                 if (profile.newpassword !== profile.newconfirmpassword) throw { message: 'Confirm password wrong' }
 
-                await axios.patch('http://localhost:8000/users/update-data_profile', { name: profile.name, phone_number: profile.phone_number, oldpassword: profile.oldpassword, newpassword: profile.newpassword }, {
+                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/update-data_profile`, { name: profile.name, phone_number: profile.phone_number, oldpassword: profile.oldpassword, newpassword: profile.newpassword }, {
                     headers: {
                         "token": localStorage.getItem('token')
                     }

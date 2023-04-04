@@ -6,7 +6,8 @@ export const CheckLogin = async () => {
                         id: null,
                         username: null
                 }
-                let response = await axios.get(`http://localhost:8000/admin/keep-login?`, {
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/keep-login?`, {
+
                         headers: {
                                 token: getTokenId
                         }

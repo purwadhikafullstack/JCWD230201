@@ -611,7 +611,7 @@ module.exports = {
             console.log(words)
 
             await sequelize.query(`
-            CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 10 SECOND
+            CREATE EVENT transaction_expired_${kreat.dataValues.id.split('/')[3]} ON SCHEDULE AT NOW() + INTERVAL 2 HOUR
             DO BEGIN
             UPDATE transactions SET order_status_id = 6 WHERE id = "${kreat.dataValues.id}" AND upload_payment IS NULL;
             INSERT INTO status_transaction_logs (order_status_id,transaction_id)
@@ -866,7 +866,7 @@ module.exports = {
                     await db.log_stock.create({
                         qty: item.qty,
                         location_warehouse_id: warehouse_id,
-                        status: 'Sold',
+                        status: 'Reduction',
                         product_detail_id: item.product_detail_id,
                         product_id:item.product_id
                     })

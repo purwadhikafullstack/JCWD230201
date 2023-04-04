@@ -23,7 +23,7 @@ export default function ConfirmEmail(props) {
 
             setDisabledButton(true)
 
-            await axios.post(`http://localhost:8000/users/confirm-email`, { email: inputEmail })
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/confirm-email`, { email: inputEmail })
 
             toast.success(`Please check your email`)
             setDisabledButton(false)

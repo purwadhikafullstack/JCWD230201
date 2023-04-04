@@ -39,9 +39,9 @@ export default function ResetPassword(props) {
             if (!characterNumber.test(inputPassword)) throw { message: 'Password must contains number' }
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
-
             setDisable(true)
-            let result = await axios.patch(`http://localhost:8000/users/reset-password/${id}`, { password: inputPassword })
+            let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/reset-password/${id}`, { password: inputPassword })
+
 
             password.current.value = ''
             confirmPassword.current.value = ''

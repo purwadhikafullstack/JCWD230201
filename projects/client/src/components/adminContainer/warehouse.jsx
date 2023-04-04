@@ -31,7 +31,7 @@ export default function Warehouse() {
     const [arrCity, setArrCity] = useState([]), [changeC, setChangeC] = useState([])
 
     let getDataWH = async (page) => {
-        let response = await axios.get(`http://localhost:8000/warehouse/getwh?page=${page}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/getwh?page=${page}`)
         console.log(response.data.data)
         setDataWH({
             ...dataWH, wh: response.data.data.getWH, total_pages: response.data.data.total_pages,
@@ -46,7 +46,7 @@ export default function Warehouse() {
             let inputCity = onCity.current.value.split(",")[1]
             let inputSubdistrict = onSubdistrict.current.value
             if (!inputSubdistrict || !inputWH_Address) throw { message: 'Incomplete Input' }
-            let response = await axios.post(`http://localhost:8000/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
             toast.success(response.data.message)
             setShow(!show)
             setDataWH({ ...dataWH, pop: false })
@@ -84,7 +84,7 @@ export default function Warehouse() {
             let inputProvince_id = changeProvince.current.value == 'Please Select Province' ? chosenWH.province_id : changeProvince.current.value.split(", ")[0]
 
 
-            let response = await axios.post(`http://localhost:8000/warehouse/updateWH`, { id: chosenWH.id, province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: inputCity_id, province_id: inputProvince_id })
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/updateWH`, { id: chosenWH.id, province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: inputCity_id, province_id: inputProvince_id })
 
             setDataWH({ ...dataWH, pop: false })
             toast.success(response.data.message)
@@ -110,7 +110,7 @@ export default function Warehouse() {
 
     let getDataProvince = async () => {
         try {
-            let response = await axios.get("http://localhost:8000/rajaongkir/province", {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/province`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 }
@@ -125,7 +125,7 @@ export default function Warehouse() {
     let getDataCityforChange = async () => {
         console.log(changeProvince.current.value)
         try {
-            let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${changeProvince.current.value.split(",")[0]}`, {
+            let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${changeProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -139,7 +139,7 @@ export default function Warehouse() {
 
     let getDataCity = async () => {
         try {
-            let data = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
+            let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",
                 },
@@ -151,7 +151,7 @@ export default function Warehouse() {
     };
 
     let deleteWH = async () => {
-        let response = await axios.post('http://localhost:8000/warehouse/deleteWH', { id: chosenWH.id })
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/deleteWH`, { id: chosenWH.id })
 
         toast.success(response.data.message)
         setShow2(!show2)

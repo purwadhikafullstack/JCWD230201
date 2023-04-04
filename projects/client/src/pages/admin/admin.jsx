@@ -48,7 +48,7 @@ export default function Admin() {
             let fd = new FormData()
             fd.append('images', profile[0])
 
-            let data = await axios.post('http://localhost:8000/admin/update-photo', fd, {
+            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/update-photo`, fd, {
                 headers: {
                     "token": localStorage.getItem('token')
                 }

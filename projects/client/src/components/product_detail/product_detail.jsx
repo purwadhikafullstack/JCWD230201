@@ -27,8 +27,7 @@ export default function ProductDetail(props) {
 
     let getSelected = async (mem) => {
         try {
-            let response = await axios.get(`http://localhost:8000/product/${id}/${colors}/${mem}`)
-            // console.log(response)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${colors}/${mem}`)
             setMemory(mem)
             setSelected(response.data.data[0]);
         } catch (error) {
@@ -46,7 +45,7 @@ export default function ProductDetail(props) {
 
             if (!selected) throw { message: "Please choose product variant" }
 
-            await axios.post('http://localhost:8000/cart/add-to-cart', { qty: quantity, product_id: selected.product_id, product_detail_id: selected.id }, {
+            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/cart/add-to-cart`, { qty: quantity, product_id: selected.product_id, product_detail_id: selected.id }, {
                 headers: {
                     token: localStorage.getItem('token')
                 }

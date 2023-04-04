@@ -63,21 +63,21 @@ export default function AdminProducts(props){
         try {
             console.log("masuk")
             console.log(_page)
-            let response = await axios.get(`http://localhost:8000/product/products/all?page=${_page?_page:showPage}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
                 console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 console.log(response.data.page);
                 setArrProducts(response.data.data)
             if(btn==="next"){
                 _page = Number(_page) + 1
-                let response = await axios.get(`http://localhost:8000/product/products/all?page=${_page?_page:showPage}`)
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
                 console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 console.log(response.data.page);
                 setArrProducts(response.data.data)
             }else if(btn==="prev"){
                 _page = Number(_page) - 1
-                let response = await axios.get(`http://localhost:8000/product/products/all?page=${_page?_page:showPage}`)
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
                 console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 console.log(response.data.page);
@@ -120,7 +120,7 @@ export default function AdminProducts(props){
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
             fd.append('data', JSON.stringify({name: inputAddName, description: inputAddDescription, category_id: inputAddCategory, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex, qty: inputAddQuantity}))
-            let response = await axios.post('http://localhost:8000/product/add-product',fd)
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/add-product`,fd)
             console.log(response);
             onAddName.current.value = ""
             onAddCategory.current.value = ""
@@ -175,7 +175,7 @@ export default function AdminProducts(props){
     let getDetail = async(val)=>{
         try {
             // setEditId(val);
-            let response = await axios.post('http://localhost:8000/product/edit-product/detail', {id: val})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/edit-product/detail`, {id: val})
             console.log(response);
             setEditProductCategory(response.data.data.name)
         } catch (error) {
@@ -196,16 +196,16 @@ export default function AdminProducts(props){
             let inputUpdateColor = onUpdateColor.current.value // product_detail.color
             let inputUpdateColorHex = onUpdateColorHex.current.value // product_detail.color
             let inputUpdateQty = onUpdateQty.current.value // product_detail.qty
-            let response = await axios.patch('http://localhost:8000/product/update-product/detail/a/a', {id: editId, name: inputUpdateName, description: inputUpdateDescription, category_id: inputUpdateCategory })
+            let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a`, {id: editId, name: inputUpdateName, description: inputUpdateDescription, category_id: inputUpdateCategory })
             console.log(response);
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
             fd.append('data', JSON.stringify({id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor, colorhex: inputUpdateColorHex, product_id: editId}))
             if(imgProduct.photo_product.length==0){
-                let data = await axios.patch('http://localhost:8000/product/update-product/detail/a/a/a/a', {id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor,colorhex: inputUpdateColorHex, product_id: editId})
+                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a/a/a`, {id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor,colorhex: inputUpdateColorHex, product_id: editId})
             }else{
 
-                let data = await axios.patch('http://localhost:8000/product/update-product/detail/a/a/a', fd)
+                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a/a`, fd)
                 console.log(data);
             }
             // onUpdateName.current.value = ""
@@ -243,9 +243,9 @@ export default function AdminProducts(props){
 
     let deleteProduct = async()=>{
         try {
-            let data = await axios.post('http://localhost:8000/product/delete-product/detail/a/a', {id: deleteProductId})
+            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a`, {id: deleteProductId})
             console.log(data);
-            let response = await axios.post('http://localhost:8000/product/delete-product/detail/a/a/a', {id: deleteProductCategoryId})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a/a`, {id: deleteProductCategoryId})
             console.log(response);
             setTimeout(() => {
                 toast.success('Delete Product Success', {
