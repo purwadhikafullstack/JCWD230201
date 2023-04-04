@@ -24,6 +24,9 @@ Router.post('/confirm', locationProductController.confirmProduct)
 Router.post('/updateqty', locationProductController.updateProductQty)
 Router.post('/confirm/:location_warehouse_id_target', locationProductController.getConfirm)
 Router.post('/cancel', locationProductController.postCancel)
+Router.post('/namedetail', locationProductController.getNameDetail)
+Router.post('/locationwarehouse', locationProductController.postProductWarehouse)
+Router.get('/all-mutation/:location_warehouse_id_origin/:order_status_id', locationProductController.getFilterMutation)
 
 
 module.exports = Router
