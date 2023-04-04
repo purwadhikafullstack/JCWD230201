@@ -42,7 +42,7 @@ module.exports = {
                     product_detail_id
                 }
             })
-            console.log(checkData)
+            // console.log(checkData)
 
             if (!checkData) {
                 await db.cart.create({
@@ -127,9 +127,9 @@ module.exports = {
             //         id
             //     }
             // })
-            console.log(id)
-            console.log(parseInt(qtyx) + 1)
-            console.log(type)
+            // console.log(id)
+            // console.log(parseInt(qtyx) + 1)
+            // console.log(type)
 
             let checkQty = await db.cart.findOne({
                 where: {
@@ -137,7 +137,7 @@ module.exports = {
                 },
                 include: { model: db.product_detail }
             })
-            console.log(checkQty)
+            // console.log(checkQty)
 
 
             if (type === "+") {

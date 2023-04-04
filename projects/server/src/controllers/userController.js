@@ -70,7 +70,7 @@ module.exports = {
 
         } catch (error) {
             await t.rollback()
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -105,7 +105,7 @@ module.exports = {
             })
         } catch (error) {
             await t.rollback()
-            console.log(error)
+            // console.log(error)
             res.status(404).send({
                 isError: true,
                 message: error.message,
@@ -272,7 +272,7 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -303,7 +303,7 @@ module.exports = {
         } catch (error) {
             await t.rollback()
             deleteFiles(req.files)
-            console.log(error)
+            // console.log(error)
             res.status(404).send({
                 isError: true,
                 message: error.message,
@@ -371,7 +371,7 @@ module.exports = {
             })
         } catch (error) {
             await t.rollback()
-            console.log(error)
+            // console.log(error)
             res.status(404).send({
                 isError: true,
                 message: error.message,
@@ -392,10 +392,10 @@ module.exports = {
             })
 
             let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
-            console.log(jalan)
+            // console.log(jalan)
 
             let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
-            console.log(response.data.results[0].geometry.lat)
+            // console.log(response.data.results[0].geometry.lat)
 
             if (!checkData) {
                 await db.user_address.create({
@@ -416,7 +416,7 @@ module.exports = {
             })
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             // await t.rollback()
             res.status(404).send({
                 isError: true,
@@ -428,7 +428,7 @@ module.exports = {
     updateAddressUser: async (req, res) => {
         try {
             let { id, receiver_name, user_address, phone_number, subdistrict, province_id, province, city_id, city } = req.body
-            console.log(province)
+            // console.log(province)
 
             // let checkData = await db.user_address.findOne({
             //     where: {
@@ -450,7 +450,7 @@ module.exports = {
                 data: null
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(404).send({
                 isError: true,
                 message: error,
@@ -474,7 +474,7 @@ module.exports = {
                 data: null
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(404).send({
                 isError: true,
                 message: error.message,

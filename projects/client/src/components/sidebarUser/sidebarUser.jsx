@@ -34,9 +34,11 @@ export default function Sidebar(props) {
         })
         setTimeout(() => {
             localStorage.removeItem('token')
-
         }, 2000)
-        navigate('/')
+
+        setTimeout(() => {
+            window.location.reload(false)
+        }, 2000)    
     }
 
     return (
@@ -61,7 +63,7 @@ export default function Sidebar(props) {
                                                             onClick={() => {
                                                                 props.func.getProductDetail(val.id)
                                                                 navigate(`/product/productdetail/${val.id}`)
-                                                                window.location.reload(false)
+                                                                // window.location.reload(false)
                                                             }}
                                                             className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">
                                                             {val.name}
@@ -72,7 +74,6 @@ export default function Sidebar(props) {
                                                                 <button
                                                                     onClick={() => {
                                                                         navigate(`/product/${value.id}`)
-                                                                        window.location.reload(false)
                                                                     }}
                                                                     className="w-full flex justify-start px-4 py-2 text-lg text-white font-light ">
                                                                     View All

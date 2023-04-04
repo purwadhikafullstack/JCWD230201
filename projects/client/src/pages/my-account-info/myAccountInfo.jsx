@@ -48,7 +48,7 @@ export default function MyAccountInfo() {
             setProfile({ ...profile, name: data.data.name, phone_number: data.data.phone_number, email: data.data.email, photo_profile: data.data.photo_profile })
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -66,7 +66,7 @@ export default function MyAccountInfo() {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             setMessage(error.message)
 
         }
@@ -82,7 +82,7 @@ export default function MyAccountInfo() {
                     "token": localStorage.getItem('token')
                 }
             })
-            console.log(data)
+            // console.log(data)
 
 
             toast.success('Update Profile Picture Success!', {
@@ -104,7 +104,7 @@ export default function MyAccountInfo() {
             }, 3000)
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast.error('Error')
         }
     }
@@ -147,8 +147,12 @@ export default function MyAccountInfo() {
             }, 2000)
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+            // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -158,15 +162,12 @@ export default function MyAccountInfo() {
 
     return (
         user ?
-            <div className="w-full h-max">
+            <div className="w-full h-max bg-white">
                 <div className="border text-base lg:text-xl font-bold px-5 py-2">
                     Change Account Information
                 </div>
                 <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
-                        <div>
-                            {console.log(user.photo_profile)}
-                        </div>
                         <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">
                             <Button onClick={() => setModal(!modal)} className="rounded-sm bg-neutral-900 hover:bg-neutral-700 active:ring-0 active:ring-transparent">

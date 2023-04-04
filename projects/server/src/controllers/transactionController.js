@@ -589,9 +589,9 @@ module.exports = {
 
             // console.log(Math.min(...closestWH))
             const x = new Date().toJSON()
-            console.log(x)
+            // console.log(x)
             const date = new Date().toJSON().slice(0, 10).split('-');
-            console.log(date)
+            // console.log(date)
             // console.log(`${date[0]}${date[1]}${date[2]}`);
 
             let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random()*1000) + Date.now().toString().slice(10)}`
@@ -957,7 +957,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
             let { id } = req.query
-            console.log(id)
+            // console.log(id)
             let data = await db.transaction.findOne({
                 where: {
                     user_id: getToken.id,
