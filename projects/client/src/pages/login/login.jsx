@@ -1,28 +1,24 @@
-import { useContext, useRef, useState,useEffect } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { userData } from "../../data/userData";
 import { LoginAccount } from "../../utils/login";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Spinner } from "flowbite-react";
 
-export default function Login() {
+export default function Login(props) {
 
     const [disable, setDisable] = useState(false)
     const [visiblePassword, setVisiblePassword] = useState(false)
     const [typePassword, setTypePassword] = useState('password')
 
     let navigate = useNavigate()
-    const location = useLocation();
-    console.log(location)
-    
-    // let from = location.state;
-    // console.log(from)
-    // navigate(from, { replace: true }); 
 
     const { user, setUser } = useContext(userData)
 
     let email = useRef()
     let password = useRef()
+    // console.log(props.data.conditionPage)
 
     let confirmation = (data) => {
         if (data.id == undefined) {
@@ -46,8 +42,14 @@ export default function Login() {
             }, 2000)
 
             setTimeout(() => {
-                navigate('/')
+                if (props.data.conditionPage === true) {
+                    navigate('/')
+                    props.data.setConditionPage(false)
+                } else {
+                    navigate(-1)
+                }
             }, 3000)
+
         }
 
     }
@@ -92,13 +94,28 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <button disabled={disable} onClick={async () => {
-                        setDisable(!disable)
-                        let data = await LoginAccount(email.current.value, password.current.value, false)
-                        confirmation(data)
-                    }} className="bg-neutral-900 px-5 py-2 mt-5 text-white w-full">
-                        Login
-                    </button>
+                    {
+                        !disable ?
+                            <button disabled={disable} onClick={async () => {
+                                setDisable(!disable)
+                                let data = await LoginAccount(email.current.value, password.current.value, false)
+                                confirmation(data)
+                            }} className="bg-neutral-900 px-5 py-2 mt-5 text-white w-full">
+                                Login
+                            </button>
+                            :
+                            <button disabled={disable} onClick={async () => {
+                                setDisable(!disable)
+                                let data = await LoginAccount(email.current.value, password.current.value, false)
+                                confirmation(data)
+                            }} className="bg-neutral-900 px-5 py-2 mt-5 text-white w-full">
+                                <Spinner
+                                    aria-label="Medium sized spinner example"
+                                    size="md"
+                                /> Loading . . .
+                            </button>
+                    }
+
 
                     <div className="mt-3 flex justify-center">
                         Don't have an account?

@@ -25,7 +25,7 @@ export default function ShippingSuccess(props) {
                     token: localStorage.getItem('token')
                 }
             })
-            console.log(response)
+            // console.log(response)
             setStatus(response.data.data.order_status.status)
             setOrderNumber(response.data.data.id)
             setData(response.data.data)
@@ -37,7 +37,7 @@ export default function ShippingSuccess(props) {
 
             setTotalPrice(sum + response.data.data.ongkir)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -49,8 +49,8 @@ export default function ShippingSuccess(props) {
     return (
         data ?
             <>
-                <div className="pt-28 grid grid-cols-6">
-                    <div className="col-start-3 col-end-5">
+                <div className="pt-28 px-5 md:px-0 grid grid-cols-6">
+                    <div className="col-start-1 col-end-7 md:col-start-2 md:col-end-6 lg:col-start-3 lg:col-end-5">
                         <p className="border-b-2 pb-4 text-2xl text-center font-bold">
                             Payment Information
                         </p>
