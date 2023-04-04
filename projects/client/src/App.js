@@ -93,7 +93,7 @@ function App() {
     try {
       // console.log(id);
       let response = await axios.get(`http://localhost:8000/product/productdetail/${id}`)
-      console.log(response);
+      // console.log(response);
       setDetail(response.data.data[0])
       setDetailProduct(response.data.data[0].product_details)
       setDetailQty(response.data.data2);

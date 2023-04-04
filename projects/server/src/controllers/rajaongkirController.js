@@ -16,7 +16,7 @@ module.exports= {
                     "key": key
                 }
             })
-            console.log(data)
+            // console.log(data)
             res.status(200).send({
                 isError: false, 
                 message: 'Get Province Success',
@@ -35,7 +35,7 @@ module.exports= {
     getCity: async(req, res)=>{
         try {
             let {province_id} = req.query
-            console.log(province_id)
+            // console.log(province_id)
             let {key} = req.headers
 
             // if(!province_id) return res.status(404).send({
@@ -57,7 +57,7 @@ module.exports= {
                 data: data.data.rajaongkir
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(500).send({
                 isError: true, 
                 message: error.message,

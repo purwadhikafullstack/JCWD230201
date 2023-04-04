@@ -63,7 +63,7 @@ export default function Activation(props) {
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             if (!error.response) {
                 toast.error(error.message)
             } else {

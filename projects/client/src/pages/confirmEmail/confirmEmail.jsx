@@ -26,6 +26,7 @@ export default function ConfirmEmail(props) {
             await axios.post(`http://localhost:8000/users/confirm-email`, { email: inputEmail })
 
             toast.success(`Please check your email`)
+            setDisabledButton(false)
 
             email.current.value = ''
 
@@ -38,8 +39,6 @@ export default function ConfirmEmail(props) {
             } else {
                 toast.error(error.response.data.message)
             }
-        } finally {
-            setDisabledButton(false)
         }
     }
 

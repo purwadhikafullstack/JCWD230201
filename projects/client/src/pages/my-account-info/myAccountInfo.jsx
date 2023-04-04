@@ -147,8 +147,12 @@ export default function MyAccountInfo() {
             }, 2000)
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+            // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 

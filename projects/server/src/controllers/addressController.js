@@ -11,7 +11,7 @@ module.exports = {
     getAllAddress: async (req, res) => {
         try {
             let getData = req.dataToken
-            console.log(getData);
+            // console.log(getData);
             let data = await db.user_address.findAll({
                 where: {
                     user_id: getData.id
@@ -20,7 +20,7 @@ module.exports = {
                     model: db.user
                 }
             })
-            console.log(data);
+            // console.log(data);
             res.status(200).send({
                 isError: false,
                 message: "Get All Address Success",
@@ -41,10 +41,10 @@ module.exports = {
             let getData = req.dataToken
 
             let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
-            console.log(jalan)
+            // console.log(jalan)
 
             let response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${jalan}&key=f3582c716b9f443a9d260569d39b1ac3`)
-            console.log(response.data.results[0].geometry.lat)
+            // console.log(response.data.results[0].geometry.lat)
 
             let data = await db.user_address.create({ receiver_name, value, user_address, province, city, city_id, subdistrict, phone_number, user_id: getData.id, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng }, { transaction: t })
 

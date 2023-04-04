@@ -75,7 +75,7 @@ export default function MyAccountAddress() {
 
     let getCity = async (input) => {
         try {
-            console.log(input.split(',')[2])
+            // console.log(input.split(',')[2])
 
             let response = await axios.get(`http://localhost:8000/rajaongkir/city?province_id=${input.split(',')[0]}`, {
                 headers: {
@@ -111,7 +111,7 @@ export default function MyAccountAddress() {
 
     let updateAddressUser = async () => {
         try {
-            console.log(choosenUser.receiver_name)
+            // console.log(choosenUser.receiver_name)
             let response = await axios.post('http://localhost:8000/users/update-user_address', {
                 id: choosenUser.id,
                 receiver_name: choosenUser.receiver_name,

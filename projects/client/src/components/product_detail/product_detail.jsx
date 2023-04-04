@@ -28,7 +28,7 @@ export default function ProductDetail(props) {
     let getSelected = async (mem) => {
         try {
             let response = await axios.get(`http://localhost:8000/product/${id}/${colors}/${mem}`)
-            console.log(response)
+            // console.log(response)
             setMemory(mem)
             setSelected(response.data.data[0]);
         } catch (error) {

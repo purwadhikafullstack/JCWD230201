@@ -4,7 +4,7 @@ module.exports ={
     tokenVerify:async(req,res,next)=>{
         
         let dataCart = req.body
-        console.log(dataCart)
+        // console.log(dataCart)
 
              try {
                 const validateTokenResult = validateToken(dataCart.token)

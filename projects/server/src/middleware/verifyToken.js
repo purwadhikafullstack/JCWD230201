@@ -6,7 +6,7 @@ module.exports ={
         let {token} = req.headers
         // console.log(token)
         
-            console.log(`token is ${token}`)
+            // console.log(`token is ${token}`)
             if(!token) return res.status(404).send({
             isError:true,
             message:"token not Found",
@@ -17,7 +17,7 @@ module.exports ={
                 req.dataToken = validateTokenResult
                 next()
              } catch (error) {
-                console.log(error)
+                // console.log(error)
                 res.status(500).send({
                     isError:true,
                     message:"Invalid Token",
