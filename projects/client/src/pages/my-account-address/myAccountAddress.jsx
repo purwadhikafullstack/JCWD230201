@@ -17,7 +17,6 @@ export default function MyAccountAddress() {
     let provinceAdd = useRef()
 
     const { user, setUser } = useContext(userData)
-    // console.log(user.id.id)
 
     const [modal, setModal] = useState(false)
     const [modalEdit, setModalEdit] = useState(false)

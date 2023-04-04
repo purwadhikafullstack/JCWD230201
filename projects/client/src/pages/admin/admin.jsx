@@ -53,9 +53,6 @@ export default function Admin() {
                     "token": localStorage.getItem('token')
                 }
             })
-            console.log(data)
-
-
             toast.success('Update Profile Picture Success!', {
                 style: {
                     background: "black",
@@ -75,7 +72,6 @@ export default function Admin() {
             }, 3000)
 
         } catch (error) {
-            console.log(error)
             toast.error('Error')
         }
     }
@@ -93,7 +89,6 @@ export default function Admin() {
             }
 
         } catch (error) {
-            console.log(error)
             setMessage(error.message)
 
         }

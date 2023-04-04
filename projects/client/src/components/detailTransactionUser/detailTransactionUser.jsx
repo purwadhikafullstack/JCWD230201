@@ -41,8 +41,6 @@ export default function DetailTransaction() {
         try {
             var id = queryParams.get('id');
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/detailTransaction?id=${id}`)
-
-            // console.log(response.data.data)
             setTransactionDetail({
                 ...transactionDetail,
                 id: response.data.data.id,
@@ -72,13 +70,11 @@ export default function DetailTransaction() {
                 sum += e.qty * e.price)
             setTotalPrice(sum)
         } catch (error) {
-            // console.log(error)
         }
     }
 
     let cancelOrder = async (input) => {
         try {
-            // console.log(input)
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-transaction`, {
                 id: input
             })
@@ -100,7 +96,6 @@ export default function DetailTransaction() {
 
     let confirmOrder = async (input) => {
         try {
-            // console.log(input)
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/confirm-order`, {
                 id: input
             })

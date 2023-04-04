@@ -134,7 +134,6 @@ export default function Shipping(props) {
 
     let getDataCity = async () => {
         try {
-            console.log(onProvince.current.value.split(",")[0])
             let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${onProvince.current.value.split(",")[0]}`, {
                 headers: {
                     key: "767e2faef8f409adc96f179e3a949442",

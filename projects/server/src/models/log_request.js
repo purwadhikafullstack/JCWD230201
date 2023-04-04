@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     location_product_id_origin: DataTypes.INTEGER,
     location_product_id_target: DataTypes.INTEGER,
     qty: DataTypes.INTEGER,
+    location_warehouse_id_origin: DataTypes.INTEGER,
+    location_warehouse_id_target: DataTypes.INTEGER,
+
     createdAt:{
       type:DataTypes.DATE,
       defaultValue:sequelize.literal('CURRENT_TIMESTAMP')

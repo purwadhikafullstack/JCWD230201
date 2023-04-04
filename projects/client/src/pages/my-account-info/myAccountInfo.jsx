@@ -48,7 +48,6 @@ export default function MyAccountInfo() {
             setProfile({ ...profile, name: data.data.name, phone_number: data.data.phone_number, email: data.data.email, photo_profile: data.data.photo_profile })
 
         } catch (error) {
-            console.log(error)
         }
     }
 
@@ -63,10 +62,7 @@ export default function MyAccountInfo() {
                     if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
                 })
             }
-
-
         } catch (error) {
-            console.log(error)
             setMessage(error.message)
 
         }
@@ -82,7 +78,6 @@ export default function MyAccountInfo() {
                     "token": localStorage.getItem('token')
                 }
             })
-            console.log(data)
 
 
             toast.success('Update Profile Picture Success!', {
@@ -104,7 +99,6 @@ export default function MyAccountInfo() {
             }, 3000)
 
         } catch (error) {
-            console.log(error)
             toast.error('Error')
         }
     }
@@ -147,7 +141,6 @@ export default function MyAccountInfo() {
             }, 2000)
 
         } catch (error) {
-            console.log(error)
             toast.error(error.message)
         }
     }
@@ -165,7 +158,7 @@ export default function MyAccountInfo() {
                 <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
                         <div>
-                            {console.log(user.photo_profile)}
+                            {/* {console.log(user.photo_profile)} */}
                         </div>
                         <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">

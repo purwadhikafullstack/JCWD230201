@@ -47,7 +47,7 @@ export default function ProductDetail(props) {
 
             props.func.getCart()
         } catch (error) {
-            // console.log(error)
+
             toast.error(error.response.data.message)
         }
     }

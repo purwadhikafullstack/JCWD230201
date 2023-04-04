@@ -36,9 +36,7 @@ export default function AdminCategoryProducts(){
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/category`)
             setCategory(response.data.data)
-            console.log(response.data.data);
         } catch (error) {
-            console.log(error)
         }
     }
 
@@ -55,7 +53,6 @@ export default function AdminCategoryProducts(){
             setShowCategory(true)
             getCategory()
             onPostCategory.current.value = ""
-            console.log(response);
         } catch (error) {
             setTimeout(() => {
                 toast.error(error.response.data.message, {
@@ -70,10 +67,8 @@ export default function AdminCategoryProducts(){
         try {
             // setEditId(Category[index].id);
             setEditId(category[index].id);
-            console.log(editId);
             let updateCategoryName = onUpdateCategory.current.value
             setEditName(value);
-            console.log(editName);
         } catch (error) {
             
         }
@@ -81,9 +76,7 @@ export default function AdminCategoryProducts(){
 
     let updatePostCategory = async()=>{
         try {
-            console.log(editId);
             let updateCategoryName = onUpdateCategory.current.value
-            console.log(updateCategoryName);
             let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/edit-category`,{id:editId, name: updateCategoryName })
             setTimeout(() => {
                 toast.success('Add Category Success', {
@@ -114,7 +107,6 @@ export default function AdminCategoryProducts(){
     
     let deletePostCategory = async()=>{
         try {
-            console.log(deleteId);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-category`,{id:deleteId})
             setTimeout(() => {
                 toast.success('Delete Category Success', {
@@ -130,32 +122,22 @@ export default function AdminCategoryProducts(){
 
     let getProduct = async(id)=>{
         try {
-            // console.log("masuk product");
-            // console.log(showPagePro);
-            // console.log( _pagePro);
             // _pagePro = Number(_pagePro) + 1
             let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/${id}`)
             // let {data} = await axios.get(`http://localhost:8000/product/products/${id}?page=${_pagePro?_pagePro:showPagePro}`)
             // let {data} = await axios.get(`http://localhost:8000/product/${id}?page=${_page? _page:showPage}`)
             setShowProduct(data.data)
-            console.log(data.data);
             // setShowPagePro({page: data.data.page, pages: data.data.pages, total: data.data.total})
-            console.log(data.data);
             getProductDetail(id)
         } catch (error) {
-            console.log(error)
         }
       }
 
       let getProductDetail = async(id)=>{
         try {
-            // console.log(id);
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/productdetail/${id}`)
-            // console.log(response.data.data[0].product_images[0].img);
             setCoba(response)
-            console.log(response);
         } catch (error) {
-            console.log(error)
         }
       }
     
