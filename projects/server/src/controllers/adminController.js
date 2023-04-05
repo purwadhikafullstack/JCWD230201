@@ -107,9 +107,10 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
-            if (!hashMatch(password, dataAdmin.password)) throw { message: 'Password wrong!' }
-            console.log(dataAdmin)
-            console.log(dataAdmin.location_warehouse)
+            let matchPassword = await hashMatch(password, dataAdmin.dataValues.password) 
+            
+            if(matchPassword === false) throw { message: 'Password wrong!' }
+
             let token = await createToken({ id: dataAdmin.id })
 
             res.status(201).send({

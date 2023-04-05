@@ -12,6 +12,8 @@ export default function Activation(props) {
 
     let navigate = useNavigate()
 
+    const[disable,setDisable]=useState(false)
+
     const [visiblePassword, setVisiblePassword] = useState(false)
     const [visibleConfirmPassword, setVisibleConfirmPassword] = useState(false)
 
@@ -40,18 +42,20 @@ export default function Activation(props) {
 
             if (inputPassword !== inputConfirmPassword) throw { message: 'Password not match' }
 
+            setDisable(true)
             let result = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/activation/${id}`, { password: inputPassword })
             // console.log(result)
 
             password.current.value = ''
             confirmPassword.current.value = ''
-            
+
             toast.success('Account Verified!')
+            setDisable(false)
 
             setTimeout(() => {
                 navigate('/login')
             }, 2000);
-
+            props.data.setConditionPage(true)
             let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
 
@@ -94,7 +98,7 @@ export default function Activation(props) {
         try {
             let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
             setStatusUser(resultStatus.data.data.status)
-            console.log(resultStatus.data.data.status)
+            // console.log(resultStatus.data.data.status)
 
         } catch (error) {
 
@@ -139,9 +143,19 @@ export default function Activation(props) {
                         {/*  */}
                         <li className={(!inputPassword ? '' : character1.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>Must contain Number</li>
                     </div>
-                    <button onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                        Submit
-                    </button>
+                    {
+                        !disable?
+                            <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                Submit
+                            </button>
+                            :
+                            <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                <Spinner
+                                    aria-label="Medium sized spinner example"
+                                    size="md"
+                                /> Loading . . .
+                            </button>
+                    }
 
                 </div>
             </div>

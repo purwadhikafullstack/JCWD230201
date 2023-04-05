@@ -18,13 +18,12 @@ module.exports = {
             var offset = (page - 1) * page_size;
             var limit = page_size;
 
-
             if (!from && !to) {
                 if (order_status_id == 0) {
                     console.log('masuk 1')
-                    var total_count = warehouse ? await db.transaction.count({ where: { location_warehouse_id: warehouse } }) : await db.transaction.count()
+                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse } }) : await db.transaction.count()
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: { location_warehouse_id: warehouse },
                         include: [
                             { model: db.location_warehouse },
@@ -46,9 +45,9 @@ module.exports = {
                         })
                 } else {
                     console.log('masuk 2')
-                    var total_count = warehouse ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id } }) : await db.transaction.count({ where: { order_status_id } })
+                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id } }) : await db.transaction.count({ where: { order_status_id } })
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: { location_warehouse_id: warehouse, order_status_id },
                         include: [
                             { model: db.location_warehouse },
@@ -73,7 +72,7 @@ module.exports = {
             } else if (!to) {
                 console.log('masuk 3')
                 if (order_status_id == 0) {
-                    var total_count = warehouse ? await db.transaction.count({ where: { location_warehouse_id: warehouse, updatedAt: {
+                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, updatedAt: {
                         [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
                         [Op.lte]: moment(from).add(2, 'days').format().split("T")[0]
                     }} })
@@ -82,7 +81,7 @@ module.exports = {
                             [Op.lte]: moment(from).add(2, 'days').format().split("T")[0]
                         }} })
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: {
                             location_warehouse_id: warehouse, updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
@@ -116,10 +115,10 @@ module.exports = {
                 } else {
                     console.log('masuk 4')
                     console.log(order_status_id)
-                    var total_count = warehouse ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] } })
+                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] } })
                         : await db.transaction.count({ where: { updatedAt: moment(from).add(1, 'days').format().split("T")[0] } })
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
                         include: [
                             { model: db.location_warehouse },
@@ -144,7 +143,7 @@ module.exports = {
             } else {
                 console.log('masuk 5')
                 if (order_status_id == 0) {
-                    var total_count = warehouse ? await db.transaction.count({
+                    var total_count = warehouse !=0 ? await db.transaction.count({
                         where: {
                             location_warehouse_id: warehouse,
                             updatedAt: {
@@ -162,7 +161,7 @@ module.exports = {
                             }
                         })
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: {
                             location_warehouse_id: warehouse,
                             updatedAt: {
@@ -196,7 +195,7 @@ module.exports = {
                         })
                 } else {
                     console.log('masuk 6')
-                    var total_count = warehouse ? await db.transaction.count({
+                    var total_count = warehouse !=0 ? await db.transaction.count({
                         where: {
                             location_warehouse_id: warehouse, order_status_id,
                             updatedAt: {
@@ -214,7 +213,7 @@ module.exports = {
                             }
                         })
                     var total_pages = Math.ceil(total_count / page_size)
-                    var response = warehouse ? await db.transaction.findAll({
+                    var response = warehouse !=0 ? await db.transaction.findAll({
                         where: {
                             location_warehouse_id: warehouse, order_status_id,
                             updatedAt: {
@@ -346,8 +345,20 @@ module.exports = {
         }
     },
     getSales: async (req, res) => {
-        let { start, end, type, WH } = req.query
+        let { start, end, type, WH, page } = req.query
         console.log(`ini warehouse ${WH}`)
+
+        var getMoney = await db.transaction_detail.findAll({
+            include:{
+                model:db.transaction, where:{
+                   order_status_id:{[Op.eq] : 5
+}            }}
+            })
+        var totalMoney = 0
+
+        for await (const item of getMoney) {
+            totalMoney += item.dataValues.qty*item.dataValues.price
+        }
 
         var total_transactionS = await db.transaction.findAll({
             where: {
@@ -472,6 +483,53 @@ module.exports = {
                     ]
                 })
         } else if (type == 3) {
+
+            var page_size = 5;
+            var offset = (page - 1) * page_size
+            var limit = page_size;
+
+            var total_count = WH == 0 ? await db.transaction_detail.count({
+                include: [{
+                    model: db.transaction,
+                    where: {
+                        [Op.and]: [
+                            {
+                                updatedAt: {
+                                    [Op.gte]: start,
+                                    [Op.lt]: end
+                                }
+                            },
+                            {
+                                order_status_id: 5
+                            }
+                        ]
+                    }
+                }]
+            })
+            :
+            await db.transaction_detail.count({
+                include: [{
+                    model: db.transaction,
+                    where: {
+                        [Op.and]: [
+                            {
+                                updatedAt: {
+                                    [Op.gte]: start,
+                                    [Op.lt]: end
+                                }
+                            },
+                            {
+                                order_status_id: 5
+                            },
+                            {
+                                location_warehouse_id: WH
+                            }
+                        ]
+                    }
+                }]
+            })
+
+            var total_pages = Math.ceil(total_count / page_size)
             var response = WH == 0 ? await db.transaction_detail.findAll({
                 include: [{
                     model: db.transaction,
@@ -512,7 +570,6 @@ module.exports = {
                         }
                     }]
                 })
-
         }
         res.status(201).send({
             isError: false,
@@ -522,7 +579,10 @@ module.exports = {
             wh: warehouse?.length ? warehouse.length : null,
             list_wh: list_WH,
             tr_success: total_transactionS?.length ? total_transactionS.length : null,
-            tr_cancel: total_transactionC?.length ? total_transactionC.length : null
+            tr_cancel: total_transactionC?.length ? total_transactionC.length : null,
+            page,
+            total_count,
+            total_pages, totalMoney
         })
 
     },
@@ -589,9 +649,9 @@ module.exports = {
 
             // console.log(Math.min(...closestWH))
             const x = new Date().toJSON()
-            console.log(x)
+            // console.log(x)
             const date = new Date().toJSON().slice(0, 10).split('-');
-            console.log(date)
+            // console.log(date)
             // console.log(`${date[0]}${date[1]}${date[2]}`);
 
             let idTransaction = `INV/${date[0]}${date[1]}${date[2]}/MPL/${Math.floor(Math.random()*1000) + Date.now().toString().slice(10)}`
@@ -739,6 +799,7 @@ module.exports = {
                         latlongWH.push(dataWH[i].dataValues.id)
 
                         latlongWH.push(dataWH[i].dataValues.location_products[0].dataValues.qty)
+                        latlongWH.push(dataWH[i].dataValues.location_products[0].dataValues.id)
 
                         distanceWH.push(latlongWH)
                     }
@@ -769,8 +830,10 @@ module.exports = {
                                 })
 
                             await db.log_request.create({
-                                location_product_id_origin: distanceWH[i][1],
-                                location_product_id_target: warehouse_id,
+                                location_warehouse_id_origin:distanceWH[i][1],
+                                location_warehouse_id_target:warehouse_id,
+                                location_product_id_origin: distanceWH[i][3],
+                                location_product_id_target: findData.dataValues.location_products[0].dataValues.id,
                                 product_detail_id: item.product_detail_id,
                                 qty: x,
                                 order_status_id: 8
@@ -824,8 +887,11 @@ module.exports = {
                                 })
 
                             await db.log_request.create({
-                                location_product_id_origin: distanceWH[i][1],
-                                location_product_id_target: warehouse_id,
+
+                                location_warehouse_id_origin:distanceWH[i][1],
+                                location_warehouse_id_target:warehouse_id,
+                                location_product_id_origin: distanceWH[i][3],
+                                location_product_id_target: findData.dataValues.location_products[0].dataValues.id,
                                 product_detail_id: item.product_detail_id,
                                 qty: distanceWH[i][2],
                                 order_status_id: 8
@@ -957,7 +1023,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
             let { id } = req.query
-            console.log(id)
+            // console.log(id)
             let data = await db.transaction.findOne({
                 where: {
                     user_id: getToken.id,
@@ -1178,30 +1244,19 @@ module.exports = {
     },
     test: async (req, res) => {
         let { date, id } = req.body
-        console.log(date)
+        
 
-          let response  = moment(new Date()).format('MM/01/YYYY')  
-        // let response = await db.log_stock.findAll({
-        //     where:{
-        //         createdAt:{
-        //             [Op.gte] : date
-        //         }
-        //     }
-        // })
-       
-        // fs.unlink(date, (err) => {
-        //     if (err) {
-        //       console.error(err)
-        //       return
-        //     }
-          
-        //     //file removed
-        //   })
+        let response = await  db.transaction_detail.findAll({
+            attributes: ['qty', 'price', [sequelize.fn('SUM', (sequelize.fn('COALESCE', (sequelize.col('qty')), 0), sequelize.literal('*'), sequelize.fn('COALESCE', (sequelize.col('price')), 0))), 'total_sum']],
+            group: ['qty', 'price']})
+
+
         res.status(201).send({
-        data:response,
+        response,
            message:'foto deleted'
         })
     },
+
     confirmOrder: async (req, res) => {
         try {
             let { id } = req.body

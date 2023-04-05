@@ -20,9 +20,6 @@ export default function Warehouse() {
     let onSubdistrict = useRef(), onSubdistrictC = useRef()
     let WH_address = useRef(), WH_addressC = useRef()
 
-    // console.log(onProvince.current.value)
-    // console.log(onCity.current.value)
-
     let [dataWH, setDataWH] = useState({
         wh: [], total_pages: 0, total_count: 0, loading: true, page: 1
     }), [chosenWH, setChosenWH] = useState({})
@@ -32,7 +29,6 @@ export default function Warehouse() {
 
     let getDataWH = async (page) => {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/getwh?page=${page}`)
-        console.log(response.data.data)
         setDataWH({
             ...dataWH, wh: response.data.data.getWH, total_pages: response.data.data.total_pages,
             total_count: response.data.data.total_count, loading: false, page, choice: 1, pop: false
@@ -118,12 +114,10 @@ export default function Warehouse() {
             setChangeP(response.data.data)
             setArrProvince(response.data.data);
         } catch (error) {
-            console.log(error);
         }
     };
 
     let getDataCityforChange = async () => {
-        console.log(changeProvince.current.value)
         try {
             let data = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/rajaongkir/city?province_id=${changeProvince.current.value.split(",")[0]}`, {
                 headers: {
@@ -132,7 +126,6 @@ export default function Warehouse() {
             });
             setChangeC(data.data.data.results)
         } catch (error) {
-            console.log(error);
         }
     };
 
@@ -146,7 +139,6 @@ export default function Warehouse() {
             });
             setArrCity(data.data.data.results)
         } catch (error) {
-            console.log(error);
         }
     };
 
@@ -182,7 +174,7 @@ export default function Warehouse() {
                             <div className='text-sm text-gray-400 '>{dataWH.total_count} warehouse found</div>
                            
                         </div>
-                        <div className='border border-slate-200 bg-slate-100 px-8 py-5 h-full rounded-md shadow-indigo-300 shadow-lg'>
+                        <div className='bg-stone-800 text-white px-7 py-5 border-y-4 border-violet-500 rounded-md'>
                             <div className='flex justify-between mb-5 items-center'>
                                 <div className='relative flex items-center'>
                                     <button className='absolute'>
@@ -190,7 +182,7 @@ export default function Warehouse() {
                                     </button>
                                 </div>
 
-                                <button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-black'>
+                                <button onClick={() => setShow(!show)} className='p-1 overflow-hidden flex items-center duration-300 hover:w-56 w-8 h-8 rounded-xl hover:bg-emerald-600 hover:text-white font-semibold text-white'>
                                     <div><AiOutlinePlus size={'22px'} /></div>
                                     <div className='overflow-hidden flex gap-3 ml-3 h-full'>
                                         <div>Add</div> <div> New</div> <div> Warehouse</div>
@@ -427,8 +419,8 @@ export default function Warehouse() {
                             </Modal>
 
                             <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
-                                <table className="w-full text-sm text-left border text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <table className="w-full text-sm text-left text-gray-500 bg-slate-200 dark:text-gray-400">
+                                    <thead className="text-xs text-gray-200 uppercase bg-stone-400 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
                                             <th scope="col" className="px-6 py-3">
                                                 No

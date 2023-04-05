@@ -7,7 +7,6 @@ import { Modal, Label, Button } from 'flowbite-react'
 import { AiOutlineLoading3Quarters, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 export default function MenuAdminSetting(data) {
-  // console.log(data.data)
   let [dataEmptyWH, setDataEmptyWH] = useState([])
   let [visible, setVisible] = useState({
     check: false,
@@ -27,12 +26,10 @@ export default function MenuAdminSetting(data) {
     location_warehouse_id: null,
     password: ''
   })
-  // console.log(data.data)
 
   let getEmptyWH = async () => {
     let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
     setDataEmptyWH(response.data.data)
-    console.log(response.data.data)
   }
 
   let submit = async () => {
@@ -77,7 +74,7 @@ export default function MenuAdminSetting(data) {
                 password: ''
               })
             }}
-            className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-70 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+            className="inline-flex w-full justify-center rounded-md bg-stone-800 hover:bg-stone-600 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
             Options
             <ChevronDownIcon
               className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"

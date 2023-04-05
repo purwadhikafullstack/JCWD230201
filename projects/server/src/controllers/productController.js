@@ -71,24 +71,28 @@ module.exports = {
                     id
                 },
                 include: [{
-                    model: db.product_detail
+                    model: db.product_detail, include:{
+                        model: db.location_product
+                    }
                 },
                 { model: db.product_image }]
             })
-            let data2 = await db.location_product.findAll({
-                where:{
-                    product_detail_id: id
-                }
-            })
-            let arr = 0
-            for (let i = 0; i < data2.length; i++) {
-                arr=data2[i].qty+arr
-            }
+            console.log(data[0].product_details[0].location_products.length);
+            // let arr = 0
+            // for(let j = 0 ; j<data[0].product_details.length; j++){
+            // // for (let i = 0; i < data[0].product_details[j].location_products.length; i++) {
+            //     arr=data[0].product_details[j].location_products[j].qty+arr
+            // }
+            // console.log(arr);
+            // await db.product_detail.update({
+            //     qty: arr
+            // }, {where:{
+            //     product_id: id
+            // }})
             res.status(200).send({
                 isError: false,
                 message: "Get Product Details Success",
-                data: data,
-                data2: arr
+                data: data
             })
         } catch (error) {
             res.status(400).send({
@@ -239,30 +243,29 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let dataToCreate = JSON.parse(req.body.data)
-            console.log(dataToCreate);
+            // console.log(dataToCreate);
             let response = await db.product.create({ ...dataToCreate, name: dataToCreate.name, description: dataToCreate.description, category_id: dataToCreate.category_id })
-            console.log(response);
+            // console.log(response);
 
             let find = await db.product.findOne({
                 where: {
                     name: dataToCreate.name
                 }
             }, { transaction: t })
-            console.log(find.dataValues.id, "INI ID PRODUCT")
+            // console.log(find.dataValues.id, "INI ID PRODUCT")
 
-            let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
+            // let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
             let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[2], product_id: find.dataValues.id })
             // console.log(req.files.images[0].path.split("/")[2])
             await t.commit()
             res.status(201).send({
                 isError: false,
-                message: "Add Product Success",
-                data
+                message: "Add Product Success"
             })
         } catch (error) {
             await t.rollback()
             deleteFiles(req.files)
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -279,21 +282,21 @@ module.exports = {
                 }
             })
 
-            console.log(find.dataValues.product_id);
+            // console.log(find.dataValues.product_id);
 
             let findTwo = await db.product.findOne({
                 where: {
                     id: find.dataValues.product_id
                 }
             })
-            console.log(findTwo.dataValues.category_id);
+            // console.log(findTwo.dataValues.category_id);
 
             let findThree = await db.category.findOne({
                 where: {
                     id: findTwo.dataValues.category_id
                 }
             })
-            console.log(findThree.dataValues.name);
+            // console.log(findThree.dataValues.name);
             res.status(201).send({
                 isError: false,
                 message: "Get Id success",
@@ -335,7 +338,7 @@ module.exports = {
                 message: "Update Product Detail Success"
             })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -366,7 +369,7 @@ module.exports = {
         } catch (error) {
             await t.rollback()
             deleteFiles(req.files)
-            console.log(error)
+            // console.log(error)
             res.status(401).send({
                 isError: true,
                 message: error.message,
@@ -432,7 +435,7 @@ module.exports = {
     getProducts: async(req, res)=>{
         try {
             let { page } = req.query
-            console.log(page);
+            // console.log(page);
             let data = await db.product_detail.findAll({
                 // include:{
                 //     model: db.product_detail
@@ -587,7 +590,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -613,7 +616,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -681,7 +684,7 @@ module.exports = {
                         arr.push(data[i].product_id)
                     }
                 }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
@@ -715,7 +718,7 @@ module.exports = {
                     arr.push(data[i].color)
                 }
             }
-            console.log("BISMILLAH",arr)
+            // console.log("BISMILLAH",arr)
             res.status(201).send({
                 isError: false,
                 message: "Get Color Success",
@@ -741,6 +744,11 @@ module.exports = {
             for (let i = 0; i < data.length; i++) {
                 arr=data[i].qty+arr
             }
+            // await db.product_detail.update({
+            //     qty: arr
+            // },{where:{
+            //     id
+            // }})
             res.status(201).send({
                 isError: false,
                 message: "Get Color Success",
@@ -752,6 +760,65 @@ module.exports = {
                 message: error.message,
                 data: error,
                 });
-}
+        }
+    },
+    getName: async(req, res)=>{
+        try {
+            let data = await db.product.findAll()
+            res.status(201).send({
+                isError: false,
+                message: "Get Product Name Success",
+                data
+            })
+        } catch (error) {
+            return res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: error,
+            });
+        }
+    },
+    addProductDetail: async (req, res) => {
+        try {
+            let {product_id, price, memory_storage, color, colorhex} = req.body
+            let response = await db.product_detail.create({ product_id, price, memory_storage, color, colorhex })
+            res.status(201).send({
+                isError: false,
+                message: "Add Product Success"
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error.message,
+                data: error
+            })
+        }
+    },
+    updateQtyPro: async(req, res)=>{
+        try {
+            let data = await db.location_product.findAll({
+                attributes:[
+                    [sequelize.fn('sum', sequelize.col('qty')),'total_qty'],
+                    'product_detail_id'
+                ],
+                group:'product_detail_id'
+            })
+            data.forEach(async(value)=>{
+                await db.product_detail.update({qty: value.dataValues.total_qty}, {where:{
+                    id: value.product_detail_id
+                }})
+            })
+            res.status(201).send({
+                isError: false,
+                message: "Get Count Success",
+                data
+            })
+        } catch (error) {
+            res.status(401).send({
+                isError: true,
+                message: error.message,
+                data: error
+            })
+        }
     }
 }

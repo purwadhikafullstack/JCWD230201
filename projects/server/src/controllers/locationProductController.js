@@ -121,8 +121,8 @@ module.exports= {
     },
     postStock: async(req, res)=>{
         try {
-            let {qty, status, location_warehouse_id, product_detail_id} = req.body
-            let data = await db.log_stock.create({qty, status, location_warehouse_id, product_detail_id})
+            let {qty, status, location_warehouse_id, product_detail_id, product_id} = req.body
+            let data = await db.log_stock.create({qty, status, location_warehouse_id, product_detail_id, product_id})
             res.status(200).send({
                 isError: false,
                 message: "Post Stock Success",
@@ -427,18 +427,35 @@ module.exports= {
     },
     confirmProduct: async(req, res)=>{
         try {
-            let {id, qty, order_status_id} = req.body
+            let {id, qty, order_status_id, location_warehouse_id, product_detail_id, location_warehouse_id_target, product_id} = req.body
             let data = await db.log_request.findOne({where:{id}})
             await db.log_request.update({order_status_id},{
                 where:{
                     id
                 }
             })
-            // let data = await db.location_product.findOne({
-            //     where:{
-            //         id
-            //     }
-            // })
+            await db.log_stock.create(
+                {
+                    qty,
+                    status: 'Reduction',
+                    location_warehouse_id,
+                    product_detail_id,
+                    product_id
+                }),
+            await db.log_stock.create(
+                {
+                    qty,
+                    status: 'Additional',
+                    location_warehouse_id: location_warehouse_id_target,
+                    product_detail_id,
+                    product_id
+                })
+                await db.log_request.update({order_status_id},{
+                    where:{
+                        id
+                    }
+                })
+            
             res.status(200).send({
                 isError: false,
                 message: "Update Status Log Request Success",
@@ -455,10 +472,15 @@ module.exports= {
     },
     updateProductQty: async(req, res)=>{
         try {
-            let {id, qty} = req.body
+            let {id, qty, id_target} = req.body
             let data = await db.location_product.findOne({
                 where:{
                     id
+                }
+            })
+            let data3 = await db.location_product.findOne({
+                where:{
+                    id: id_target
                 }
             })
             console.log(data.dataValues.qty);
@@ -468,6 +490,12 @@ module.exports= {
                     id
                 }
             })
+            await db.location_product.update({qty: data3.dataValues.qty - Number(qty)},{where: {id: id_target}})
+            // let data3 = await db.location_product.findOne({
+            //     where:{
+            //         id: id_target
+            //     }
+            // })
             res.status(200).send({
                 isError: false,
                 message: "Get Location Product Success",
@@ -527,6 +555,77 @@ module.exports= {
             res.status(200).send({
                 isError: false,
                 message: "Get Location Product Success",
+                data: data
+                
+            })
+        } catch (error) {
+            res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    getNameDetail: async(req, res)=>{
+        try {
+            let {product_id} = req.body
+            let data = await db.product_detail.findAll({
+                where:{
+                    product_id
+                }
+            })
+            res.status(200).send({
+                isError: false,
+                message: "Get Product Detail Success",
+                data: data,
+            })
+        } catch (error) {
+            res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    postProductWarehouse: async(req, res)=>{
+        try {
+            let {qty, location_warehouse_id, product_detail_id, status} = req.body
+            let data = await db.location_product.create({qty, location_warehouse_id, product_detail_id})
+            let data2 = await db.product_detail.findOne({
+                id: product_detail_id
+            })
+            let data3 = await db.log_stock.create({qty, status, product_id: data2.dataValues.product_id, location_warehouse_id, product_detail_id})
+            res.status(200).send({
+                isError: false,
+                message: "Post Location Product Success",
+            })
+        } catch (error) {
+            res.status(400).send({
+                isError: true,
+                message: error.message,
+                data: null
+            })
+        }
+    },
+    getFilterMutation: async(req, res)=>{
+        try {
+            let {location_warehouse_id_origin, order_status_id} = req.params
+            let data = await db.log_request.findAll({
+                where:{
+                    location_warehouse_id_origin,
+                    order_status_id
+                }, 
+                include:[{
+                    model: db.product_detail, include:{
+                        model: db.product, include:[{
+                            model: db.category
+                        },{model: db.product_image}]
+                    }
+                },{model: db.order_status}]
+            })
+            res.status(200).send({
+                isError: false,
+                message: "Get Product Success",
                 data: data
                 
             })
