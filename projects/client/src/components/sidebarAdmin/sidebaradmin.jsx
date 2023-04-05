@@ -74,6 +74,15 @@ export default function SidebarAdmin() {
                             :
                             null
                     }
+                    {
+                        user.role == 1 ?
+                            <button onClick={() => navigate('mutation-super')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
+                                <BsMailbox size={'20px'} />
+                                All Mutation
+                            </button>
+                            :
+                            null
+                    }
                 </div>
 
                 <div className='flex flex-col items-center justify-end h-full'>

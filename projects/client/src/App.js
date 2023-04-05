@@ -43,6 +43,7 @@ import AdminProductLocation from './components/adminContainer/adminProductLocati
 import AdminProductListLocation from './components/adminContainer/adminProductListLocation';
 import AdminMutation from './components/adminContainer/adminMutation';
 import LogProduct from './components/adminContainer/logProduct';
+import AdminSuperMutation from './components/adminContainer/adminSuperMutation';
 
 
 //import context for global
@@ -277,6 +278,7 @@ function App() {
                     <Route path=':id' element={<AdminProductListLocation />} />
                   </Route>
                   <Route path='mutation' element={<AdminMutation />} />
+                  <Route path='mutation-super' element={<AdminSuperMutation />} />
                   <Route path='sales-report' element={<SalesReport />} />
                   <Route path='*' element={<ErrorAdmin />} />
 

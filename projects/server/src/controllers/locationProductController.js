@@ -367,6 +367,7 @@ module.exports= {
     },
     getMutation: async(req, res)=>{
         try {
+            let { page } = req.query
             let {location_warehouse_id_origin} = req.params
             let data = await db.log_request.findAll({
                 where:{
@@ -380,10 +381,30 @@ module.exports= {
                     }
                 },{model: db.order_status}]
             })
+            var limit = 3
+            var pages = Math.ceil(data.length / limit)
+            var offset = limit * (Number(page) - 1)
+            let data1 = await db.log_request.findAll({
+                where:{
+                    location_warehouse_id_origin
+                }, 
+                include:[{
+                    model: db.product_detail, include:{
+                        model: db.product, include:[{
+                            model: db.category
+                        },{model: db.product_image}]
+                    }
+                },{model: db.order_status}],
+                offset,
+                limit
+            })
             res.status(200).send({
                 isError: false,
                 message: "Get Product Success",
-                data: data
+                data: data1,
+                total: data.length,
+                page: Number(page),
+                pages: pages
                 
             })
         } catch (error) {
