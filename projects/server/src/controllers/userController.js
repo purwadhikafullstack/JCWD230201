@@ -55,7 +55,7 @@ module.exports = {
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `http://localhost:3000/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
-                from: 'iFrit',
+                from: 'iFhone',
                 to: email,
                 subject: 'Account Activation',
                 html: newTemplate
@@ -200,7 +200,7 @@ module.exports = {
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name: data.name, email, url: `http://localhost:3000/reset-password/${data.id}` })
             await transporter.sendMail({
-                from: 'iFrit',
+                from: 'iFhone',
                 to: email,
                 subject: 'Reset Password',
                 html: newTemplate

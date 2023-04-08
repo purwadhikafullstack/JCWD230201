@@ -80,12 +80,8 @@ export default function NavbarUser(props) {
                 </div>
                 <div className="flex items-center gap-10">
                     <Link to='/'>
-                        <button className="w-12 object-contain flex items-end">
-                            <div className="absolute text-3xl">I</div>
-                            <img src={require('../../Assets/logo black.jpg')} alt="" />
-                            <div className="absolute ml-6 text-3xl">
-                                rit
-                            </div>
+                        <button onClick={() => navigate('/')} className="w-fitobject-contain flex items-end">
+                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/F_logo.png`} alt="" width={'80px'} />
                         </button>
                     </Link>
                     {category.map((value, index) => {

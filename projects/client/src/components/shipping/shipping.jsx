@@ -572,7 +572,7 @@ export default function Shipping(props) {
 
                             <div className='w-full border mt-5 rounded-sm mb-5 md:mb-0'>
                                 <div className='font-bold py-5 border-b-2 px-4 text-xl'>
-                                    Shipping from iFrit Warehouse
+                                    Shipping from iFhone Warehouse
                                 </div>
                                 {
                                     dataCart.map((value, index) => {

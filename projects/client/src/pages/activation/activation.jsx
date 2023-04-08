@@ -118,7 +118,7 @@ export default function Activation(props) {
             <div className="pt-28 flex justify-center items-center h-screen">
                 <div className="flex flex-col h-max mx-5 md:w-max px-5 py-3 border border-gray-200 rounded-sm">
                     <div className="flex justify-center font-bold text-xl md:text-3xl py-2 border-b-2 border-gray-500">
-                        Welcome to iFrit
+                        Welcome to iFhone
                     </div>
 
                     <div className="py-3 font-semibold">

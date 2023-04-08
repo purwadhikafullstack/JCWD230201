@@ -120,7 +120,7 @@ export default function Transaction() {
 
     let shipping = async (id, code, load, wh_id) => {
         let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/transaction/ship?transaction_id=${ok.id}&code=${ok.code}&load=${JSON.stringify(ok.transaction)}&warehouse_id=${ok.warehouse}`)
-        response.data.message == 'Order canceled' ? toast.error(response.data.message) : toast.success(response.data.message)
+        toast.success(response.data.message)
         setTimeout(() => {
             toast('Loading..')
             setPop(false)
@@ -206,7 +206,7 @@ export default function Transaction() {
                                                 })
                                             }
                                         </select>
-                                    </div> : null
+                                    </div> : <div className='flex items-end gap-2 text-md font-medium'> <p>warehouse</p> {user.warehouse} </div>
                             }
 
                         </div>
@@ -294,7 +294,7 @@ export default function Transaction() {
                                                 <div className='w-4/5 flex flex-col'>
                                                     <div className='flex'>
                                                         {/* <img src={require(`../../Assets/${item.transaction_details[0].product_img}`)} className='w-20 h-20 object-contain' alt="" /> */}
-                                                        <img src={`http://localhost:8000/Public/images/${item.transaction_details[0].product_img}`} className='w-20 h-20 object-contain' alt="" />
+                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${item.transaction_details[0].product_img}`} className='w-20 h-20 object-contain' alt="" />
                                                         <div className='mt-4 font-bold flex flex-col items-start'>
                                                             <button>
                                                                 {item.transaction_details[0].product_name}
@@ -431,18 +431,18 @@ export default function Transaction() {
                                 </div>
                             </div>
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center pt-10'>
-                                <lottie-player
-                                    autoplay
-                                    loop
-                                    mode="normal"
-                                    src="https://assets8.lottiefiles.com/packages/lf20_BU0RNhEvBm.json"
-                                    style={{ width: "300px" }}
-                                ></lottie-player>
-                                <div className='text-xl font-semibold pl-5'>
-                                    Sorry data not found
-                                </div>
-                            </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                            style={{ width: "200px" }}    >
+                                        </lottie-player>
+                                        <div className='text-2xl'>
+                                            Data not found
+                                        </div>
+                                    </div>
                     }
 
                 </div>

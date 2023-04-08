@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast'
 import Loading from "../loading/loading";
-// import ReactImageMagnify from 'react-image-magnify'
 
 export default function ProductDetail(props) {
 

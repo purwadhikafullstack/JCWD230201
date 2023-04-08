@@ -63,17 +63,20 @@ export default function GetAllAccount() {
                         </div>
 
                         <div className="relative overflow-visible shadow-md  sm:rounded-lg">
-                            <table className="w-full text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
+                            <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
+                                    <th className="px-6 py-4">
+                                            ID
+                                        </th>
+                                    <th className="px-6 py-4">
+                                            Name
+                                        </th>
                                         <th className="px-6 py-4">
                                             Email
                                         </th>
                                         <th className="px-6 py-4">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            role
+                                           Status
                                         </th>
                                         <th className="px-6 py-4">
                                             Phone number
@@ -85,6 +88,12 @@ export default function GetAllAccount() {
                                     {
                                         dataAdmin.loading ?
                                         <tr className='border-red-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                 <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                </td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
                                                 </td> <td className="px-6 py-4 text-center">
@@ -96,25 +105,26 @@ export default function GetAllAccount() {
                                                 <td className="px-6 py-4 text-center">
                                                     <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
                                                 </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
+                                               
                                             </tr>
                                             :
                                             dataAdmin.user.map((value, index) => {
                                                 return (
                                                     value.role == 1 ?
                                                         null :
-                                                        <tr className='border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                        <tr className='border-red-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                               <td className="px-6 py-4">
+                                                                {value.id.split('-')[0]}
+                                                            </td>
+                                                              <td className="px-6 py-4 flex justify-between items-center">
+                                                               <img src={`${process.env.REACT_APP_API_IMAGE_URL}${value.photo_profile?value.photo_profile:`Public/images/Blank_PP.jpg`}`}  className="w-8 h-8 object-cover rounded-full" alt="" /> <p className='text-start w-1/2'> {value.name}</p>
+                                                            </td>
                                                             <td className="px-6 py-4">
                                                                 {value.email}
                                                             </td>
                                                             <td className="px-6 py-4">
-                                                                {value.name}
-                                                            </td>
-                                                            <td className="px-6 py-4">
                                                                 {
-                                                                    value.role ? 'WareHouse Admin' : 'User'
+                                                                    value.role ? <div className='flex gap-1 justify-start pl-7'><p>Admin Warehouse-</p> <p>{value.location_warehouse.city?value.location_warehouse.city:'-'}</p></div>: value.status
                                                                 }
                                                             </td>
                                                             <td className="px-6 py-4">

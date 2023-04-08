@@ -82,9 +82,9 @@ function App() {
 
   let keepLogin = async () => {
     let response = await CheckLogin()
-    if (!response) {
+    if (response.id==null) {
       localStorage.removeItem('token')
-      setUser(null)
+      setUser(response)
     } else {
       setUser(response)
     }

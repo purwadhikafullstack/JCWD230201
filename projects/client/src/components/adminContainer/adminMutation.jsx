@@ -6,7 +6,6 @@ import { Modal, Button, Label, Pagination } from 'flowbite-react'
 import toast,{ Toaster } from "react-hot-toast";
 import { MdOutlineDescription } from 'react-icons/md'
 import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
-import noData from '../../Assets/data_not_found2.jpg'
 
 export default function AdminMutation(){
     let {user} = useContext(userData)
@@ -654,12 +653,18 @@ export default function AdminMutation(){
                                 )
                             })
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center'>
-                                <img src={noData} width={'300px'} alt="" />
-                                <div className='text-xl font-semibold'>
-                                    Sorry Data Not Found
-                                </div>
-                            </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                            style={{ width: "200px" }}    >
+                                        </lottie-player>
+                                        <div className='text-2xl'>
+                                            Data not found
+                                        </div>
+                                    </div>
                         }
                     </div>
                 : null}
@@ -870,12 +875,18 @@ export default function AdminMutation(){
                                 )
                             })
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center'>
-                                <img src={noData} width={'300px'} alt="" />
-                                <div className='text-xl font-semibold'>
-                                    Sorry Data Not Found
-                                </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                            <lottie-player
+                                autoplay
+                                loop
+                                mode="normal"
+                                src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                style={{ width: "200px" }}    >
+                            </lottie-player>
+                            <div className='text-2xl'>
+                                Data not found
                             </div>
+                        </div>
                         }
                     </div>
                 : null}

@@ -13,7 +13,7 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 const { createToken } = require('../lib/jwt');
 
 const deleteFiles = require('./../helpers/deleteFiles')
-
+const fs = require('fs')
 
 module.exports = {
     register: async (req, res) => {
@@ -67,6 +67,7 @@ module.exports = {
                         name: item.dataValues.name ? item.dataValues.name : null,
                         email: item.dataValues.email ? item.dataValues.email : null,
                         gender: item.dataValues.gender ? item.dataValues.gender : null,
+                        photo_profile:item.dataValues.photo_profile?item.dataValues.photo_profile:null,
                         phone_number: item.dataValues.phone_number ? item.dataValues.phone_number : null,
                         role: item.dataValues.role ? item.dataValues.role : null,
                         location_warehouse_id: item.dataValues.location_warehouse_id ? item.dataValues.location_warehouse_id : null,
@@ -159,6 +160,8 @@ module.exports = {
                 where: {
                     role: 2
                 },
+                include:{model:db.location_warehouse}
+                ,
                 offset,limit
             })
         }
@@ -302,6 +305,16 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
 
+            let findAdmin = await db.admin.findOne({where:{id:getToken.id}})
+            console.log(findAdmin)
+            fs.unlink(findAdmin.dataValues.photo_profile, function (err) {
+                try {
+                    if (err) throw err
+                } catch (error) {
+                    console.log(error)
+                }
+            })
+
             let profilePicture = await db.admin.update({ photo_profile: req.files.images[0].path }, {
                 where: {
                     id: getToken.id
@@ -312,11 +325,11 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: 'Update Photo Profile Success!',
-                data: profilePicture
+                // data: profilePicture
             })
 
         } catch (error) {
-            await t.rollback()
+            // await t.rollback()
             deleteFiles(req.files)
             console.log(error)
             res.status(404).send({

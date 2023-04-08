@@ -24,16 +24,25 @@ export default function LogProduct() {
         pilihKategori: 1,
         pilihProduk: 1,
         pilihProdukIndex: 0,
-        namaProduk: ''
+        namaProduk: '',
+        statusIndex:0
     })
+
+    let [filterStatus, setFilterStatus] = useState([
+        { value: '', label: 'All Status', index: 0 },
+        { value: 'Additional', label: 'Additional', index: 1 },
+        { value: 'Reduction', label: 'Reduction', index: 2 },
+        { value: 'Sold', label: 'Sold', index: 3 },
+        { value: 'Cancelation', label: 'Cancelation', index: 4 }
+    ])
 
     let filter = async () => {
         let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/filter`, { data: 'Warehouse' })
         setDataFilter(response.data.data)
     }
 
-    let getAllLog = async (page, warehouse_id, code, date, pilihKategori, pilihProduk, pilihProdukIndex) => {
-        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/log/getlog?page=${page}&warehouse_id=${warehouse_id}&code=${code}&date=${date}&pilihKategori=${pilihKategori}&pilihProduk=${pilihProduk}`)
+    let getAllLog = async (page, warehouse_id, code, date, pilihKategori, pilihProduk, pilihProdukIndex, filterStatus) => {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/log/getlog?page=${page}&warehouse_id=${warehouse_id}&code=${code}&date=${date}&pilihKategori=${pilihKategori}&pilihProduk=${pilihProduk}&filterStatus=${filterStatus.value}`)
 
         if (code == 1) {
             let loader = [], loader2 = []
@@ -57,14 +66,14 @@ export default function LogProduct() {
             setDataLog({
                 ...dataLog, log: response.data.data.getData, product: loader, code, page, date, pilihKategori, pilihProduk, pilihProdukIndex, loading: false,
                 total_count: response.data.data.total_count, category: response.data.data.category, namaProduk: loader[pilihProdukIndex].label,
-                total_pages: response.data.data.total_pages, warehouse: warehouse_id, date: date == 0 ? new Date() : new Date(date)
+                total_pages: response.data.data.total_pages, warehouse: warehouse_id, date: date == 0 ? new Date() : new Date(date), statusIndex:filterStatus.index
             })
         }
 
     }
 
     useEffect(() => {
-        getAllLog(1, user.warehouse_id ? user.warehouse_id : 0, 1, 0, 1, 0, 0)
+        getAllLog(1, user.warehouse_id ? user.warehouse_id : 0, 1, 0, 1, 0, 0,{ value: '', label: 'All Status', index: 0 })
         filter()
     }, [])
 
@@ -87,7 +96,7 @@ export default function LogProduct() {
                                         disabled={dataLog.code == index + 1}
                                         onClick={() => {
                                             setDataLog({ ...dataLog, loading: true })
-                                            getAllLog(1, dataLog.warehouse, index + 1, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
+                                            getAllLog(1, dataLog.warehouse, index + 1, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                         }}
                                         className={`font-semibold relative hover:text-gray-200 ${dataLog.code == index + 1 ? 'text-gray-200' : 'text-gray-400'}  `}
                                     >
@@ -107,7 +116,7 @@ export default function LogProduct() {
                                 selected={dataLog.date}
                                 onChange={(date) => {
                                     setDataLog({ ...dataLog, date, loading: true })
-                                    getAllLog(1, dataLog.warehouse, dataLog.code, date.toLocaleDateString(), dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
+                                    getAllLog(1, dataLog.warehouse, dataLog.code, date.toLocaleDateString(), dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
                                 }}
                             />
 
@@ -123,7 +132,7 @@ export default function LogProduct() {
                                         onChange={(e) => {
                                             setDataLog({ ...dataLog, loading: true, warehouse: e.target.value })
                                             getAllLog(1, e.target.value, dataLog.code, dataLog.date, dataLog.pilihKategori,
-                                                dataLog.pilihProduk, dataLog.pilihProdukIndex)
+                                                dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
                                         }}
                                         className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
                                         <option value={0}>All Warehouse Log</option>
@@ -136,9 +145,8 @@ export default function LogProduct() {
                                         }
                                     </select>
                                 </div> :
-                                <div className='text-lg'>
-                                    Log Stock : WH-{user.warehouse}
-                                </div>
+                                <p className='text-md gap-2 flex items-end font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p>
+
                         }
 
                     </div>
@@ -151,7 +159,7 @@ export default function LogProduct() {
                     dataLog.loading ?
                         <Loading />
                         :
-                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200">
+                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-green-500 rounded-lg px-12 py-7 bg-stone-800 text-slate-200">
                             <div className='flex justify-between w-full'>
                                 <div className='flex w-3/4 gap-10 mb-4'>
                                     {
@@ -162,7 +170,7 @@ export default function LogProduct() {
                                                     onClick={() => {
                                                         setDataLog({ ...dataLog, loading: true, warehouse: index + 1 })
                                                         getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, index + 1,
-                                                            0, 0)
+                                                            0, 0,filterStatus[dataLog.statusIndex])
                                                     }}
                                                     className={`font-semibold relative hover:text-gray-200 ${dataLog.pilihKategori == index + 1 ? 'underline-offset-4 underline text-gray-200' : 'text-gray-500'}  `}
                                                 >
@@ -182,7 +190,7 @@ export default function LogProduct() {
                                         // isLoading={dataLog.loading}
                                         onChange={(e) => {
                                             setDataLog({ ...dataLog, loading: true })
-                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index)
+                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index,filterStatus[dataLog.statusIndex])
                                         }}
                                         maxMenuHeight={220}
                                         options={dataLog.product} >
@@ -190,98 +198,99 @@ export default function LogProduct() {
                                     </Select>
                                 </div>
                             </div>
+                            <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
+                                <table className="w-full text-sm text-center border border-green-500 text-gray-500 dark:text-gray-400">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <tr >
+                                            <th scope="col" className="px-6 py-3">
+                                                Product
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Details
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Total Additional
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Total Reductional
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
+                                                Final Stock
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            dataLog.loading ?
+                                                <tr >
+                                                    <td className="px-6 py-4 text-center">
+                                                        <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                    </td>
+                                                </tr>
+                                                :
+                                                dataLog.log.map((item, index) => {
+                                                    return (
+                                                        <tr className='border-green-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                            <td scope="col" className="px-6 py-3">
+                                                                {dataLog.namaProduk}
+                                                            </td>
+                                                            {
+                                                                item.connectivity == '' &&
+                                                                    item.memory_storage == 0 &&
+                                                                    item.processor == '' &&
+                                                                    item.screen_size == '' ?
+                                                                    <td className="px-6 py-4">
+                                                                        -
+                                                                    </td> :
+                                                                    <td scope="col" className="px-6 py-3 flex flex-col gap-1.5">
+                                                                        <div className="flex gap-2 justify-center">
+                                                                            {item.color} <p style={{ backgroundColor: `${item.colorhex}` }} className={`w-5 rounded-full border border-stone-500 border-opacity-50 h-5 `}></p>
+                                                                        </div>
+                                                                        <div>{item.connectivity}</div>
+                                                                        <div>{item.memory_storage} GB</div>
+                                                                        <div>{item.processor}</div>
+                                                                        <div>{item.screen_size ? item.screen_size + ' ' + 'inch' : null} </div>
+                                                                        <div>{item.weight * 1000} g</div>
+                                                                    </td>
 
-                            <table className="w-full text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr >
-                                        <th scope="col" className="px-6 py-3">
-                                            Product
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Details
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Total Additional
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Total Reductional
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Final Stock
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        dataLog.loading ?
-                                            <tr >
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                            </tr>
-                                            :
-                                            dataLog.log.map((item, index) => {
-                                                return (
-                                                    <tr className='border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
-                                                        <td scope="col" className="px-6 py-3">
-                                                            {dataLog.namaProduk}
-                                                        </td>
-                                                        {
-                                                            item.connectivity == '' &&
-                                                                item.memory_storage == 0 &&
-                                                                item.processor == '' &&
-                                                                item.screen_size == '' ?
-                                                                <td className="px-6 py-4">
-                                                                    -
-                                                                </td> :
-                                                                <td scope="col" className="px-6 py-3 flex flex-col gap-1.5">
-                                                                    <div className="flex gap-2 justify-center">
-                                                                        {item.color} <p style={{ backgroundColor: `${item.colorhex}` }} className={`w-5 rounded-full border border-stone-500 border-opacity-50 h-5 `}></p>
-                                                                    </div>
-                                                                    <div>{item.connectivity}</div>
-                                                                    <div>{item.memory_storage} GB</div>
-                                                                    <div>{item.processor}</div>
-                                                                    <div>{item.screen_size ? item.screen_size + ' ' + 'inch' : null} </div>
-                                                                    <div>{item.weight * 1000} g</div>
-                                                                </td>
+                                                            }
 
-                                                        }
+                                                            <td scope="col" className=" px-6 py-3">
+                                                                {dataLog.addition[index]}
+                                                            </td>
+                                                            <td scope="col" className=" px-6 py-3">
+                                                                {dataLog.reduction[index]}
+                                                            </td>
+                                                            <td scope="col" className="px-6 py-3">
+                                                                {dataLog.final[index]}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                        }
+                                    </tbody>
 
-                                                        <td scope="col" className=" px-6 py-3">
-                                                            {dataLog.addition[index]}
-                                                        </td>
-                                                        <td scope="col" className=" px-6 py-3">
-                                                            {dataLog.reduction[index]}
-                                                        </td>
-                                                        <td scope="col" className="px-6 py-3">
-                                                            {dataLog.final[index]}
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })
-                                    }
-                                </tbody>
-
-                            </table>
+                                </table>
+                            </div>
 
                             <div className='flex justify-center p-5 gap-2'>
                                 <button
                                     disabled={(dataLog.page - 1) == 0}
                                     onClick={() => {
                                         setDataLog({ ...dataLog, loading: true, page: dataLog.page - 1 })
-                                        getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
+                                        getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
                                     }} className='font-semibold rounded-l-lg px-4 hover:bg-white hover:text-black'>
                                     Previous
                                 </button>
@@ -292,7 +301,7 @@ export default function LogProduct() {
                                     disabled={(dataLog.page + 1) > dataLog.total_pages}
                                     onClick={() => {
                                         setDataLog({ ...dataLog, loading: true, page: dataLog.page + 1 })
-                                        getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
+                                        getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
                                     }} className='font-semibold rounded-r-lg px-7 hover:bg-white hover:text-black'>
                                     Next
                                 </button>
@@ -303,9 +312,9 @@ export default function LogProduct() {
                     dataLog.loading ?
                         <Loading />
                         :
-                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200">
+                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-green-500 rounded-md px-12 py-7 bg-stone-800 text-slate-200">
                             <div className='flex justify-between w-full'>
-                                <div className='flex w-3/4 gap-10 mb-4'>
+                                <div className='flex gap-10 mb-4'>
                                     {
                                         dataLog.category?.map((item, index) => {
                                             return (
@@ -314,7 +323,7 @@ export default function LogProduct() {
                                                     onClick={() => {
                                                         setDataLog({ ...dataLog, loading: true, warehouse: index + 1 })
                                                         getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, index + 1,
-                                                            0, 0)
+                                                            0, 0, filterStatus[dataLog.statusIndex])
                                                     }}
                                                     className={`font-semibold relative hover:text-gray-200 ${dataLog.pilihKategori == index + 1 ? 'underline-offset-4 underline text-gray-200' : 'text-gray-500'}  `}
                                                 >
@@ -323,10 +332,22 @@ export default function LogProduct() {
                                             )
                                         })}
                                 </div>
-
-                                <div className='w-1/4 mb-5'>
+                                
+                                <div className='flex gap-4 mb-5'>
                                     <Select
-                                        menuPosition="fixed"
+                                 
+                                 className="basic-single text-black"
+                                 classNamePrefix="select"
+                                 defaultValue={filterStatus[dataLog.statusIndex]}
+                                 onChange={(e) => {
+                                    setDataLog({ ...dataLog, loading: true})
+                                    getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, e)
+                                }}
+                                maxMenuHeight={220}
+                                options={filterStatus} >
+                                   
+                                </Select>
+                                    <Select
                                         className="basic-single text-black"
                                         classNamePrefix="select"
                                         defaultValue={dataLog.product[dataLog.pilihProdukIndex]}
@@ -334,7 +355,7 @@ export default function LogProduct() {
                                         // isLoading={dataLog.loading}
                                         onChange={(e) => {
                                             setDataLog({ ...dataLog, loading: true })
-                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index)
+                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index, filterStatus[dataLog.statusIndex])
                                         }}
                                         maxMenuHeight={220}
                                         options={dataLog.product} >
@@ -345,70 +366,93 @@ export default function LogProduct() {
 
                             {
                                 dataLog.log.length > 0 ?
-                                    <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                            <tr>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Id
-                                                </th>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Warehouse
-                                                </th>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Status
-                                                </th>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Quantity
-                                                </th>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Product
-                                                </th>
-                                                <th scope="col" className="px-6 py-3">
-                                                    Details
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                dataLog.log?.map((item, index) => {
-                                                    return (
-                                                        <tr className='border-yellow-300 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
-                                                            <td className="px-6 py-4" >
-                                                                {item.id}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {item.location_warehouse?.city}
-                                                            </td>
-                                                            <td className={`px-6 py-4 ${item.status == 'Additional' ? 'text-green-500' : 'text-red-500'}`}>
-                                                                {item.status}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {item.qty}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {item.product_detail?.product.name}
-                                                            </td>
-                                                            <td className="flex px-6 py-4 flex-col gap-1.5">
-                                                                <div className="flex gap-2 justify-center">
-                                                                    {item.product_detail?.color} <p style={{ backgroundColor: `${item.product_detail?.colorhex}` }} className={`w-5 rounded-full border border-stone-500 border-opacity-50 h-5 `}></p>
-                                                                </div>
-                                                                <div>{item.product_detail?.connectivity}</div>
-                                                                {
-                                                                    item.product_detail?.memory_storage == 0 ?
-                                                                        null
-                                                                        :
-                                                                        <div>{item.product_detail.memory_storage} GB</div>
-                                                                }
-                                                                <div>{item.product_detail?.processor}</div>
-                                                                <div>{item.product_detail?.screen_size}</div>
-                                                                <div>{item.product_detail?.weight * 1000} g</div>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
+                                    <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
+                                        <table className="w-full text-sm text-center border border-green-500 text-gray-500 dark:text-gray-400">
+                                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                                <tr>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Id
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Warehouse
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Status
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Quantity
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Product
+                                                    </th>
+                                                    <th scope="col" className="px-6 py-3">
+                                                        Details
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    dataLog.log?.map((item, index) => {
+                                                        return (
+                                                            <tr className='border-green-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                                <td className="px-6 py-4" >
+                                                                    {item.id}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {item.location_warehouse?.city}
+                                                                </td>
+                                                                <td className={`px-6 py-4 font-semibold ${item.status == 'Additional' ? 'text-green-500' : 'text-red-500'}`}>
+                                                                    {item.status}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {item.qty}
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {item.product_detail?.product.name}
+                                                                </td>
+                                                                <td className="flex px-6 py-4 flex-col gap-1.5 w-40">
+                                                                    <div className="flex gap-2 justify-center">
+                                                                        {item.product_detail?.color} <p style={{ backgroundColor: `${item.product_detail?.colorhex}` }} className={`w-5 rounded-full border border-stone-500 border-opacity-50 h-5 `}></p>
+                                                                    </div>
+                                                                    <div>{item.product_detail?.connectivity}</div>
+                                                                    {
+                                                                        item.product_detail?.memory_storage == 0 ?
+                                                                            null
+                                                                            :
+                                                                            <div>{item.product_detail?.memory_storage != 1000 ? item.product_detail?.memory_storage + ' ' + 'GB' : (item.product_detail?.memory_storage / 1000) + ' ' + 'TB'}</div>
+                                                                    }
+                                                                    <div>{item.product_detail?.processor}</div>
+                                                                    {item.product_detail?.screen_size.length>0? <div>{item.product_detail?.screen_size} inch</div>:null}
+                                                                    <div>{item.product_detail?.weight * 1000} g</div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <div className='flex justify-center p-5 gap-2'>
+                                            <button
+                                                disabled={(dataLog.page - 1) == 0}
+                                                onClick={() => {
+                                                    setDataLog({ ...dataLog, loading: true, page: dataLog.page - 1 })
+                                                    getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
+                                                }} className='font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white'>
+                                                Previous
+                                            </button>
+                                            <div>
+                                                Page {dataLog.page} of {dataLog?.total_pages}
+                                            </div>
+                                            <button
+                                                disabled={(dataLog.page + 1) > dataLog.total_pages}
+                                                onClick={() => {
+                                                    setDataLog({ ...dataLog, loading: true, page: dataLog.page + 1 })
+                                                    getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                                }} className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
                                     :
                                     <div className='flex flex-col h-full items-center justify-center'>
                                         <lottie-player
@@ -422,31 +466,8 @@ export default function LogProduct() {
                                             Data not found
                                         </div>
                                     </div>
-
                             }
-                            <div className='flex justify-center p-5 gap-2'>
-                                <button
-                                    disabled={(dataLog.page - 1) == 0}
-                                    onClick={() => {
-                                        setDataLog({ ...dataLog, loading: true, page: dataLog.page - 1 })
-                                        getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
-                                    }} className='font-semibold rounded-l-lg px-4 hover:bg-black hover:text-white'>
-                                    Previous
-                                </button>
-                                <div>
-                                    Page {dataLog.page} of {dataLog?.total_pages}
-                                </div>
-                                <button
-                                    disabled={(dataLog.page + 1) > dataLog.total_pages}
-                                    onClick={() => {
-                                        setDataLog({ ...dataLog, loading: true, page: dataLog.page + 1 })
-                                        getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex)
-                                    }} className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
-                                    Next
-                                </button>
-                            </div>
                         </div>
-
             }
         </div>
     )
