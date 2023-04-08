@@ -1,10 +1,12 @@
 import LoadingIcon from "../../core/loading"
+import Loading from "../../loading/loading"
 
 export default function SalesProduct(data) {
+    console.log(data.data)
     return (
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-           <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
                             No
@@ -22,10 +24,7 @@ export default function SalesProduct(data) {
                             Sold_Quantity
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Color
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Memory
+                            Details
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Total
@@ -33,31 +32,31 @@ export default function SalesProduct(data) {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.data.category == [] ?
+                    {data.data.loading ?
                         <tr class="bg-stone-500 border-b dark:bg-white  dark:border-white ">
                             <td className="px-6 py-4">
-                               <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <th className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </th>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
                             <td className="px-6 py-4">
-                            <LoadingIcon/>
+                                <LoadingIcon />
                             </td>
 
                         </tr> :
@@ -68,7 +67,7 @@ export default function SalesProduct(data) {
                                         {index + 1}
                                     </td>
                                     <td className="px-6 py-4">
-                                       {item.transaction.id}
+                                        {item.transaction.id}
                                     </td>
                                     <td class="px-6 py-4">
                                         {item.product_name}
@@ -79,12 +78,11 @@ export default function SalesProduct(data) {
                                     <td class="px-6 py-4 text-center">
                                         {item.qty}
                                     </td>
-                                    <td class="px-6 py-4">
-                                        {item.color}
+                                    <td class="flex px-6 py-4 flex-col gap-1.5 w-40">
+                                        <div className='flex gap-2 justify-center'> {item.color} <p className={`w-5 rounded-full border border-stone-500 border-opacity-50 h-5 `} style={{ backgroundColor: `${item.product_detail.colorhex}` }}></p></div>
+                                        <div className='text-center'> {item.memory_storage != 1000 ? item.memory_storage + ' ' + 'GB' : (item.memory_storage / 1000) + ' ' + 'TB'}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-center">
-                                        {item.memory_storage != 1000 ? item.memory_storage + ' ' + 'GB' : (item.memory_storage / 1000) + ' ' + 'TB'}
-                                    </td>
+
                                     <td class="px-6 py-4">
                                         {(item.qty * item.price).toLocaleString()}
                                     </td>

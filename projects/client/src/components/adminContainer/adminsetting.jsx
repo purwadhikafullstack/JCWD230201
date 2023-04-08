@@ -16,7 +16,7 @@ export default function AdminSetting() {
 
     let [dataEmptyWH, setDataEmptyWH] = useState([])
 
-    const [visiblePassword, setVisiblePassword] = useState(false)
+    const [visiblePassword, setVisiblePassword] = useState(false), [picture, setPicture] = useState(false), [pictureindex,setPictureindex] = useState('')
     const [typePassword, setTypePassword] = useState('password')
     let password = useRef(), nama = useRef(), imail = useRef(), nomor = useRef()
     let navigate = useNavigate()
@@ -71,7 +71,7 @@ export default function AdminSetting() {
     }
 
     let changeVisiblePassword = () => {
-      
+
         if (typePassword === 'password') {
             setVisiblePassword(true)
             setTypePassword('text')
@@ -113,6 +113,18 @@ export default function AdminSetting() {
                                     <div>Add</div> <div> New</div> <div> Admin</div>
                                 </div>
                             </button>
+
+                            <Modal
+                                show={picture}
+                                size="md"
+                                popup={true}
+                                onClose={() => setPicture(!picture)}
+                            >
+                                <Modal.Header />
+                                <Modal.Body className='flex items-center justify-center'>
+                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}${pictureindex}`} alt="" />
+                                </Modal.Body>
+                            </Modal>
 
                             <Modal
                                 show={add}
@@ -271,8 +283,8 @@ export default function AdminSetting() {
                         </div>
 
                         <div className="relative overflow-visible shadow-md z-0  sm:rounded-lg">
-                        <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th className="px-6 py-4">
                                             Name
@@ -324,8 +336,11 @@ export default function AdminSetting() {
                                                     value.role == 1 ?
                                                         null :
                                                         <tr className='border-blue-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
-                                                            <td className='px-6 py-4 gap-3'>
-                                                                {value.name ? value.name : '-empty-'}
+                                                            <td className='px-6 py-4'>
+                                                               <button onClick={()=>{
+                                                                setPictureindex(value.photo_profile?value.photo_profile:`Public/images/Blank_PP.jpg`)
+                                                                setPicture(!picture)
+                                                                }} className='hover:underline-offset-4 hover:underline gap-3 flex justify-center items-center'>  <img src={`${process.env.REACT_APP_API_IMAGE_URL}${value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`}`} className="w-8 h-8 object-cover rounded-full" alt="" /> <p className='text-start w-1/2'> {value.name}</p></button>     
                                                             </td>
                                                             <td className='px-6 py-4 gap-3'>
                                                                 {value.gender == "M" ? "Male" : "Female"}

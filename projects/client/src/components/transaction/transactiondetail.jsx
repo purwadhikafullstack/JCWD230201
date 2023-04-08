@@ -310,7 +310,7 @@ export default function TransactionDetail() {
                                     <div>
                                         Payment Method
                                     </div>
-                                    <img src={require('../../Assets/mandiri_VA.png')} className=' w-28' alt="" />
+                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/Bank_Central_Asia.webp`} className=' w-28' alt="" />
                                 </div>
 
                                 <div className='flex justify-between items-center'>

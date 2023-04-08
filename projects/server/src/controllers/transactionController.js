@@ -359,19 +359,7 @@ module.exports = {
         for await (const item of getMoney) {
             totalMoney += item.dataValues.qty*item.dataValues.price
         }
-
-        var total_transactionS = await db.transaction.findAll({
-            where: {
-                order_status_id: 5
-            }
-        })
-
-        var total_transactionC = await db.transaction.findAll({
-            where: {
-                order_status_id: 6
-            }
-        })
-
+        
         if (type == 1) {
             var response = WH == 0 ? await db.transaction.findAll({
                 where: {
@@ -417,16 +405,123 @@ module.exports = {
                     { model: db.order_status }
                 ]
             })
-
-            var users = await db.user.findAll()
-            var usersUV = await db.user.findAll({
-                where: {
-                    status: 'Unverified'
-                }
+            var cancel_t = WH == 0 ?  await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    }
+                ]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    },
+                    {
+                        location_warehouse_id: WH
+                    }]}
+            })
+            var success_t = WH==0? await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    }]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    },{
+                        location_warehouse_id: WH
+                    }
+                ]}
             })
             var list_WH = WH == 0 ? await db.location_warehouse.findAll() : await db.location_warehouse.findOne({ where: { id: WH } })
-            var warehouse = await db.location_warehouse.findAll()
+            
         } else if (type == 2) {
+            var cancel_t = WH == 0 ?  await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    }
+                ]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    },
+                    {
+                        location_warehouse_id: WH
+                    }]}
+            })
+            var success_t = WH==0? await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    }]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    },{
+                        location_warehouse_id: WH
+                    }
+                ]}
+            })
             var response = WH == 0 ? await db.category.findAll({
                 include: [
                     {
@@ -483,7 +578,63 @@ module.exports = {
                     ]
                 })
         } else if (type == 3) {
-
+            var cancel_t = WH == 0 ?  await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    }
+                ]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 6
+                    },
+                    {
+                        location_warehouse_id: WH
+                    }]}
+            })
+            var success_t = WH==0? await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    }]}
+            })
+            :
+            await db.transaction.count({
+                where:{ [Op.and]: [
+                    {
+                        updatedAt: {
+                            [Op.gte]: start,
+                            [Op.lt]: end
+                        }
+                    },
+                    {
+                        order_status_id: 5
+                    },{
+                        location_warehouse_id: WH
+                    }
+                ]}
+            })
             var page_size = 5;
             var offset = (page - 1) * page_size
             var limit = page_size;
@@ -546,7 +697,7 @@ module.exports = {
                             }
                         ]
                     }
-                }]
+                },{model:db.product_detail}], offset,limit
             })
                 :
                 await db.transaction_detail.findAll({
@@ -568,18 +719,15 @@ module.exports = {
                                 }
                             ]
                         }
-                    }]
+                    },{model:db.product_detail}],offset,limit
                 })
         }
         res.status(201).send({
             isError: false,
             data: response,
-            users: users?.length ? users.length : null,
-            userUV: usersUV?.length ? usersUV.length : null,
-            wh: warehouse?.length ? warehouse.length : null,
+            cancel_t,
             list_wh: list_WH,
-            tr_success: total_transactionS?.length ? total_transactionS.length : null,
-            tr_cancel: total_transactionC?.length ? total_transactionC.length : null,
+            success_t,
             page,
             total_count,
             total_pages, totalMoney
@@ -859,7 +1007,7 @@ module.exports = {
                             await db.log_stock.create({
                                 qty: item.qty,
                                 location_warehouse_id: warehouse_id,
-                                status: 'Reduction',
+                                status: 'Sold',
                                 product_detail_id: item.product_detail_id,
                                 product_id:item.product_id
                             })
@@ -932,7 +1080,7 @@ module.exports = {
                     await db.log_stock.create({
                         qty: item.qty,
                         location_warehouse_id: warehouse_id,
-                        status: 'Reduction',
+                        status: 'Sold',
                         product_detail_id: item.product_detail_id,
                         product_id:item.product_id
                     })
@@ -1221,7 +1369,7 @@ module.exports = {
                 await db.log_stock.create({
                     qty: item.qty,
                     location_warehouse_id: warehouse_id,
-                    status: 'Additional',
+                    status: 'Cancelation',
                     product_detail_id: item.product_detail_id,
                     product_id:item.product_id
                 }
@@ -1245,11 +1393,9 @@ module.exports = {
     test: async (req, res) => {
         let { date, id } = req.body
         
-
-        let response = await  db.transaction_detail.findAll({
-            attributes: ['qty', 'price', [sequelize.fn('SUM', (sequelize.fn('COALESCE', (sequelize.col('qty')), 0), sequelize.literal('*'), sequelize.fn('COALESCE', (sequelize.col('price')), 0))), 'total_sum']],
-            group: ['qty', 'price']})
-
+let response = await db.log_stock.findAll({
+    where:{status:{[Op.in]:['Cancelation', 'Sold']}}
+})
 
         res.status(201).send({
         response,
