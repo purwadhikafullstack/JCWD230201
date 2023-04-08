@@ -162,7 +162,7 @@ export default function MyAccountInfo() {
                 </div>
                 <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
-                        <img src={user.photo_profile ? `${process.env.REACT_APP_API_IMAGE_URL}/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
+                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile ? user.photo_profile : `Public/images/Blank_PP.jpg`}`} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">
                             <button onClick={() => setModal(!modal)} className="text-white bg-black border border-black hover:bg-white hover:text-black font-semibold rounded-sm px-10 py-2">
                                 Change Profile Picture

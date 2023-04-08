@@ -213,8 +213,8 @@ export default function Shipping(props) {
 
         }
     }
-    
-    let continueOrder = async()=>{
+
+    let continueOrder = async () => {
         try {
             if (onCourier.current.value == "choose" || onCost.current.value == "chooseService") throw { message: "Please choose your shipping courier" }
 
@@ -556,7 +556,7 @@ export default function Shipping(props) {
                                         <select ref={onCost} onChange={(e) => {
                                             getService(e.target.value)
                                             // setDisable(false)
-                                            
+
                                         }} className='rounded-sm w-full border border-black focus:ring-0 focus:ring-transparent focus:border focus:border-black'>
                                             <option value={"chooseService"}>Choose Service</option>
                                             {costShipping.map((value, index) => {
@@ -744,7 +744,7 @@ export default function Shipping(props) {
                                                             </button> */}
                                                         </div>
                                                         <div className='flex items-center py-5 px-7'>
-                                                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}/Public/images/Bank_Central_Asia.webp`} alt='Logo BCA' className='w-2/12' />
+                                                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/Bank_Central_Asia.webp`} alt='Logo BCA' className='w-2/12' />
                                                             <p className='ml-8 text-sm'>
                                                                 BCA Virtual Account
                                                             </p>
