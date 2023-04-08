@@ -213,9 +213,25 @@ export default function Shipping(props) {
 
         }
     }
+    
+    let continueOrder = async()=>{
+        try {
+            if (onCourier.current.value == "choose" || onCost.current.value == "chooseService") throw { message: "Please choose your shipping courier" }
+
+            setPaymentInfoModal(!paymentInfoModal)
+        } catch (error) {
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
+        }
+
+    }
 
     let newOrder = async () => {
         try {
+
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/createOrder`, { ongkir: priceShipping, receiver: !checkValue ? initialName : selectedName, address: !checkValue ? initialUserAddress : selectedUserAddress, subdistrict: !checkValue ? initialSubdistrict : selectedSubdistrict, city: !checkValue ? initialCity : selectedCity, province: !checkValue ? initialProvince : selectedProvince, courier: `${onCourier.current.value},${costShipping[onCost.current.value.split(",")[1]].description}`, user_id: dataCart[0].user_id, phone_number: !checkValue ? initialNumber : selectedNumber, user_name: !checkValue ? initialName : selectedName, cart: dataCart, user_address_id: !checkValue ? initialID : selectedID }, {
                 headers: {
                     token: localStorage.getItem('token')
@@ -227,7 +243,11 @@ export default function Shipping(props) {
             // props.func.setItemCart([])
             // setDataCart([])
         } catch (error) {
-
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -246,8 +266,8 @@ export default function Shipping(props) {
                 <div className='font-bold text-3xl flex justify-start py-5 px-3 md:px-0'>
                     Shipping
                 </div>
-                <div className='grid md:grid-cols-6'>
-                    <div className='flex justify-end col-span-3 md:mr-3 lg:mr-5'>
+                <div className='flex flex-col md:flex-row md:justify-around'>
+                    <div className='flex justify-end md:w-1/2 lg:w-2/3 md:mr-3 lg:mr-5'>
                         <div className='flex-col items-end w-full'>
                             <div className='flex-col items-end border mb-5 md:mb-0'>
                                 <div className='flex justify-between border-b-2 py-3 px-3'>
@@ -535,7 +555,8 @@ export default function Shipping(props) {
                                         </div>
                                         <select ref={onCost} onChange={(e) => {
                                             getService(e.target.value)
-                                            setDisable(false)
+                                            // setDisable(false)
+                                            
                                         }} className='rounded-sm w-full border border-black focus:ring-0 focus:ring-transparent focus:border focus:border-black'>
                                             <option value={"chooseService"}>Choose Service</option>
                                             {costShipping.map((value, index) => {
@@ -577,7 +598,7 @@ export default function Shipping(props) {
                             </div>
                         </div>
                     </div>
-                    <div className='grid col-span-3 md:ml-2 lg:ml-0'>
+                    <div className='md:w-1/2 lg:w-1/3 md:ml-2 lg:ml-0'>
                         <div className='hidden md:block w-full border h-max mb-5'>
                             <div className='flex justify-between border-b-2 py-3 px-3'>
                                 <div className='flex items-center font-bold text-xl'>
@@ -605,7 +626,7 @@ export default function Shipping(props) {
                                     </div>
                                     <select ref={onCost} onChange={(e) => {
                                         getService(e.target.value)
-                                        setDisable(false)
+                                        // setDisable(false)
                                     }} className='rounded-sm w-full border border-black focus:ring-0 focus:ring-transparent focus:border focus:border-black'>
                                         <option value={"chooseService"}>Choose Service</option>
                                         {costShipping.map((value, index) => {
@@ -646,7 +667,7 @@ export default function Shipping(props) {
                                     Rp. {(totalPrice + priceShipping).toLocaleString()}
                                 </div>
                             </div>
-                            <button onClick={() => setPaymentInfoModal(!paymentInfoModal)} className={`bg-black text-white font-bold w-full py-2 rounded disabled:cursor-not-allowed`} disabled={disable}>
+                            <button onClick={() => continueOrder()} className={`bg-black text-white font-bold w-full py-2 rounded-sm`}>
                                 Buy
                             </button>
                             <Modal
@@ -718,12 +739,12 @@ export default function Shipping(props) {
                                                             <p className="text-lg font-bold leading-relaxed text-neutral-800 dark:text-gray-600">
                                                                 Payment Method
                                                             </p>
-                                                            <button className="text-sm font-bold leading-relaxed text-orange-400 dark:text-gray-400">
+                                                            {/* <button className="text-sm font-bold leading-relaxed text-orange-400 dark:text-gray-400">
                                                                 Change Payment
-                                                            </button>
+                                                            </button> */}
                                                         </div>
-                                                        <div className='flex items-center py-3 px-7'>
-                                                            <img src={`http://localhost:8000/Public/images/Bank_Central_Asia.webp`} alt='Logo BCA' className='w-2/12' />
+                                                        <div className='flex items-center py-5 px-7'>
+                                                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}/Public/images/Bank_Central_Asia.webp`} alt='Logo BCA' className='w-2/12' />
                                                             <p className='ml-8 text-sm'>
                                                                 BCA Virtual Account
                                                             </p>

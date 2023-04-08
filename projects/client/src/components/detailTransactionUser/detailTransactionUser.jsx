@@ -118,17 +118,17 @@ export default function DetailTransaction() {
             {
                 transactionDetail ?
                     <div>
-                        <div className="pb-5 flex">
-                            <h1 className="text-2xl font-semibold">
+                        <div className="pb-5 flex border-b md:border-0">
+                            <h1 className="text-xl md:text-2xl font-semibold">
                                 Transaction Detail
                             </h1>
-                            <div className="flex items-end ml-3 text-sm">
+                            <div className="flex items-end ml-3 text-xs md:text-sm">
                                 Order Number: {transactionDetail.id}
                             </div>
                         </div>
-                        <div className="border rounded-sm px-3 py-5">
+                        <div className="md:border rounded-sm md:px-3 py-5">
 
-                            <div className="border rounded-sm mt-3 px-4">
+                            <div className="border rounded-sm mt-3 px-2 md:px-4">
                                 <div className="border-b flex items-center">
                                     <h2 className="text-lg font-semibold py-4 mr-4">
                                         Order Status
@@ -258,13 +258,13 @@ export default function DetailTransaction() {
                                 </div>
                             </div>
 
-                            <div className="border rounded-sm mt-3 px-4">
-                                <div>
+                            <div className="border rounded-sm mt-3 px-2 md:px-4">
+                                <div className="border-b">
                                     <h2 className="text-lg font-semibold py-4">
                                         Shipping Address
                                     </h2>
                                 </div>
-                                <div className="pb-5 text-sm">
+                                <div className="py-3 text-sm">
                                     <p>{transactionDetail.name}</p>
                                     <p>{transactionDetail.address}</p>
                                     <p>{transactionDetail.subdistrict}, {transactionDetail.city}, {transactionDetail.province}</p>
@@ -272,7 +272,7 @@ export default function DetailTransaction() {
                                 </div>
                             </div>
 
-                            <div className="border rounded-sm mt-3 px-4">
+                            <div className="border rounded-sm mt-3 px-2 md:px-4">
                                 <div className="border-b flex items-center">
                                     <h2 className="text-lg font-semibold py-4">
                                         Detail Shipping
@@ -300,16 +300,16 @@ export default function DetailTransaction() {
                                 </div>
                             </div>
 
-                            <div className="mt-3 px-4">
+                            <div className="mt-3 px-2 md:px-4">
                                 <div className="border-b">
                                     <h2 className="text-lg font-semibold py-4">
                                         Total Order
                                     </h2>
                                 </div>
-                                <div className=" pb-5 text-sm">
+                                <div className=" pb-5 text-xs md:text-sm">
 
-                                    <div className="grid grid-cols-5 text-left py-3 border-b">
-                                        <th className="col-span-2">
+                                    <div className="grid grid-cols-4 md:grid-cols-5 text-center md:text-left py-3 border-b">
+                                        <th className="md:col-span-2">
                                             Product Name
                                         </th>
                                         <th>
@@ -326,19 +326,19 @@ export default function DetailTransaction() {
                                     {
                                         product.map((value, index) => {
                                             return (
-                                                <div className="grid grid-cols-5 border-b py-4 items-center">
-                                                    <div className="col-span-2 flex items-center">
-                                                        <img src={require(`../../../../server/src/Public/images/${value.product_img}`)} className='flex items-start w-20' />
+                                                <div className="grid grid-cols-4 md:grid-cols-5 border-b py-4 items-center text-center">
+                                                    <div className="md:col-span-2 flex items-center flex-col md:flex-row md:items-center">
+                                                        <img src={require(`../../../../server/src/Public/images/${value.product_img}`)} className='flex items-start w-10 md:w-20' />
                                                         <p>{value.product_name}</p>
                                                     </div>
                                                     <td>
-                                                        Rp. {value.price.toLocaleString()}
+                                                        Rp {value.price.toLocaleString()}
                                                     </td>
                                                     <td>
                                                         {value.qty}
                                                     </td>
                                                     <td className="text-right">
-                                                        Rp. {(value.price * value.qty).toLocaleString()}
+                                                        Rp {(value.price * value.qty).toLocaleString()}
                                                     </td>
                                                 </div>
                                             )
@@ -346,7 +346,7 @@ export default function DetailTransaction() {
                                     }
 
                                     <div className="grid grid-cols-5 border-b py-4">
-                                        <div className="col-start-4 col-end-5 font-semibold">
+                                        <div className="col-start-2 col-end-4 md:col-start-4 md:col-end-5 font-semibold">
                                             <p>
                                                 Subtotal:
                                             </p>
@@ -357,7 +357,7 @@ export default function DetailTransaction() {
                                                 Grand Total:
                                             </p>
                                         </div>
-                                        <div className="text-right">
+                                        <div className="col-start-4 col-end-6 md:col-start-5 md:col-end-6 text-right">
                                             <p>
                                                 Rp. {totalPrice.toLocaleString()}
                                             </p>
