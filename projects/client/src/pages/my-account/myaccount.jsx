@@ -65,7 +65,7 @@ export default function MyAccount() {
                 </div>
 
                 <div className="flex justify-center w-max lg:hidden">
-                    <div className="ml-2 md:ml-10 my-5 flex justify-center text-sm">
+                    <div className="ml-2 md:ml-10 my-5 flex justify-center text text-sm">
                         <Button.Group>
                             <Button className="w-20 md:w-44" color="gray" onClick={() => navigate('/my-account')}>
                                 My Account

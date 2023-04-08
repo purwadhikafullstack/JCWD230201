@@ -62,11 +62,11 @@ export default function NavbarUser(props) {
                                 <MdOutlineCancel />
                             </button>
                             <div
-                                className={`top-20 left-0 w-full z-20 md:w-80 bg-black text-white fixed  h-full transition ease-in-out duration-300 overflow-y-scroll
+                                className={`top-20 left-0 w-full z-20 md:w-80 border-t-2 border-white bg-black text-white fixed  h-full transition ease-in-out duration-300 overflow-x-hidden
                                 ${showSidebar ? "transform translate-x-0 " : "transform translate-x-full"}`}
                             >
                                 <div className="flex flex-col z-20">
-                                    <Sidebar func={props.func} data={{ ...props.data, category }} />
+                                    <Sidebar func={props.func} data={{ ...props.data, category, setShowSidebar }} />
                                 </div>
                             </div>
                         </>
@@ -95,7 +95,12 @@ export default function NavbarUser(props) {
                                                 {value.products ? value.products.map((val, idx) => {
                                                     return (
                                                         <Link to={`/product/productdetail/${val.id}`}>
-                                                            <li onClick={() => props.func.getProductDetail(val.id)} className="py-3">
+                                                            <li onClick={() => {
+                                                                props.data.setMemory([])
+                                                                props.data.setSelected(0)
+                                                                props.data.setLoadingPage(true)
+                                                                props.func.getProductDetail(val.id)
+                                                            }} className="py-3">
                                                                 <div className="block text-neutral-800 text-base text-left hover:text-neutral-500 cursor-pointer">
                                                                     {val.name}
                                                                 </div>
@@ -111,6 +116,21 @@ export default function NavbarUser(props) {
                             </button>
                         )
                     })}
+                    <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
+                        <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
+                            Event & Promo
+                        </div>
+                    </button>
+                    <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
+                        <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
+                            Business
+                        </div>
+                    </button>
+                    <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
+                        <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
+                            Services
+                        </div>
+                    </button>
                 </div>
                 <div className="flex items-center gap-5 text-2xl">
                     <button className="hidden lg:inline">

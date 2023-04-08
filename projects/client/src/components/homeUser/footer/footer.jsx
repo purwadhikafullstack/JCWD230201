@@ -12,7 +12,7 @@ import { MdOutlineCopyright } from 'react-icons/md'
 export default function Footer() {
     return (
         <>
-            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row px-5 md:px-10 lg:px-80 py-6 mt-10'>
+            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row px-5 md:px-10 lg:px-20 py-6 mt-10'>
                 <div className='flex items-center mr-5 my-3'>
                     <img src={FooterWarranty} className="mr-3 w-9 md:w-10 lg:w-12"/>
                     <div className='text-white text-sm lg:text-base'>
@@ -43,7 +43,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className='bg-black flex items-center lg:justify-center flex-col lg:flex-row gap-10 py-7 -z-10'>
+            <div className='bg-black flex items-center lg:justify-center flex-col lg:flex-row lg:px-10 gap-10 py-7 -z-10'>
                 <p className='text-white text-sm font-semibold text-center lg:text-start'>
                     Start subscribing to the newsletter and get the latest information and promos
                 </p>
@@ -55,7 +55,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 px-5 md:px-10 lg:px-80 lg:gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 px-5 md:px-10 lg:px-60 lg:gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
                 <div className="">
                     <div className="text-lg font-semibold">
                         <img src={require('../../../Assets/logo black.jpg')} alt="" className='w-20' />
@@ -114,7 +114,7 @@ export default function Footer() {
                         We Accept
                     </div>
                     <div className="pt-2 ">
-                        <img src={FooterPayment} />
+                        <img src={FooterPayment}  className='w-2/3 md:w-full'/>
                     </div>
                     <div className="pt-3 text-base font-semibold">
                         Shipping Services

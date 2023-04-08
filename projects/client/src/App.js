@@ -67,11 +67,15 @@ function App() {
   const [totalPrice, setTotalPrice] = useState(0)
   const [loading, setLoading] = useState(false)
   const [detailQty, setDetailQty] = useState(0)
+  const [initialPrice, setInitialPrice] = useState(0)
+  const [loadingPage, setLoadingPage] = useState(false)
 
   const [loadingIndex, setLoadingIndex] = useState(0)
 
   const [conditionPage, setConditionPage] = useState(false)
   const [chance, setChance] = useState(false)
+  const [selected, setSelected] = useState(0)
+  const [memory, setMemory] = useState([])
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
@@ -93,14 +97,16 @@ function App() {
       setDetail(response.data.data[0])
       setDetailProduct(response.data.data[0].product_details)
       setDetailQty(response.data.data2);
+      setInitialPrice(response.data.data[0].product_details[0].price)
+      setLoadingPage(false)
     } catch (error) {
     }
   }
 
   let getColor = async (id) => {
     try {
-        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/color/${id}`)
-        setAdaSort(response.data.data);
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/color/${id}`)
+      setAdaSort(response.data.data);
     } catch (error) {
 
     }
@@ -108,8 +114,8 @@ function App() {
 
   let getProduct = async (id, ada) => {
     try {
-        if(ada==undefined){
-        let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}`)
+      if (ada == undefined) {
+        let { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}`)
         setShow(data.data)
         setNyow();
         var arrColor = []
@@ -123,7 +129,7 @@ function App() {
         });
         setArrColor(arrColor2);
         // getColor()
-    }else if(ada === "az"){
+      } else if (ada === "az") {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
         setShow(response.data.data);
         setNyow();
@@ -137,7 +143,7 @@ function App() {
           arrColor = []
         });
         setArrColor(arrColor2);
-    }else if(ada === "za"){
+      } else if (ada === "za") {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
         setShow(response.data.data);
         setNyow();
@@ -151,11 +157,11 @@ function App() {
           arrColor = []
         });
         setArrColor(arrColor2);
-    }else if(ada === "lohi"){
-      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
-      setShow(response.data.data);
-      setNyow(response.data.data);
-      var arrColor = []
+      } else if (ada === "lohi") {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+        setShow(response.data.data);
+        setNyow(response.data.data);
+        var arrColor = []
         var arrColor2 = []
         response.data.data.forEach((item, index) => {
           if (!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
@@ -163,11 +169,11 @@ function App() {
           arrColor = []
         });
         setArrColor(arrColor2);
-    }else if(ada === "hilo"){
-      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
-      setShow(response.data.data);
-      setNyow(response.data.data);
-      var arrColor = []
+      } else if (ada === "hilo") {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+        setShow(response.data.data);
+        setNyow(response.data.data);
+        var arrColor = []
         var arrColor2 = []
         response.data.data.forEach((item, index) => {
           if (!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
@@ -175,11 +181,11 @@ function App() {
           arrColor = []
         });
         setArrColor(arrColor2);
-    }else{
-      let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/sort-product/${id}`,{color: ada})
-      setShow(response.data.data);
-      setNyow(response.data.data);
-      var arrColor = []
+      } else {
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/sort-product/${id}`, { color: ada })
+        setShow(response.data.data);
+        setNyow(response.data.data);
+        var arrColor = []
         var arrColor2 = []
         response.data.data.forEach((item, index) => {
           if (!arrColor.includes(item.colorhex)) arrColor.push(item.colorhex)
@@ -286,7 +292,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart, getColor }} data={{ show, itemCart, adaSort }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart, getColor }} data={{ show, itemCart, adaSort, setInitialPrice, setLoadingPage,setSelected,setMemory }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login data={{ setConditionPage, conditionPage }} />} />
@@ -304,8 +310,8 @@ function App() {
               <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, setItemCart, totalPrice, loading, setLoading, setLoadingIndex, loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort }} func={{ getProduct, getColor }} />} />
-              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty, verifyStatus }} />} />
+              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort, loadingPage }} func={{ getProduct, getColor }} />} />
+              <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty, verifyStatus, initialPrice, loadingPage, setSelected, selected,memory,setMemory }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess func={{ getCart }} />} />
             </Routes>

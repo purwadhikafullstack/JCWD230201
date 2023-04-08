@@ -86,8 +86,7 @@ export default function MyAccountInfo() {
             })
 
             setTimeout(() => {
-                setModal(false)
-                toast('loading...', {
+                toast('Loading...', {
                     duration: 2500
                 })
             }, 2000)
@@ -103,11 +102,12 @@ export default function MyAccountInfo() {
 
     let updateDataProfile = async () => {
         try {
-            if (profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
 
-            // if (!profile.oldpassword) throw { message: 'Please input your current password' }
+            if (isNaN(profile.phone_number)) throw { message: 'Please input a number' }
 
-            // if (!profile.oldpassword && profile.newpassword) throw {message: 'Please input your current password'}
+            if (profile.phone_number.length < 8 || profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
+
+            setDisable(true)
 
             if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
 
@@ -133,6 +133,8 @@ export default function MyAccountInfo() {
 
             }
             toast.success("Update Data Profile Success")
+
+            setDisable(false)
 
             setTimeout(() => {
                 window.location.reload(false)
@@ -160,14 +162,11 @@ export default function MyAccountInfo() {
                 </div>
                 <div className="border p-5 grid grid-cols-1 md:grid-cols-2">
                     <div className="my-5 flex flex-col items-center">
-                        <div>
-                            {/* {console.log(user.photo_profile)} */}
-                        </div>
-                        <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-52 h-52 object-cover rounded-full" />
+                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile ? user.photo_profile : `Public/images/Blank_PP.jpg`}`} className="w-52 h-52 object-cover rounded-full" />
                         <div className="bg-blue-500 mt-3">
-                            <Button onClick={() => setModal(!modal)} className="rounded-sm bg-neutral-900 hover:bg-neutral-700 active:ring-0 active:ring-transparent">
+                            <button onClick={() => setModal(!modal)} className="text-white bg-black border border-black hover:bg-white hover:text-black font-semibold rounded-sm px-10 py-2">
                                 Change Profile Picture
-                            </Button>
+                            </button>
                             <Modal
                                 show={modal}
                                 size="md"
@@ -185,9 +184,9 @@ export default function MyAccountInfo() {
                                             {message}
                                         </div>
                                         <div className="w-full justify-center flex">
-                                            <Button onClick={() => updateProfilePicture()} className="active:ring-0 active:ring-transparent bg-neutral-900 hover:bg-neutral-700 rounded-sm">
+                                            <button onClick={() => updateProfilePicture()} className=" text-white bg-black border border-black hover:bg-white hover:text-black font-semibold rounded-sm px-10 py-2">
                                                 Submit
-                                            </Button>
+                                            </button>
                                         </div>
                                     </div>
                                 </Modal.Body>
@@ -251,7 +250,7 @@ export default function MyAccountInfo() {
                     </div>
                 </div>
                 <div className="border py-5 px-5">
-                    <button onClick={() => updateDataProfile()} className="bg-black text-white font-semibold px-10 py-2 rounded-sm">
+                    <button disable={disable} onClick={() => updateDataProfile()} className="bg-black text-white hover:bg-white hover:text-black border border-black font-semibold px-10 py-2 rounded-sm">
                         SAVE
                     </button>
                 </div>
