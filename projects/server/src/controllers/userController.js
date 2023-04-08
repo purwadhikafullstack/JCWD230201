@@ -194,7 +194,7 @@ module.exports = {
                 }
             })
 
-            if (!data) throw { message: 'Email Not Found!' }
+            if (!data) throw { message: 'Email not found' }
 
             const template = await fs.readFile('./template/resetpassword.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
@@ -417,7 +417,7 @@ module.exports = {
 
         } catch (error) {
             // console.log(error)
-            // await t.rollback()
+            await t.rollback()
             res.status(404).send({
                 isError: true,
                 message: error.message,

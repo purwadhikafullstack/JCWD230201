@@ -9,14 +9,14 @@ var storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         // console.log(file)
 
-        let isDirectoryExist = fs.existsSync(__dirname + `${defaultPath}/${file.fieldname}`)
+        let isDirectoryExist = fs.existsSync(`${defaultPath}/${file.fieldname}`)
 
         if (!isDirectoryExist) {
-            await fs.promises.mkdir(__dirname + `${defaultPath}/${file.fieldname}`, { recursive: true });
+            await fs.promises.mkdir(`${defaultPath}/${file.fieldname}`, { recursive: true });
         }
 
         if (file.fieldname === 'images') {
-            cb(null, __dirname + `${defaultPath}/${file.fieldname}`)
+            cb(null, `${defaultPath}/${file.fieldname}`)
         }
     },
     filename: (req, file, cb) => {
