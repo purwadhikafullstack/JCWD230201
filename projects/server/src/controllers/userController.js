@@ -286,7 +286,7 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let getToken = req.dataToken
-            // console.log(getToken)
+            console.log(req.files)
 
             let profilePicture = await users.update({ photo_profile: req.files.images[0].path }, {
                 where: {
