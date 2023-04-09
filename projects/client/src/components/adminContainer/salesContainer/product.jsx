@@ -2,7 +2,7 @@ import LoadingIcon from "../../core/loading"
 import Loading from "../../loading/loading"
 
 export default function SalesProduct(data) {
-    console.log(data.data)
+    
     return (
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-center border border-red-500 text-gray-500 dark:text-gray-400">

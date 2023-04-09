@@ -19,7 +19,6 @@ import Category from './salesContainer/category'
 
 export default function SalesReport() {
     let { user } = useContext(userData)
-    console.log(user)
     let [year, setYear] = useState([
         new Date().getFullYear(), new Date().getFullYear() - 1, new Date().getFullYear() - 2, new Date().getFullYear() - 3
     ])

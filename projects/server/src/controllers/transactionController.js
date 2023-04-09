@@ -17,7 +17,7 @@ module.exports = {
             var page_size = 3;
             var offset = (page - 1) * page_size;
             var limit = page_size;
-
+            let test= null
             if (!from && !to) {
                 if (order_status_id == 0) {
                     console.log('masuk 1')
@@ -69,7 +69,7 @@ module.exports = {
                             limit
                         })
                 }
-            } else if (!to) {
+            } else if (!to){
                 console.log('masuk 3')
                 if (order_status_id == 0) {
                     var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, updatedAt: {
@@ -115,11 +115,11 @@ module.exports = {
                 } else {
                     console.log('masuk 4')
                     console.log(order_status_id)
-                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] } })
-                        : await db.transaction.count({ where: { updatedAt: moment(from).add(1, 'days').format().split("T")[0] } })
+                    var total_count = warehouse !=0 ? await db.transaction.count({ where: { location_warehouse_id: warehouse, order_status_id, updatedAt:{[Op.lt] :moment(from).add(2, 'days').format().split("T")[0],[Op.gte]:moment(from).add(1, 'days').format().split("T")[0] }} })
+                        : await db.transaction.count({ where: { updatedAt:{[Op.lt] :moment(from).add(2, 'days').format().split("T")[0],[Op.gte]:moment(from).add(1, 'days').format().split("T")[0] }} })
                     var total_pages = Math.ceil(total_count / page_size)
                     var response = warehouse !=0 ? await db.transaction.findAll({
-                        where: { location_warehouse_id: warehouse, order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
+                        where: { location_warehouse_id: warehouse, order_status_id, updatedAt:{[Op.lt] :moment(from).add(2, 'days').format().split("T")[0],[Op.gte]:moment(from).add(1, 'days').format().split("T")[0] }},
                         include: [
                             { model: db.location_warehouse },
                             { model: db.transaction_detail },
@@ -130,7 +130,7 @@ module.exports = {
                     })
                         :
                         await db.transaction.findAll({
-                            where: { order_status_id, updatedAt: moment(from).add(1, 'days').format().split("T")[0] },
+                            where: { order_status_id, updatedAt:{[Op.lt] :moment(from).add(2, 'days').format().split("T")[0],[Op.gte]:moment(from).add(1, 'days').format().split("T")[0] }},
                             include: [
                                 { model: db.location_warehouse },
                                 { model: db.transaction_detail },
@@ -149,7 +149,8 @@ module.exports = {
                             updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
                                 [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
-                            }
+                            },
+                            test
                         }
                     })
                         : await db.transaction.count({
@@ -157,7 +158,8 @@ module.exports = {
                                 updatedAt: {
                                     [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
                                     [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
-                                }
+                                },
+                                test
                             }
                         })
                     var total_pages = Math.ceil(total_count / page_size)
@@ -1393,10 +1395,15 @@ module.exports = {
     test: async (req, res) => {
         let { date, id } = req.body
         
-let response = await db.log_stock.findAll({
-    where:{status:{[Op.in]:['Cancelation', 'Sold']}}
-})
+// let response = await db.log_stock.findAll({
+//     where:{status:{[Op.in]:['Cancelation', 'Sold']}}
+// })
 
+let response = await db.admin.findAll({
+    where:{
+      email:{  [Op.startsWith]:''}
+    }
+})
         res.status(201).send({
         response,
            message:'foto deleted'

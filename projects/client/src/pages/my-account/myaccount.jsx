@@ -1,10 +1,12 @@
 import { Breadcrumb, Dropdown, Button } from "flowbite-react";
 import { toast, Toaster } from "react-hot-toast";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { userData } from "../../data/userData";
+import { useContext } from "react";
 
 export default function MyAccount() {
-
     let navigate = useNavigate()
+    let {user} = useContext(userData)
 
     let logout = () => {
         toast('Logout..', {
@@ -20,6 +22,7 @@ export default function MyAccount() {
     }
 
     return (
+        user?.id?
         <>
             <div className="pt-20 grid grid-cols-8 lg:grid-cols-10 gap-1 px-5 lg:px-24">
 
@@ -111,5 +114,8 @@ export default function MyAccount() {
             </div>
             <Toaster />
         </>
+        :
+        navigate('/page-not-found')
+        
     )
 }

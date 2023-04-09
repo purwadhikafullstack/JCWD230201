@@ -19,18 +19,18 @@ module.exports = {
     register: async (req, res) => {
         const t = await sequelize.transaction()
         try {
-            let { email, password, name, location_warehouse_id,phone_number,gender } = req.body
+            let { email, password, name, location_warehouse_id, phone_number, gender } = req.body
 
             let matchdata = await db.admin.findOne({
-                where:{
-                    [Op.or]:[{email},{name}]
+                where: {
+                    [Op.or]: [{ email }, { name }]
                 }
             })
 
-            if(matchdata) throw{message:'Email or Name has been used'}
+            if (matchdata) throw { message: 'Email or Name has been used' }
 
-            let newSuper = await db.admin.create({ id: uuidv4(), password: await hashPassword(password), email, name,phone_number,gender,location_warehouse_id,role:2 },{ transaction: t })
-           
+            let newSuper = await db.admin.create({ id: uuidv4(), password: await hashPassword(password), email, name, phone_number, gender, location_warehouse_id, role: 2 }, { transaction: t })
+
             await t.commit()
             res.status(201).send({
                 message: 'Register Success',
@@ -40,25 +40,35 @@ module.exports = {
             await t.rollback()
             res.status(404).send({
                 message: error.message,
-                data:null
+                data: null
             })
         }
     },
     getAllAdmin: async (req, res) => {
-        let {page} = req.query
+        let { page,search } = req.query
         const page_size = 5;
         const offset = (page - 1) * page_size;
         const limit = page_size;
 
-        const total_count = await db.admin.count({where:{role:2}})
+        const total_count = await db.admin.count({ where: { role: 2
+            ,
+            [Op.or]: [
+                { email: { [Op.startsWith]: search} },
+                { name: { [Op.startsWith]: search} }
+            ]
+        } })
         const total_pages = Math.ceil(total_count / page_size)
 
         try {
             let allData = await db.admin.findAll({
                 where: {
-                    role: 2
+                    role: 2,
+                    [Op.or]: [
+                        { email: { [Op.startsWith]: search} },
+                        { name: { [Op.startsWith]: search} }
+                    ]
                 },
-                include: [{ model: db.location_warehouse }],offset,limit
+                include: [{ model: db.location_warehouse }], offset, limit
             })
             let loader = allData.map((item, index) => {
                 return (
@@ -67,7 +77,7 @@ module.exports = {
                         name: item.dataValues.name ? item.dataValues.name : null,
                         email: item.dataValues.email ? item.dataValues.email : null,
                         gender: item.dataValues.gender ? item.dataValues.gender : null,
-                        photo_profile:item.dataValues.photo_profile?item.dataValues.photo_profile:null,
+                        photo_profile: item.dataValues.photo_profile ? item.dataValues.photo_profile : null,
                         phone_number: item.dataValues.phone_number ? item.dataValues.phone_number : null,
                         role: item.dataValues.role ? item.dataValues.role : null,
                         location_warehouse_id: item.dataValues.location_warehouse_id ? item.dataValues.location_warehouse_id : null,
@@ -108,9 +118,9 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
             if (!dataAdmin) throw { message: 'Data Not Found!' }
-            let matchPassword = await hashMatch(password, dataAdmin.dataValues.password) 
-            
-            if(matchPassword === false) throw { message: 'Password wrong!' }
+            let matchPassword = await hashMatch(password, dataAdmin.dataValues.password)
+
+            if (matchPassword === false) throw { message: 'Password wrong!' }
 
             let token = await createToken({ id: dataAdmin.id })
 
@@ -124,9 +134,9 @@ module.exports = {
                     'role': `${dataAdmin.role}`,
                     'warehouse': dataAdmin.location_warehouse_id ?
                         dataAdmin.location_warehouse.city : null,
-                    'warehouse_id':dataAdmin.location_warehouse_id ?
-                    dataAdmin.location_warehouse_id:null,
-                    'photo_profile':dataAdmin.photo_profile?dataAdmin.photo_profile:null
+                    'warehouse_id': dataAdmin.location_warehouse_id ?
+                        dataAdmin.location_warehouse_id : null,
+                    'photo_profile': dataAdmin.photo_profile ? dataAdmin.photo_profile : null
                 }
             })
 
@@ -139,37 +149,37 @@ module.exports = {
         }
     },
     getAllUser: async (req, res) => {
-        let {page,code} = req.query
+        let { page, code } = req.query
         const page_size = 5;
         const offset = (page - 1) * page_size;
         const limit = page_size;
 
-        if(code==1){
-            
+        if (code == 1) {
+
             var total_count = await db.user.count()
             var total_pages = Math.ceil(total_count / page_size)
             var allUser = await db.user.findAll({
-              offset,limit
+                offset, limit
             })
 
-        }else if(code==2){
-           
-            var total_count = await db.admin.count({where:{role: 2}})
+        } else if (code == 2) {
+
+            var total_count = await db.admin.count({ where: { role: 2 } })
             var total_pages = Math.ceil(total_count / page_size)
-            var allAdmin = await db.admin.findAll({ 
+            var allAdmin = await db.admin.findAll({
                 where: {
                     role: 2
                 },
-                include:{model:db.location_warehouse}
+                include: { model: db.location_warehouse }
                 ,
-                offset,limit
+                offset, limit
             })
         }
         res.status(201).send({
             isError: false,
             message: 'get data success',
             data: {
-                response:allUser?allUser:allAdmin,
+                response: allUser ? allUser : allAdmin,
                 total_count,
                 total_pages
             }
@@ -280,7 +290,7 @@ module.exports = {
                 include: [{ model: db.location_warehouse }]
             })
         }
-    // console.log(getDataUser)
+        // console.log(getDataUser)
         res.status(201).send({
             isError: false,
             message: 'token still valid',
@@ -305,7 +315,7 @@ module.exports = {
             let getToken = req.dataToken
             // console.log(getToken)
 
-            let findAdmin = await db.admin.findOne({where:{id:getToken.id}})
+            let findAdmin = await db.admin.findOne({ where: { id: getToken.id } })
             console.log(findAdmin)
             fs.unlink(findAdmin.dataValues.photo_profile, function (err) {
                 try {

@@ -9,7 +9,7 @@ import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
 
 export default function AdminMutation(){
     let {user} = useContext(userData)
-        console.log(user)
+
 
     let onLocation = useRef()
     let onCategory = useRef()
@@ -62,10 +62,10 @@ export default function AdminMutation(){
     let getLocation = async()=>{
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
-            console.log(response.data.data);
+    
             setLocationName(response.data.data);
         } catch (error) {
-            console.log(error)
+       
         }
     }
 
@@ -73,17 +73,17 @@ export default function AdminMutation(){
     for(let i=0 ; i<locationName.length ; i++){
         ab.push(locationName[i].city)
     }
-    console.log(ab);
+
 
 
     let getDetailWarehouse = async()=>{
         try {
             setThisQty(0)
             let a = Number(onLocation.current.value)
-            console.log(a);
+    
             // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/detail`, {location_warehouse_id: a})
-            console.log(response);
+        
             setDetailWarehouse(response.data.data)
             getDetailCategory()
         } catch (error) {
@@ -95,7 +95,7 @@ export default function AdminMutation(){
         try {
             if(onLocation.current.value!=0){
                 let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/category`)
-                console.log(response);
+          
                 setDetailCategory(response.data.data)
                 // getName()
             }
@@ -128,16 +128,13 @@ export default function AdminMutation(){
             let a = Number(onLocation.current.value)
             let b = Number(onCategory.current.value)
             let c = Number(onName.current.value)
-            console.log(a);
-            console.log(b)
-            console.log(c)
+        
             // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/spec`, {location_warehouse_id: a, category_id: b, product_id: c})
-            console.log(response.data.data);
             setDetailSpec(response.data.data)
             // getDetailLast()
         } catch (error) {
-            console.log(error);
+           
         }
     }
 
