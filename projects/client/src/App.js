@@ -210,18 +210,18 @@ function App() {
 
   //   }
   // }
-  let notRegister = async () => {
+  let notRegister = () => {
     try {
 
-      let response = await axios.get('http://localhost:8000/users/keep-login', {
-        headers: {
-          token: localStorage.getItem('token')
-        }
-      })
-      // console.log(response)
-      setVerifyStatus(response.data.data.status);
+      // let response = await axios.get('http://localhost:8000/users/keep-login', {
+      //   headers: {
+      //     token: localStorage.getItem('token')
+      //   }
+      // })
+      // // console.log(response)
+      // setVerifyStatus(response.data.data.status);
 
-      if ((localStorage.getItem("token") == null) || (response.data.data.status === 'Unverified')) {
+      if ((localStorage.getItem("token") == null)) {
         setTimeout(() => {
           toast.error('Login or Regist First', {
             duration: 3000

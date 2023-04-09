@@ -52,9 +52,9 @@ export default function Home() {
                     style={{ width: "1300px" }}
                 ></lottie-player>
             </div> */}
-            <div>
+            {/* <div>
                 <Discount />
-            </div>
+            </div> */}
         </>
     )
 }
