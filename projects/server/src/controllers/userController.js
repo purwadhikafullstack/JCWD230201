@@ -51,7 +51,7 @@ module.exports = {
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
             // console.log(resCreateUsers)
 
-            const template = await fs.readFile(path.resolve(__dirname, './template/confirmation.html'), 'utf-8')
+            const template = await fs.readFile(path.resolve(__dirname, '../template/confirmation.html'), 'utf-8')
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `https://jcwd230201.purwadhikabootcamp.com/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
