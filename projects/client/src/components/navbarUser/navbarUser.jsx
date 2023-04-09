@@ -117,18 +117,13 @@ export default function NavbarUser(props) {
                         )
                     })}
                     <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
-                        <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
+                        <div className="px-2 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
                             Event & Promo
                         </div>
                     </button>
                     <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
                         <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
                             Business
-                        </div>
-                    </button>
-                    <button className="hidden lg:block lg:px-3 hover:bg-neutral-500">
-                        <div className="px-4 py-7 text-white  hover:text-neutral-900 cursor-pointer tracking-wide">
-                            Services
                         </div>
                     </button>
                 </div>

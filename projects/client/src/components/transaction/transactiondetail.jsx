@@ -9,7 +9,6 @@ export default function TransactionDetail() {
     
     const [maxpayment, setMaxpayment] = useState(false), [pop, setPop] = useState(false), [disable, setDisable] = useState(false)
     let [submit, setSubmit] = useState(1)
-    console.log(transaction.transaction_details)
 
     let total_price = 0
     let total_weight = 0

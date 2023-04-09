@@ -30,7 +30,6 @@ export default function Dashboard() {
     let getData = async (warehouse_id) => {
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dash/getDash?warehouse_id=${warehouse_id}`)
-            console.log(response)
             let duit = 0
             response.data.data.balances.forEach((item, index) => {
                 item.transaction_details.forEach((item, index) => {

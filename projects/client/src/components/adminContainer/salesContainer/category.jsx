@@ -4,7 +4,6 @@ import Loading from "../../loading/loading"
 
 
 export default function Category(data) {
-    console.log(data.data)
     let [tugel, setTugel] = useState([false, false, false, false])
 
     let click = (index) => {

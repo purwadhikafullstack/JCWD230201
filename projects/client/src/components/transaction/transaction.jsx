@@ -144,9 +144,7 @@ export default function Transaction() {
                 <div className='text-gray-500 font-semibold mb-6'>
                     {listData.total_count} transactions found
                 </div>
-                <div>
-
-                </div>
+    
                 <div>
                     <div className='flex justify-between gap-3 '>
                         <div className='flex gap-5 items-center'>
@@ -448,6 +446,5 @@ export default function Transaction() {
                 </div>
                 <Toaster />
             </div>
-
     )
 }

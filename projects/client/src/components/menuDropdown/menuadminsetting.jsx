@@ -13,8 +13,8 @@ export default function MenuAdminSetting(data) {
     disable: false,
     update: false,
     password: false,
-    pop:false,
-    choice:1
+    pop: false,
+    choice: 1
   })
 
   let [profile, setProfile] = useState({
@@ -34,15 +34,28 @@ export default function MenuAdminSetting(data) {
 
   let submit = async () => {
     try {
+      if (isNaN(profile.phone_number) && profile.phone_number.length !=0) throw { message: 'Please input correct phone_number' }
+
+      if (profile.phone_number.length < 8 || profile.phone_number.length > 13 && profile.phone_number.length !=0) throw { message: 'Please input valid phone number' }
+
+      if (profile.password.length < 8 && profile.password.length !=0) throw { message: 'Password at least has 8 characters' }
+
+      let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+      if (!character.test(profile.password) && profile.password.length !=0) throw { message: 'Password must contains number' }
+
       let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/update`, profile)
       toast.success(response.data.message)
-      setVisible({ ...visible, pop:false,disable:true })
+      setVisible({ ...visible, pop: false, disable: true })
       setTimeout(() => {
         window.location.reload(false)
       }, 2000)
     } catch (error) {
-      setVisible({ ...visible, pop:false,disable:false })
-      toast.error(error.response.data.message)
+      setVisible({ ...visible, pop: false, disable: false })
+      if (!error.response) {
+        toast.error(error.message)
+      } else {
+        toast.error(error.response.data.message)
+      }
     }
 
   }
@@ -50,7 +63,7 @@ export default function MenuAdminSetting(data) {
   let deleteAdmin = async () => {
     let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/delete`, { id: profile.id })
     toast.success(response.data.message)
-    setVisible({ ...visible, pop:false })
+    setVisible({ ...visible, pop: false })
     setTimeout(() => {
       toast('Loading..')
       window.location.reload(false)
@@ -121,8 +134,8 @@ export default function MenuAdminSetting(data) {
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <button 
-                  onClick={()=>setVisible({...visible,pop:true, choice:2})}
+                  <button
+                    onClick={() => setVisible({ ...visible, pop: true, choice: 2 })}
                     className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
                       } group flex w-full items-center rounded-md px-2 py-2 text-sm `}
                   >
@@ -166,9 +179,13 @@ export default function MenuAdminSetting(data) {
               </div>
               <input onChange={(e) => setProfile({ ...profile, name: e.target.value })} className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black'
                 id="name"
+                maxlength="20"
                 placeholder={data.data.name}
                 required={true}
               />
+              <div className={` text-sm text-gray-500 ml-1`}>
+                cannot be more than 20 character
+              </div>
             </div>
             <div>
               <div className="mb-2 block">
@@ -209,6 +226,8 @@ export default function MenuAdminSetting(data) {
                   className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' id="phone_number"
                   onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
                   placeholder={data.data.phone_number ? data.data.phone_number : 'Empty..'}
+                  type="tel" name="phone" pattern="+62[0-9]{11}"
+                  maxLength={14}
                   required={true}
                 />
               </div>
@@ -226,7 +245,7 @@ export default function MenuAdminSetting(data) {
                 id="warehouse"
                 required={true}
               >
-                <option value={data.data?.location_warehouse}>{data.data.location_warehouse? data.data.location_warehouse:'Please select warehouse'}</option>
+                <option value={data.data?.location_warehouse}>{data.data.location_warehouse ? data.data.location_warehouse : 'Please select warehouse'}</option>
                 {
                   dataEmptyWH.map((item, index) => <option value={item.id}>{item.city}</option>)
                 }
@@ -246,9 +265,14 @@ export default function MenuAdminSetting(data) {
                     <div className="flex items-center relative">
                       <input
                         onChange={(e) => setProfile({ ...profile, password: e.target.value })}
+                        maxLength={15}
                         type={visible.password ? 'text' : 'password'} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full" />
                       <button onClick={() => setVisible({ ...visible, password: visible.password ? false : true })} className="absolute right-3 text-xl" >{visible.password ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
                     </div>
+                  </div>
+                  <div className='flex flex-col gap-1 text-sm ml-1 text-red-500'>
+                    <p className={`${profile.password.length>8 || profile.password.length==0?'hidden':''}`}>password at least has 8 character</p>
+                    <p className={`${/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/.test(profile.password) || profile.password.length == 0?'hidden':''}`}>password must contain number</p>
                   </div>
                 </div>
 
@@ -256,9 +280,9 @@ export default function MenuAdminSetting(data) {
                 null}
 
             <Button disabled={visible.disable} onClick={() => {
-              setVisible({ ...visible, pop:true, choice:1})
+              setVisible({ ...visible, pop: true, choice: 1 })
             }} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-full'>
-             Submit
+              Submit
             </Button>
 
           </div>
@@ -267,19 +291,19 @@ export default function MenuAdminSetting(data) {
 
       <Modal
 
-show={visible.pop}
-size="md"
-popup={true}
-onClose={() => setVisible({ ...visible, pop: false })}
->
-<Modal.Header />
+        show={visible.pop}
+        size="md"
+        popup={true}
+        onClose={() => setVisible({ ...visible, pop: false })}
+      >
+        <Modal.Header />
 
 
-<Modal.Body>
-    <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-        <div className="flex flex-col items-center justify-center">
+        <Modal.Body>
+          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="flex flex-col items-center justify-center">
 
-            <lottie-player
+              <lottie-player
                 autoplay
                 loop
                 mode="normal"
@@ -288,30 +312,30 @@ onClose={() => setVisible({ ...visible, pop: false })}
 
 
 
-            <h3 className="mb-5 mt-4 text-lg font-normal text-gray-500 dark:text-gray-400">
-              {
-                visible.choice==1?'Are you sure to update this admin?' : 'Are you sure want to delete this admin?'
-              }
-            </h3>
-            <div className='flex gap-3'>
+              <h3 className="mb-5 mt-4 text-lg font-normal text-gray-500 dark:text-gray-400">
+                {
+                  visible.choice == 1 ? 'Are you sure to update this admin?' : 'Are you sure want to delete this admin?'
+                }
+              </h3>
+              <div className='flex gap-3'>
                 <button
-                    disabled={visible.disable}
-                    onClick={() => {
-                      setVisible({ ...visible, disable: true })
-                      visible.choice==1?submit():deleteAdmin(data.data)
-                    }} data-modal-hide="popup-modal" type="button" className={`text-white ${visible.choice==1?'bg-blue-500 hover:bg-blue-600':'bg-red-500 hover:bg-red-600'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
-                    {
-                    visible.choice==1?'Yes, update' : 'Yes, delete'
-                    }
+                  disabled={visible.disable}
+                  onClick={() => {
+                    setVisible({ ...visible, disable: true })
+                    visible.choice == 1 ? submit() : deleteAdmin(data.data)
+                  }} data-modal-hide="popup-modal" type="button" className={`text-white ${visible.choice == 1 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-red-500 hover:bg-red-600'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
+                  {
+                    visible.choice == 1 ? 'Yes, update' : 'Yes, delete'
+                  }
                 </button>
                 <button disabled={visible.disable} onClick={() => setVisible({ ...visible, pop: false })} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
+              </div>
+
             </div>
+          </div>
+        </Modal.Body>
 
-        </div>
-    </div>
-</Modal.Body>
-
-</Modal>
+      </Modal>
     </div>
   )
 }
