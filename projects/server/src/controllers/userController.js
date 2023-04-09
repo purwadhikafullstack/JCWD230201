@@ -288,7 +288,7 @@ module.exports = {
             let getToken = req.dataToken
             console.log(req.files)
 
-            let profilePicture = await users.update({ photo_profile: req.files.images[0].path }, {
+            let profilePicture = await users.update({ photo_profile: `/Public/images/${req.files.images[0].filename}` }, {
                 where: {
                     id: getToken.id
                 }
