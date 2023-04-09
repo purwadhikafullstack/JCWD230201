@@ -37,6 +37,7 @@ module.exports = {
     },
     getProduct: async (req, res) => {
         try {
+            let { page } = req.query
             let { category_id } = req.params
             // console.log(name);
             let data = await db.product.findAll({
@@ -50,10 +51,31 @@ module.exports = {
                 order:[[{model: db.product_detail},'price', 'ASC']]
 
             })
+            var limit = 8
+            var pages = Math.ceil(data.length / limit)
+            var offset = limit * (Number(page) - 1)
+
+            let data2 = await db.product.findAll({
+                where: {
+                    category_id
+                },
+                include:[{
+                        model: db.product_detail
+                    },
+                {model: db.product_image}],
+                order:[[{model: db.product_detail},'price', 'ASC']],
+                offset,
+                limit
+
+            })
+
             res.status(201).send({
                 isError: false,
                 message: "Get Product Success",
-                data
+                data: data2,
+                total: data.length,
+                page: Number(page),
+                pages: pages
             })
         } catch (error) {
             res.status(401).send({
@@ -255,8 +277,9 @@ module.exports = {
             // console.log(find.dataValues.id, "INI ID PRODUCT")
 
             // let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
-            let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[2], product_id: find.dataValues.id })
-            // console.log(req.files.images[0].path.split("/")[2])
+            let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[req.files.images[0].path.split("/").length-1], product_id: find.dataValues.id })
+            // console.log(req.files.images[0].path.split("/")[req.files.images[0].path.split("/").length-1])
+            // console.log(req.files.images[0].path)
             await t.commit()
             res.status(201).send({
                 isError: false,
@@ -523,7 +546,7 @@ module.exports = {
         try {
             let {category_id} = req.params
             let {color} = req.body
-            let { sort } = req.query;
+            let { sort, page } = req.query;
             if (sort === "az") {
             try {
                 let data = await db.product.findAll({
@@ -536,10 +559,30 @@ module.exports = {
                     },
                 {model: db.product_image}]
                 });
+                // var limit = 4
+                // var pages = Math.ceil(data.length / limit)
+                // var offset = limit * (Number(page) - 1)
+
+                // let data2 = await db.product.findAll({
+                //     where:{
+                //         category_id
+                //     }, order: [
+                //         ['name', 'ASC'],
+                //     ], include:[{
+                //         model: db.product_detail
+                //     },
+                // {model: db.product_image}],
+                // offset,
+                // limit
+                // });
+
                 return res.status(201).send({
                 isError: false,
                 message: "Sort A-Z Success",
                 data,
+                // total: data.length,
+                // page: Number(page),
+                // pages: pages
                 });
             } catch (error) {
                 return res.status(400).send({
@@ -559,10 +602,30 @@ module.exports = {
                         model: db.product_detail
                     },
                 {model: db.product_image}]});
+
+                // var limit = 4
+                // var pages = Math.ceil(data.length / limit)
+                // var offset = limit * (Number(page) - 1)
+
+                // let data2 = await db.product.findAll({
+                //     where:{
+                //         category_id
+                //     }, order: [
+                //         ['name', 'DESC'],
+                //     ], include:[{
+                //         model: db.product_detail
+                //     },
+                //     {model: db.product_image}],
+                //     offset,
+                //     limit
+                // });
                 return res.status(201).send({
                 isError: false,
                 message: "Sort Z-A Success",
                 data,
+                // total: data.length,
+                // page: Number(page),
+                // pages: pages
                 });
             } catch (error) {
                 return res.status(400).send({
@@ -574,28 +637,48 @@ module.exports = {
         }else if(sort === "lohi"){
             let data = await db.product_detail.findAll({
                 include:[{
-                        model: db.product,where: {
-                            category_id
-                        }, include:{
-                            model: db.product_image
-                        }
-                    },],
-                order:[['price', 'ASC']]
+                    model: db.product,where: {
+                        category_id
+                    }, include:{
+                        model: db.product_image
+                    }
+                },],
             })
+            
             let arr = []
-            let arr2 = []
+            var arr2 = []
                 for (let i = 0; i < data.length; i++) {
                     if (!arr.includes(data[i].product_id)) {
                         arr2.push(data[i])
                         arr.push(data[i].product_id)
                     }
                 }
-            // console.log("BISMILLAH",arr)
+
+                // var limit = 4
+                // var pages = Math.ceil(arr2.length / limit)
+                // var offset = limit * (Number(page) - 1)
+
+                // // let data2 = ({include:{arr2},offset, limit})
+
+                // let data2 = ({
+                //     include:[{
+                //         model: arr2
+                //     }],
+                //     offset,
+                //     limit
+                // })
+            
+
+            // // console.log("BISMILLAH",arr2)
+            // console.log(arr2.length);
             // console.log("HAAAIIII",data[1])
             res.status(201).send({
                 isError: false,
                 message: "Get Product Success",
-                data: arr2
+                data: arr2,
+                // total: data.length,
+                // page: Number(page),
+                // pages: pages
             })
         }else if(sort === "hilo"){
             let data = await db.product_detail.findAll({
@@ -608,6 +691,24 @@ module.exports = {
                     },],
                 order:[['price', 'DESC']]
             })
+
+            // var limit = 4
+            // var pages = Math.ceil(data.length / limit)
+            // var offset = limit * (Number(page) - 1)
+
+            // let data2 = await db.product_detail.findAll({
+            //     include:[{
+            //             model: db.product,where: {
+            //                 category_id
+            //             }, include:{
+            //                 model: db.product_image
+            //             }
+            //         },],
+            //     order:[['price', 'DESC']],
+            //     offset,
+            //     limit
+            // })
+
             let arr = []
             let arr2 = []
                 for (let i = 0; i < data.length; i++) {
@@ -621,7 +722,10 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: "Get Product Success",
-                data: arr2
+                data: arr2,
+                // total: data.length,
+                // page: Number(page),
+                // pages: pages
             })
         }else if(sort === color){
             let data = await db.product_detail.findAll({
@@ -636,6 +740,25 @@ module.exports = {
                     color
                 }
             })
+
+            // var limit = 4
+            // var pages = Math.ceil(data.length / limit)
+            // var offset = limit * (Number(page) - 1)
+
+            // let data2 = await db.product_detail.findAll({
+            //     include:[{
+            //             model: db.product,where: {
+            //                 category_id
+            //             }, include:{
+            //                 model: db.product_image
+            //             }
+            //         },],
+            //     where:{
+            //         color
+            //     },
+            //     offset,
+            //     limit
+            // })
             // let arr = []
             // let arr2 = []
             //     for (let i = 0; i < data.length; i++) {
@@ -649,7 +772,10 @@ module.exports = {
             res.status(201).send({
                 isError: false,
                 message: "Get Product Success",
-                data
+                data,
+                // total: data.length,
+                // page: Number(page),
+                // pages: pages
             })
         }
         } catch (error) {

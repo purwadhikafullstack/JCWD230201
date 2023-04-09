@@ -68,6 +68,9 @@ function App() {
   const [totalPrice, setTotalPrice] = useState(0)
   const [loading, setLoading] = useState(false)
   const [detailQty, setDetailQty] = useState(0)
+  const [showPage, setShowPage] = useState(1)
+  const [showPages, setShowPages] = useState(1)
+  const [cek, setCek] = useState(undefined)
 
   const [loadingIndex, setLoadingIndex] = useState(0)
 
@@ -76,6 +79,14 @@ function App() {
 
   let userValue = useMemo(() => ({ user, setUser }), [user, setUser])
   let transactionDetail = useMemo(() => ({ transaction, setTransaction }), [transaction, setTransaction])
+
+  let sumQty = async()=>{
+    try {
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/get-count/a`)
+    } catch (error) {
+        
+    }
+  }
 
   let keepLogin = async () => {
     let response = await CheckLogin()
@@ -96,6 +107,9 @@ function App() {
       setDetailQty(response.data.data2);
     } catch (error) {
     }
+    finally{
+      sumQty()
+    }
   }
 
   let getColor = async (id) => {
@@ -105,12 +119,24 @@ function App() {
     } catch (error) {
 
     }
+    finally{
+      sumQty()
+    }
   }
 
-  let getProduct = async (id, ada) => {
+  let getProduct = async (id, ada, _page, btn) => {
+    console.log(ada);
+    setCek(ada);
     try {
         if(ada==undefined){
-        let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}`)
+          if(btn==="next"){
+            _page=Number(_page)+1
+        }else if(btn==="prev"){
+            _page=Number(_page)-1
+        }
+        console.log(true);
+        let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}?page=${_page?_page:showPages}`)
+        setShowPage({page: data.page, pages: data.pages, total: data.total})
         setShow(data.data)
         setNyow();
         var arrColor = []
@@ -125,7 +151,14 @@ function App() {
         setArrColor(arrColor2);
         // getColor()
     }else if(ada === "az"){
+    //   console.log("ADA AZ");
+    //   if(btn==="next"){
+    //     _page=Number(_page)+1
+    // }else if(btn==="prev"){
+    //     _page=Number(_page)-1
+    // }
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+        // setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
         setShow(response.data.data);
         setNyow();
         var arrColor = []
@@ -139,7 +172,14 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "za"){
+    //   console.log("ADA ZA");
+    //   if(btn==="next"){
+    //     _page=Number(_page)+1
+    // }else if(btn==="prev"){
+    //     _page=Number(_page)-1
+    // }
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+        // setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
         setShow(response.data.data);
         setNyow();
         var arrColor = []
@@ -153,7 +193,13 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "lohi"){
+    //   if(btn==="next"){
+    //     _page=Number(_page)+1
+    // }else if(btn==="prev"){
+    //     _page=Number(_page)-1
+    // }
       let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+      // setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
       setShow(response.data.data);
       setNyow(response.data.data);
       var arrColor = []
@@ -165,7 +211,13 @@ function App() {
         });
         setArrColor(arrColor2);
     }else if(ada === "hilo"){
+    //   if(btn==="next"){
+    //     _page=Number(_page)+1
+    // }else if(btn==="prev"){
+    //     _page=Number(_page)-1
+    // }
       let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/sort-name/${id}?sort=${ada}`)
+      // setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
       setShow(response.data.data);
       setNyow(response.data.data);
       var arrColor = []
@@ -177,7 +229,13 @@ function App() {
         });
         setArrColor(arrColor2);
     }else{
+    //   if(btn==="next"){
+    //     _page=Number(_page)+1
+    // }else if(btn==="prev"){
+    //     _page=Number(_page)-1
+    // }
       let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/sort-product/${id}`,{color: ada})
+      // setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
       setShow(response.data.data);
       setNyow(response.data.data);
       var arrColor = []
@@ -191,6 +249,9 @@ function App() {
       }
 
     } catch (error) {
+    }
+    finally{
+      sumQty()
     }
   }
   // let loginKeep = async () => {
@@ -272,7 +333,7 @@ function App() {
                   <Route path='log-product' element={<LogProduct />} />
                   <Route path='warehouse' element={<Warehouse />} />
                   <Route path='products' element={<AdminCategoryProducts />} >
-                    <Route path=':id' element={<AdminProducts />} />
+                    <Route path=':id' element={<AdminProducts func={{sumQty}} />} />
                   </Route>
                   <Route path='products-location' element={<AdminProductLocation />} >
                     <Route path=':id' element={<AdminProductListLocation />} />
@@ -288,7 +349,7 @@ function App() {
           </>
           :
           <>
-            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart, getColor }} data={{ show, itemCart, adaSort }} />
+            <NavbarUser func={{ getProductDetail, getProduct, notRegister, getCart, getColor }} data={{ show, itemCart, adaSort, showPage }} />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login data={{ setConditionPage, conditionPage }} />} />
@@ -306,7 +367,7 @@ function App() {
               <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, setItemCart, totalPrice, loading, setLoading, setLoadingIndex, loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
               <Route path='*' element={<Error />} />
-              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort }} func={{ getProduct, getColor }} />} />
+              <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort, showPage, cek }} func={{ getProduct, getColor }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty, verifyStatus }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />
               <Route path='/shipping/success' element={<ShippingSuccess func={{ getCart }} />} />
