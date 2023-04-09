@@ -197,9 +197,9 @@ module.exports = {
 
             if (!data) throw { message: 'Email not found' }
 
-            const template = await fs.readFile('./template/resetpassword.html', 'utf-8')
+            const template = await fs.readFile(path.resolve(__dirname, '../template/resetpassword.html'), 'utf-8')
             const templateToCompile = await handlebars.compile(template)
-            const newTemplate = templateToCompile({ name: data.name, email, url: `http://localhost:3000/reset-password/${data.id}` })
+            const newTemplate = templateToCompile({ name: data.name, email, url: `https://jcwd230201.purwadhikabootcamp.com/reset-password/${data.id}` })
             await transporter.sendMail({
                 from: 'iFhone',
                 to: email,
