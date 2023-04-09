@@ -1263,7 +1263,7 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let { id } = req.body
-            let paymentProof = await db.transaction.update({ upload_payment: req.files.images[0].path, order_status_id: 2 }, {
+            let paymentProof = await db.transaction.update({ upload_payment: `Public/images/${req.files.images[0].filename}`, order_status_id: 2 }, {
                 where: {
                     id: id
                 }
