@@ -1,13 +1,14 @@
 //import sequelize 
-const { sequelize } = require('./../models')
-const { Op } = require('sequelize')
+const { sequelize } = require('./../models');
+const { Op } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
+const path = require("path");
 
-const axios = require('axios')
+const axios = require('axios');
 
 //import models
-const db = require('./../models/index')
-const users = db.user
+const db = require('./../models/index');
+const users = db.user;
 
 
 //import hashing
@@ -17,10 +18,10 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 const { createToken } = require('../lib/jwt');
 
 // Import Delete Files
-const deleteFiles = require('./../helpers/deleteFiles')
+const deleteFiles = require('./../helpers/deleteFiles');
 
 // Import transporter
-const transporter = require('./../helpers/transporter')
+const transporter = require('./../helpers/transporter');
 
 
 
