@@ -12,7 +12,7 @@ import { MdOutlineCopyright } from 'react-icons/md'
 export default function Footer() {
     return (
         <>
-            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row px-5 md:px-10 lg:px-20 py-6 mt-10'>
+            <div className='bg-neutral-800 flex justify-center flex-col md:flex-row px-5 md:px-10 lg:px-20 py-6 mt-5'>
                 <div className='flex items-center mr-5 my-3'>
                     <img src={FooterWarranty} className="mr-3 w-9 md:w-10 lg:w-12"/>
                     <div className='text-white text-sm lg:text-base'>
