@@ -55,7 +55,7 @@ module.exports = {
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `http://localhost:3000/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
-                from: 'iFrit',
+                from: 'iFhone',
                 to: email,
                 subject: 'Account Activation',
                 html: newTemplate
@@ -194,13 +194,13 @@ module.exports = {
                 }
             })
 
-            if (!data) throw { message: 'Email Not Found!' }
+            if (!data) throw { message: 'Email not found' }
 
             const template = await fs.readFile('./template/resetpassword.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name: data.name, email, url: `http://localhost:3000/reset-password/${data.id}` })
             await transporter.sendMail({
-                from: 'iFrit',
+                from: 'iFhone',
                 to: email,
                 subject: 'Reset Password',
                 html: newTemplate
@@ -417,7 +417,7 @@ module.exports = {
 
         } catch (error) {
             // console.log(error)
-            // await t.rollback()
+            await t.rollback()
             res.status(404).send({
                 isError: true,
                 message: error.message,

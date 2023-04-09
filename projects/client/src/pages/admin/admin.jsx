@@ -21,8 +21,8 @@ export default function Admin() {
     const { user, setUser } = useContext(userData)
     const { transaction } = useContext(TransactionData)
 
-    let [profile, setProfile] = useState([]), [message, setMessage] = useState(''), [modal, setModal] = useState(false)
-
+    let [profile, setProfile] = useState([]), [message, setMessage] = useState(''), [modal, setModal] = useState(false), [loading, setLoading] = useState(false)
+    let [picture, setPicture] = useState(false)
     let navigate = useNavigate()
     let [tugel, setTugel] = useState(false)
 
@@ -85,6 +85,7 @@ export default function Admin() {
             if (files.length !== 0) {
                 files.forEach((value) => {
                     if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
+                    else { setMessage('') }
                 })
             }
 
@@ -122,7 +123,7 @@ export default function Admin() {
                                     </button>
                                     <div className='relative group inline-block'>
                                         <button onBlur={() => setTugel(false)} onClick={() => setTugel(!tugel)} className='flex items-center '>
-                                            <img src={user.photo_profile ? `http://localhost:8000/${user.photo_profile}` : initialPP} className="w-10 h-10 object-cover rounded-full" />
+                                            <img src={user.photo_profile ? `${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile}` : initialPP} className="w-10 h-10 object-cover rounded-full" />
                                             <RiArrowDropDownLine color='gray' size={'28px'} />
                                         </button>
                                         <div className={`absolute ${tugel ? 'block' : 'hidden'} hover:block group-hover:block right-0 pt-1 z-10 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`} role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabIndex="-1">
@@ -130,37 +131,55 @@ export default function Admin() {
                                                 <div className='px-4 py-2 font-semibold'>
                                                     {user.username}
                                                 </div>
-                                                <a href="#" className="text-gray-700 block px-4 py-2 hover:bg-violet-700 hover:text-white  text-sm" role="menuitem" tabIndex="-1" id="menu-item-0">Account settings</a>
-                                                <button onClick={() => logout()} className="text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm" role="menuitem" tabIndex="-1" id="menu-item-3">Sign out</button>
-                                            
-                                                    <button onClick={() => setModal(!modal)} className=" text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm">
-                                                        Change Profile Picture
-                                                    </button>
-                                                    <Modal
-                                                        show={modal}
-                                                        size="md"
-                                                        popup={true}
-                                                        onClose={() => setModal(!modal)}
-                                                    >
-                                                        <Modal.Header />
-                                                        <Modal.Body>
-                                                            <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 text-center">
-                                                                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-                                                                    Change Profile Picture
-                                                                </h3>
-                                                                <input type="file" accept="image/*" onChange={(e) => onImageValidation(e)} className="w-full pr-3 border rounded-sm" />
-                                                                <div>
-                                                                    {message}
-                                                                </div>
-                                                                <div className="w-full justify-center flex">
-                                                                    <Button onClick={() => updateProfilePicture()} className="active:ring-0 active:ring-transparent bg-neutral-900 hover:bg-neutral-700 rounded-sm">
-                                                                        Submit
-                                                                    </Button>
-                                                                </div>
+                                                <button className="text-gray-700 w-full text-start block px-4 py-2 hover:bg-violet-700 hover:text-white  text-sm" onClick={() => setPicture(!picture)}>
+                                                  See Profile
+                                                </button>
+                                                <button onClick={() => setModal(!modal)} className=" text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm">
+                                                    Change Profile Picture
+                                                </button>
+                                                <button onClick={() => logout()} className="text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm" role="menuitem" tabIndex="-1" id="menu-item-3">Sign out</button> 
+                                                <Modal
+                                                    show={modal}
+                                                    size="md"
+                                                    popup={true}
+                                                    onClose={() => setModal(!modal)}
+                                                >
+                                                    <Modal.Header />
+                                                    <Modal.Body>
+                                                        <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8 text-center">
+                                                            <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                                                                Change Profile Picture
+                                                            </h3>
+                                                            <input type="file" accept="image/*" onChange={(e) => onImageValidation(e)} className="w-full pr-3 border rounded-sm" />
+                                                            <div className='text-red-500'>
+                                                                {message}
                                                             </div>
-                                                        </Modal.Body>
-                                                    </Modal>
-                                              
+                                                            <div className="w-full justify-center flex">
+                                                                <Button
+                                                                    disabled={message.length > 0 || loading == true}
+                                                                    onClick={() => {
+                                                                        setLoading(true)
+                                                                        updateProfilePicture()
+                                                                    }} className="active:ring-0 active:ring-transparent bg-neutral-900 hover:bg-neutral-700 rounded-sm">
+                                                                    Submit
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </Modal.Body>
+                                                </Modal>
+
+                                                <Modal
+                                                    show={picture}
+                                                    size="md"
+                                                    popup={true}
+                                                    onClose={() => setPicture(!picture)}
+                                                >
+                                                    <Modal.Header />
+                                                    <Modal.Body className='flex items-center justify-center'>
+                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile}`} alt="" />
+                                                    </Modal.Body>
+                                                </Modal>
+
                                             </div>
                                         </div>
                                     </div>

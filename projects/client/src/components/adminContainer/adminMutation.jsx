@@ -6,11 +6,9 @@ import { Modal, Button, Label, Pagination } from 'flowbite-react'
 import toast,{ Toaster } from "react-hot-toast";
 import { MdOutlineDescription } from 'react-icons/md'
 import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
-import noData from '../../Assets/data_not_found2.jpg'
 
 export default function AdminMutation(){
     let {user} = useContext(userData)
-        // console.log(user)
 
     let onLocation = useRef()
     let onCategory = useRef()
@@ -66,10 +64,8 @@ export default function AdminMutation(){
     let getLocation = async()=>{
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
-            // console.log(response.data.data);
             setLocationName(response.data.data);
         } catch (error) {
-            // console.log(error)
         }
     }
 
@@ -77,17 +73,12 @@ export default function AdminMutation(){
     for(let i=0 ; i<locationName.length ; i++){
         ab.push(locationName[i].city)
     }
-    // console.log(ab);
-
 
     let getDetailWarehouse = async()=>{
         try {
             setThisQty(0)
             let a = Number(onLocation.current.value)
-            // console.log(a);
-            // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/detail`, {location_warehouse_id: a})
-            // console.log(response);
             setDetailWarehouse(response.data.data)
             getDetailCategory()
         } catch (error) {
@@ -99,7 +90,6 @@ export default function AdminMutation(){
         try {
             if(onLocation.current.value!=0){
                 let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/category`)
-                // console.log(response);
                 setDetailCategory(response.data.data)
                 // getName()
             }
@@ -131,17 +121,12 @@ export default function AdminMutation(){
             setThisQty(0)
             let a = Number(onLocation.current.value)
             let b = Number(onCategory.current.value)
-            let c = Number(onName.current.value)
-            // console.log(a);
-            // console.log(b)
-            // console.log(c)
+            let c = Number(onName.current.value)  
             // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/spec`, {location_warehouse_id: a, category_id: b, product_id: c})
-            // console.log(response.data.data);
             setDetailSpec(response.data.data)
             // getDetailLast()
         } catch (error) {
-            // console.log(error);
         }
     }
 
@@ -688,12 +673,18 @@ export default function AdminMutation(){
                                 )
                             })
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center'>
-                                <img src={noData} width={'300px'} alt="" />
-                                <div className='text-xl font-semibold'>
-                                    Sorry Data Not Found
-                                </div>
-                            </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                            style={{ width: "200px" }}    >
+                                        </lottie-player>
+                                        <div className='text-2xl'>
+                                            Data not found
+                                        </div>
+                                    </div>
                         }
                     </div>
                 : null}
@@ -904,12 +895,18 @@ export default function AdminMutation(){
                                 )
                             })
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center'>
-                                <img src={noData} width={'300px'} alt="" />
-                                <div className='text-xl font-semibold'>
-                                    Sorry Data Not Found
-                                </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                            <lottie-player
+                                autoplay
+                                loop
+                                mode="normal"
+                                src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                style={{ width: "200px" }}    >
+                            </lottie-player>
+                            <div className='text-2xl'>
+                                Data not found
                             </div>
+                        </div>
                         }
                     </div>
                 : null}

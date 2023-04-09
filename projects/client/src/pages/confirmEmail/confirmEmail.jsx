@@ -19,19 +19,19 @@ export default function ConfirmEmail(props) {
 
             if (!inputEmail) throw { message: 'Incomplete input' }
 
-            if (!inputEmail.includes('@') && !inputEmail.includes('.com')) throw { message: 'Please input a valid email' }
+            if (!inputEmail.includes('@') || !inputEmail.includes('.com')) throw { message: 'Please input a valid email' }
 
             setDisabledButton(true)
 
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/confirm-email`, { email: inputEmail })
 
             toast.success(`Please check your email`)
+            
             setDisabledButton(false)
-
             email.current.value = ''
-
+            
             props.data.setChance(true)
-
+            
         } catch (error) {
             // console.log(error)
             if (!error.response) {
@@ -39,6 +39,9 @@ export default function ConfirmEmail(props) {
             } else {
                 toast.error(error.response.data.message)
             }
+        } finally{
+            setDisabledButton(false)
+            
         }
     }
 
@@ -70,7 +73,7 @@ export default function ConfirmEmail(props) {
                                 <Spinner
                                     aria-label="Medium sized spinner example"
                                     size="md"
-                                />Loading . . .
+                                />
                             </>
                             :
                             'Submit'}

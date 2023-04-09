@@ -1,7 +1,6 @@
 import { TbBuildingWarehouse, TbReportAnalytics } from 'react-icons/tb'
 import { MdOutlineSpaceDashboard } from 'react-icons/md'
-import { BsMailbox } from 'react-icons/bs'
-import { BiCoinStack } from 'react-icons/bi'
+import { BsMailbox,BsCurrencyDollar} from 'react-icons/bs'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { userData } from "../../data/userData";
@@ -24,12 +23,8 @@ export default function SidebarAdmin() {
     return (
         <div className="fixed px-5 py-5 w-60 h-screen text-white bg-black z-20">
             <div className='flex flex-col h-full'>
-                <button onClick={() => navigate('/')} className="w-12 ml-3 mb-10 object-contain relative flex items-end">
-                    <div className="absolute text-3xl">I</div>
-                    <img src={require('../../Assets/logo black.jpg')} alt="" />
-                    <div className="absolute ml-6 text-3xl">
-                        rit
-                    </div>
+                <button onClick={() => navigate('/')} className="w-fit ml-3 mb-10 object-contain relative flex items-end">
+                  <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/F_logo.png`} alt="" width={'80px'} />
                 </button>
                 <div className='flex flex-col gap-8'>
                     <button onClick={() => navigate('/admin')} className={`flex items-center gap-3 ${location.pathname.split('/')[2] == undefined || location.pathname.split('/')[2] == '' ? '' : 'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
@@ -50,7 +45,7 @@ export default function SidebarAdmin() {
                     }
 
                     <button onClick={() => navigate('Transaction')} className={`flex items-center gap-3 ${location.pathname.split('/')[2] == 'Transaction' ? '' : 'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
-                        <BiCoinStack size={'20px'} />
+                        <BsCurrencyDollar size={'20px'} />
                         Transaction
                     </button>
 
