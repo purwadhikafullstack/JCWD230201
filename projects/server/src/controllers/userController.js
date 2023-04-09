@@ -53,7 +53,7 @@ module.exports = {
 
             const template = await fs.readFile('./template/confirmation.html', 'utf-8')
             const templateToCompile = await handlebars.compile(template)
-            const newTemplate = templateToCompile({ name, email, url: `http://localhost:3000/activation/${resCreateUsers.dataValues.id}` })
+            const newTemplate = templateToCompile({ name, email, url: `https://jcwd230201.purwadhikabootcamp.com/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
                 from: 'iFhone',
                 to: email,
