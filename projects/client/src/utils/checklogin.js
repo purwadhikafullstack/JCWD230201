@@ -21,8 +21,7 @@ export const CheckLogin = async () => {
                         warehouse_id: response.data.data.warehouse_id,
                         photo_profile: response.data.data.photo_profile
                 }
-        } catch (error) {
-                // console.log(error)
+        } catch (error){
                 return {
                         id: null,
                         username: null
