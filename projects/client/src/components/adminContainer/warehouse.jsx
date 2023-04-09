@@ -419,11 +419,11 @@ export default function Warehouse() {
                             </Modal>
 
                             <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
-                                <table className="w-full text-sm text-left text-gray-500 bg-slate-200 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-200 uppercase bg-stone-400 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="w-full text-sm text-center border border-violet-500 text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
                                             <th scope="col" className="px-6 py-3">
-                                                No
+                                                ID
                                             </th>
                                             <th scope="col" className="px-6 py-3">
 
@@ -453,7 +453,7 @@ export default function Warehouse() {
                                     <tbody>
                                         {
                                             dataWH.loading ?
-                                                <tr>
+                                            <tr className='border-violet-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
                                                     <td className="px-6 py-4 text-center">
                                                     <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
                                                     </td>
@@ -482,8 +482,8 @@ export default function Warehouse() {
                                                 :
                                                 dataWH.wh.map((item, index) => {
                                                     return (
-                                                        <tr className="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                        <tr className='border-violet-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                            <th scope="row" className="px-6 py-4 font-medium text-white whitespace-nowrap dark:text-white">
                                                                 {item.id}
                                                             </th>
                                                             <td className="px-6 py-4">
@@ -507,7 +507,7 @@ export default function Warehouse() {
                                                                 <button onClick={() => {
                                                                     setChosenWH(item)
                                                                     setShow2(!show2)
-                                                                }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                                                                }} className="font-medium text-violet-500 dark:text-blue-500 hover:underline">Edit</button>
                                                             </td>
                                                         </tr>
                                                     )

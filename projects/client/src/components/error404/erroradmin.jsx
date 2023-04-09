@@ -1,21 +1,20 @@
 
+export default function ErrorAdmin() {
+    return (
 
-//assets
-import error from '../../Assets/data_not_found.jpg'
+        <div className='flex flex-col relative items-center justify-center h-full mt-20'>
 
-export default function ErrorAdmin(){
-    return(
-        
-        <div className='flex flex-col items-center justify-center h-full mb-10'>
-               
-                   <img src={error} className="h-2/3 w-1/2" alt="Page not found 404" />
-            
-                <div className='text-3xl font-bold'>
-                   OOOOPPPPSSSSSIIEEE!!!
-                </div>
-                <div className='text-3xl font-bold mt-5'>
-                    PAGE NOT FOUND
-                </div>
+            <lottie-player
+                autoplay
+                loop
+                mode="normal"
+                src="https://assets5.lottiefiles.com/packages/lf20_9Fhz02H45R.json"
+                style={{ width: "300px" }}    >
+            </lottie-player>
+
+            <div className='text-2xl absolute mt-60 font-semibold'>
+           PAGE NOT FOUND
+            </div>
         </div>
     )
 }

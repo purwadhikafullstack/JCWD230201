@@ -43,7 +43,7 @@ export default function AdminCategoryProducts(){
     let addCategory = async()=>{
         try {
             let inputCategory = onPostCategory.current.value
-            let response = await axios.post('${process.env.REACT_APP_API_BASE_URL}/product/post-category',{name:inputCategory})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/post-category`,{name:inputCategory})
             setTimeout(() => {
                 toast.success('Add Category Success', {
                     duration: 3000
@@ -157,10 +157,10 @@ export default function AdminCategoryProducts(){
                 {category.map((value, index)=>{
                     return(
                         <Link to={`/admin/products/${value.id}`}>
-                            <div className='gap-5 px-4 py-3 bg-stone-800 flex border-b-4 border-lime-300 rounded-md group'>                            
+                            <div className='gap-5 px-4 py-2 bg-stone-800 flex border-b-4 border-lime-300 rounded-md group'>                            
                                 <div className='flex flex-col items-end'>
                                     <button onClick={()=>{getProduct(value.id);setOperId(value.id)}} className=" rounded text-white min-w-[100px] ">
-                                        <p className='text-xl font-semibold'>{value.name} </p>
+                                        <p className='text-lg font-semibold'>{value.name} </p>
                                     </button>
                                 </div>
                             </div>
