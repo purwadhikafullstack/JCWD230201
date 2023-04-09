@@ -58,7 +58,7 @@ export default function Footer() {
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 px-5 md:px-10 lg:px-60 lg:gap-10 pb-10 border-t h-max pt-5 bg-white inset-x-0 bottom-auto">
                 <div className="">
                     <div className="text-lg font-semibold">
-                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/F_logo.png`} alt="" width={'80px'} />
+                      <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/F_logo.png`} alt="" width={'80px'} />
                     </div>
                     <div className="text-neutral-800 text-sm">
                         <p className="leading-loose">
