@@ -11,7 +11,7 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use('/Public/',express.static(__dirname + '/Public'))
+app.use('/Public/', (path.join(__dirname, '/Public')))
 
 //#region API ROUTES
 const {adminRouter,userRouter,productRouter,transactionRouter,
