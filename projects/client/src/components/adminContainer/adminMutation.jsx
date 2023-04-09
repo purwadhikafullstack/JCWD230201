@@ -10,7 +10,6 @@ import { BsClock, BsFillChatDotsFill } from 'react-icons/bs'
 export default function AdminMutation(){
     let {user} = useContext(userData)
 
-
     let onLocation = useRef()
     let onCategory = useRef()
     let onName = useRef()
@@ -58,14 +57,15 @@ export default function AdminMutation(){
     let [forProId, setForProId] = useState("") 
     let [forLocTarget, setForLocTarget] = useState("") 
     let [forLocOrigin, setForLocOrigin] = useState("") 
+    let [showPage, setShowPage] = useState(1)
+    let [showPages, setShowPages] = useState(1)
+    let [forStatus, setForStatus] = useState("")
     
     let getLocation = async()=>{
         try {
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
-    
             setLocationName(response.data.data);
         } catch (error) {
-       
         }
     }
 
@@ -74,16 +74,11 @@ export default function AdminMutation(){
         ab.push(locationName[i].city)
     }
 
-
-
     let getDetailWarehouse = async()=>{
         try {
             setThisQty(0)
             let a = Number(onLocation.current.value)
-    
-            // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/detail`, {location_warehouse_id: a})
-        
             setDetailWarehouse(response.data.data)
             getDetailCategory()
         } catch (error) {
@@ -95,7 +90,6 @@ export default function AdminMutation(){
         try {
             if(onLocation.current.value!=0){
                 let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/category`)
-          
                 setDetailCategory(response.data.data)
                 // getName()
             }
@@ -127,14 +121,12 @@ export default function AdminMutation(){
             setThisQty(0)
             let a = Number(onLocation.current.value)
             let b = Number(onCategory.current.value)
-            let c = Number(onName.current.value)
-        
+            let c = Number(onName.current.value)  
             // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/spec`, {location_warehouse_id: a, category_id: b, product_id: c})
             setDetailSpec(response.data.data)
             // getDetailLast()
         } catch (error) {
-           
         }
     }
 
@@ -144,13 +136,13 @@ export default function AdminMutation(){
             // let b = Number(onCategory.current.value)
             // let c = Number(onName.current.value)
             let d = Number(onSpec.current.value)
-            console.log(a);
+            // console.log(a);
             // console.log(b)
             // console.log(c)
-            console.log(d);
+            // console.log(d);
             // console.log(id);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/getqty`, {location_warehouse_id: a, product_detail_id: d })
-            console.log(response.data.data.qty);
+            // console.log(response.data.data.qty);
             setThisQty(response.data.data.qty);
             // console.log(response);
             // setDetailSpec(response.data.data)
@@ -166,7 +158,7 @@ export default function AdminMutation(){
             setThisQty(0)
             let b = Number(onCategory.current.value)
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/getname`, {category_id: b})
-            console.log(response.data.data);
+            // console.log(response.data.data);
             setThisName(response.data.data);
         } catch (error) {
             
@@ -178,11 +170,12 @@ export default function AdminMutation(){
             let a = Number(onLocation.current.value)
             let d = Number(onSpec.current.value)
             let e = Number(onQty.current.value)
+            if(!a||!d||!e) throw {message: "Form Must Be Filled"}
             if(onQty.current.value!=0){
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/a`, {qty: e, order_status_id: 7, product_detail_id: d, location_warehouse_id_origin: user.warehouse_id, location_warehouse_id_target: a})
-            console.log(response);
+            // console.log(response);
             let response2 = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/origin`, {id: response.data.data.id, product_detail_id: d, location_warehouse_id: user.warehouse_id})
-            console.log(response2);
+            // console.log(response2);
             onLocation.current.value=""
             onSpec.current.value=""
             onQty.current.value=""
@@ -203,32 +196,46 @@ export default function AdminMutation(){
                 }, 100)
             }
         } catch (error) {
-            
+            setTimeout(() => {
+                toast.error(error.message, {
+                    duration: 3000
+                })
+            }, 100)
         }
     }
 
-    let getMutation = async(status)=>{
+    let getMutation = async(status, _page, btn)=>{
+        // console.log(forStatus);
         try {
-            console.log(status);
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}`)
-                console.log(response.data.data);
-                setMyMutation(response.data.data);
-            if(status==='all'){
-                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}`)
-                console.log(response.data.data);
-                setMyMutation(response.data.data);
-            }else if(status==7){
-                console.log(status);
-                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
-                console.log(response.data.data);
-                setMyMutation(response.data.data);
-            }else if(status==5){
-                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
-                console.log(response.data.data);
-                setMyMutation(response.data.data);
-            }else if(status==6){
-                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}`)
-                console.log(response.data.data);
+            // console.log(status);
+            if(!status){
+                // console.log(true);
+                // console.log(_page);
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}?page=${_page?_page:showPage}`)
+                    // console.log(response.data.data);
+                    setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
+                    setMyMutation(response.data.data);
+                    if(btn==="next"){
+                        _page = Number(_page) + 1
+                        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}?page=${_page?_page:showPage}`)
+                        // console.log(response.data);
+                        setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
+                        // console.log(response.data.page);
+                        setMyMutation(response.data.data);
+                    }else if(btn==="prev"){
+                        _page = Number(_page) - 1
+                        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}?page=${_page?_page:showPage}`)
+                        // console.log(response.data);
+                        setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
+                        // console.log(response.data.page);
+                        setMyMutation(response.data.data);
+                    }
+            }else{
+                // console.log(status);
+                // console.log(showPage);
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}/${status}?page=${_page?_page:showPage}`)
+                // console.log(response.data.data);
+                setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
                 setMyMutation(response.data.data);
             }
 
@@ -237,10 +244,42 @@ export default function AdminMutation(){
         }
     }
 
+    let getMutationn = async(status, _page, btn)=>{
+        // console.log(forStatus);
+        try {
+            // console.log(status);
+            if(status==="all"){
+                // console.log(true);
+                // console.log(_page);
+                // console.log(showPage);
+                if(btn==="next"){
+                    _page=Number(_page)+1
+                }else if(btn==="prev"){
+                    _page=Number(_page)-1
+                }
+                let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location/all-mutation/${user.warehouse_id}?page=${_page?_page:showPages}`)
+                    // console.log(response.data.data);
+                    setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
+                    setMyMutation(response.data.data);
+            }
+
+        } catch (error) {
+            
+        }
+    }
+
+    let ada = async(ya)=>{
+        try {
+            setForStatus(ya)
+        } catch (error) {
+            
+        }
+    }
+
     let getRequest = async()=>{
         try {
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/request/${user.warehouse_id}`, {order_status_id: 7})
-            console.log(response.data.data);
+            // console.log(response.data.data);
             setMyRequest(response.data.data)
         } catch (error) {
             
@@ -316,7 +355,7 @@ export default function AdminMutation(){
         try {
             let a = Number(forCancel)
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/cancel`, {id:a, order_status_id: 6})
-            console.log(response.data.data);
+            // console.log(response.data.data);
             setMyConfirm(response.data.data)
             getMutation()
             getRequest()
@@ -352,22 +391,6 @@ export default function AdminMutation(){
             <div className="text-2xl font-semibold">
                 {user.warehouse}'s Mutation
             </div>
-            {
-                user.role==1?
-                <div className="border rounded-sm flex justify-between w-full">
-                    <div className="flex gap-5 py-3 px-5 overflow-y-hidden">
-                    {locationName.map((value, index)=>{
-                        return(
-                            // <Link to={`/admin/products-location/${value.id}`}>
-                                <button onClick={()=>{console.log(value.id)}} className="border border-gray-400 px-3 py-2 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px] ">
-                                    {value.city}
-                                </button>
-                            // {/* </Link> */}
-                        )
-                    })}
-                    </div>
-                </div>:null
-            }
             <div>
                 <div className='flex justify-between'>
                     <div className='flex items-center mt-5 mb-5'>
@@ -389,11 +412,11 @@ export default function AdminMutation(){
                     </div>
                     <div className='flex mt-5 mb-5 gap-4'>
                         <select className=' text-gray-600 p-1 rounded-sm border border-[#DBDBDB] focus:ring-transparent focus:border-black'
-                            onChange={(e) => {getMutation(e.target.value)}}
+                            onChange={(e) => {ada(e.target.value);getMutation(e.target.value);getMutationn(e.target.value)}}
                             id="bulan"
                             required={true}
                         >
-                            <option value={'all'}>All Status</option>
+                            <option value={"all"}>All Status</option>
                             <option value={7}>Waiting</option>
                             <option value={5}>Confirmed</option>
                             <option value={6}>Canceled</option>
@@ -740,7 +763,7 @@ export default function AdminMutation(){
                                                     </div>
                                                 </div>
                                                 <div className='flex gap-2'>
-                                                    <Button onClick={()=>{console.log(value.location_warehouse_id_target);simpanConfirm(value.id, value.location_product_id_origin, value.qty, value.product_detail.product.product_images[0].img, value.product_detail.product.name, value.product_detail.color, value.product_detail.memory_storage, value.product_detail.price, value.product_detail.id, value.product_detail.product.id, value.location_warehouse_id_target, value.location_warehouse_id_origin, value.location_product_id_target);setShowConfirm(true)}} color="success" className="w-[80px] h-[30px]">
+                                                    <Button onClick={()=>{simpanConfirm(value.id, value.location_product_id_origin, value.qty, value.product_detail.product.product_images[0].img, value.product_detail.product.name, value.product_detail.color, value.product_detail.memory_storage, value.product_detail.price, value.product_detail.id, value.product_detail.product.id, value.location_warehouse_id_target, value.location_warehouse_id_origin, value.location_product_id_target);setShowConfirm(true)}} color="success" className="w-[80px] h-[30px]">
                                                         <div className="text-md font-bold">
                                                             Confirm
                                                         </div>
@@ -887,6 +910,17 @@ export default function AdminMutation(){
                         }
                     </div>
                 : null}
+            </div>
+            <div className='flex justify-center p-5'>
+                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1||showPage.page==undefined?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "prev");getMutation(forStatus, showPage.page, "prev");console.log(showPage);console.log(forStatus)}}>
+                    Previous
+                </button>
+                <div>
+                    {myMutation.length<=2?null:`Page ${showPage.page}`}
+                </div>
+                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "next");getMutation(forStatus, showPage.page, "next");console.log(showPage);console.log(forStatus)}}>
+                    Next
+                </button>
             </div>
         </div>
     )

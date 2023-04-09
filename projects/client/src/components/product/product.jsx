@@ -1,10 +1,16 @@
 import { Card, Dropdown } from 'flowbite-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 // import iphonedisc from './../../Assets/iphonedisc.jpg'
 
 export default function Product(props){
     const {id} = useParams()
+    
+    let [condi, setCondi] = useState(undefined)
+
+    let condition = (ada)=>{
+        setCondi(ada)
+    }
 
     useEffect(()=>{
         props.func.getProduct(id)
@@ -25,7 +31,7 @@ export default function Product(props){
                         >
                             {props.data.adaSort.map((value, index)=>{
                                 return(
-                                <Dropdown.Item onClick={() => props.func.getProduct(`${id}`,`${value.color}`)}>
+                                <Dropdown.Item onClick={() => {props.func.getProduct(`${id}`,`${value.color}`)}}>
                                     {value.color}
                                 </Dropdown.Item>
                                 )
@@ -38,10 +44,10 @@ export default function Product(props){
                             label="Price"
                             inline={true}
                         >
-                            <Dropdown.Item onClick={() => props.func.getProduct(`${id}`,`hilo`)}>
+                            <Dropdown.Item onClick={() => {props.func.getProduct(`${id}`,`hilo`);}}>
                                 High to Low
                             </Dropdown.Item>
-                            <Dropdown.Item onClick={() => props.func.getProduct(`${id}`,`lohi`)}>
+                            <Dropdown.Item onClick={() => {props.func.getProduct(`${id}`,`lohi`);}}>
                                 Low to High
                             </Dropdown.Item>
                         </Dropdown>
@@ -52,10 +58,10 @@ export default function Product(props){
                             label="Name"
                             inline={true}
                         >
-                            <Dropdown.Item onClick={() => props.func.getProduct(`${id}`,`az`)}>
+                            <Dropdown.Item onClick={() => {props.func.getProduct(`${id}`,`az`);}}>
                                 A to Z
                             </Dropdown.Item>
-                            <Dropdown.Item onClick={() => props.func.getProduct(`${id}`,`za`)}>
+                            <Dropdown.Item onClick={() => {props.func.getProduct(`${id}`,`za`);}}>
                                 Z to A
                             </Dropdown.Item>
                         </Dropdown>
@@ -73,11 +79,11 @@ export default function Product(props){
                                         <div className=''>
                                             {!props.data.nyow?
                                                 <div className='min-h-[5px]' >
-                                                    <img src={require(`../../../../server/src/Public/images/${value.product_images[0].img}`)} className='flex items-start min-w-[10px] ' alt="hai" />
+                                                    <img src={require(`../../../../server/src/Public/images/${value.product_images[0].img}`)} className='flex items-start h-96 object-cover ' alt="hai" />
                                                 </div>
                                                 :
                                                 <div className='min-h-[5px]' >
-                                                    <img src={require(`../../../../server/src/Public/images/${value.product.product_images[0].img}`)} className='flex items-start min-w-[10px]' alt="hai" />
+                                                    <img src={require(`../../../../server/src/Public/images/${value.product.product_images[0].img}`)} className='flex items-start h-96 object-cover' alt="hai" />
                                                 </div>
                                             }
                                             <div className=''>
@@ -129,6 +135,23 @@ export default function Product(props){
                     })
                     : null}
                 </div>
+            </div>
+            <div className='flex justify-center border p-5'>
+                {props.data.cek==undefined?
+                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==1?'hidden':'block'}`} onClick={()=> {props.func.getProduct(id, condi, props.data.showPage.page, "prev")}}>
+                    Previous
+                </button>:null
+                }
+                {props.data.cek==undefined?
+                <div>
+                    Page {props.data.showPage.page}
+                </div>:null
+                }
+                {props.data.cek==undefined?
+                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==props.data.showPage.pages?'hidden':'block'}`} onClick={()=> {props.func.getProduct(id, condi, props.data.showPage.page, "next")}}>
+                    Next
+                </button>:null
+                }
             </div>
         </div>
     )

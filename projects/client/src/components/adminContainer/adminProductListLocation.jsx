@@ -8,10 +8,10 @@ import { useParams } from "react-router-dom";
 
 export default function AdminProductListLocation(props){
     let {user} = useContext(userData)
-        console.log(user)
+        // console.log(user)
 
     const {id} = useParams()
-    console.log(id);
+    // console.log(id);
     let onUpdateInc = useRef()
     let onUpdateDec = useRef()
     
@@ -36,8 +36,8 @@ export default function AdminProductListLocation(props){
         try {
             let a = Number(onUpdateInc.current.value)+defaultQty
             let b = defaultQty - Number(onUpdateDec.current.value)
-            console.log(Number(a));
-            console.log(Number(b));
+            // console.log(Number(a));
+            // console.log(Number(b));
 
             if(b<0){
                 toast.error("Quantity Cannot Be Minus")
@@ -47,10 +47,10 @@ export default function AdminProductListLocation(props){
             else if(onUpdateInc.current.value>0&&onUpdateDec.current.value==0){
                 // console.log("Masuk Pertama")
                 let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: a})
-                console.log(response);
+                // console.log(response);
 
                 let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateInc.current.value, status: "Additional", location_warehouse_id: loc, product_detail_id: proId, product_id: detailProId})
-                console.log(data);
+                // console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {
                         duration: 3000
@@ -62,10 +62,10 @@ export default function AdminProductListLocation(props){
             }else if(onUpdateInc.current.value==0&&onUpdateDec.current.value>0){
                 // console.log("Masuk Kedua")
                 let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: b})
-                console.log(response);
+                // console.log(response);
                 let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/stock`,{qty:onUpdateDec.current.value, status: "Reduction", location_warehouse_id: loc, product_detail_id: proId, product_id: detailProId})
 
-                console.log(data);
+                // console.log(data);
                 setTimeout(() => {
                     toast.success(`Update Quantity of Id ${quantity} Success`, {
                         duration: 3000
@@ -231,10 +231,10 @@ export default function AdminProductListLocation(props){
                                                     </td>
                                                     <td className="px-6 py-3">
                                                         <div className="flex justify-center gap-4">
-                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);console.log(value.product_detail.product.id);console.log(value.id);setShowIncQty(!showIncQty)}} className="flex items-center"> 
+                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);setShowIncQty(!showIncQty)}} className="flex items-center"> 
                                                                 <FiPlusCircle size={'20px'}/>
                                                             </button>
-                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);console.log(value.id);setShowDecQty(!showDecQty)}} className="flex items-center"> 
+                                                            <button onClick={()=>{getQuantity(value.id, value.qty, value.location_warehouse_id, value.product_detail.id, value.product_detail.product.id);setShowDecQty(!showDecQty)}} className="flex items-center"> 
                                                                 <FiMinusCircle size={'20px'}/>
                                                             </button>
                                                         </div>
@@ -248,24 +248,24 @@ export default function AdminProductListLocation(props){
                                 {
                                     user.role == 1?
                             <div className='flex justify-center border p-5'>
-                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "prev")}}>
+                                    <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==1?'hidden':'block'}`} onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "prev")}}>
                                         Previous
                                     </button>
                                     <div>
                                         Page {props.data.showPage.page}
                                     </div>
-                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "next")}}>
+                                    <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==props.data.showPage.pages?'hidden':'block'}`} onClick={()=> {props.func.getLocationProduct(id, props.data.showPage.page, "next")}}>
                                         Next
                                     </button>
                                 </div>:
                                     <div className='flex justify-center border p-5'>
-                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "prev")}}>
+                                    <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==1?'hidden':'block'}`} onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "prev")}}>
                                         Previous
                                     </button>
                                     <div>
                                         Page {props.data.showPage.page}
                                     </div>
-                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "next")}}>
+                                    <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${props.data.showPage.page==props.data.showPage.pages?'hidden':'block'}`} onClick={()=> {props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page, "next")}}>
                                         Next
                                     </button>
                                 </div>

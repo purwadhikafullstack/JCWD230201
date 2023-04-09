@@ -72,26 +72,26 @@ export default function AdminProducts(props){
 
     let getEveryProducts = async(_page, btn)=>{
         try {
-            console.log("masuk")
-            console.log(_page)
+            // console.log("masuk")
+            // console.log(_page)
             let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
-                console.log(response.data);
+                // console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
-                console.log(response.data.page);
+                // console.log(response.data.page);
                 setArrProducts(response.data.data)
             if(btn==="next"){
                 _page = Number(_page) + 1
                 let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
-                console.log(response.data);
+                // console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
-                console.log(response.data.page);
+                // console.log(response.data.page);
                 setArrProducts(response.data.data)
             }else if(btn==="prev"){
                 _page = Number(_page) - 1
                 let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/products/all?page=${_page?_page:showPage}`)
-                console.log(response.data);
+                // console.log(response.data);
                 setShowPage({page: response.data.page, pages: response.data.pages, total: response.data.total})
-                console.log(response.data.page);
+                // console.log(response.data.page);
                 setArrProducts(response.data.data)
             }
         } catch (error) {
@@ -102,7 +102,7 @@ export default function AdminProducts(props){
     let onImageValidation = (e) => {
         try {
             let files = [...e.target.files]
-            console.log(files)
+            // console.log(files)
             setImgProduct({ ...imgProduct, photo_product: files })
 
             if (files.length !== 0) {
@@ -113,7 +113,7 @@ export default function AdminProducts(props){
 
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             setMessage(error.message)
         }
     }
@@ -128,8 +128,8 @@ export default function AdminProducts(props){
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
             fd.append('data', JSON.stringify({name: inputAddName, description: inputAddDescription, category_id: inputAddCategory}))
-            let response = await axios.post('${process.env.REACT_APP_API_BASE_URL}/product/add-product',fd)
-            console.log(response);
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/add-product`,fd)
+            // console.log(response);
             onAddName.current.value = ""
             onAddCategory.current.value = ""
             onAddDescription.current.value = ""
@@ -143,7 +143,7 @@ export default function AdminProducts(props){
             setShowAddProduct(false)
             props.func.getCategory()
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             setTimeout(() => {
                 toast.error(error.message, {
                     duration: 3000
@@ -154,21 +154,21 @@ export default function AdminProducts(props){
 
     let updateProduct = async(value, index, valdesc, valPrice, valmemory_storage, valcolor, valcolorhex, valqty, valueid, valcategoryid)=>{
         try {
-            console.log(valueid, "product.id"); 
+            // console.log(valueid, "product.id"); 
             setEditId(valueid)// product.id
             setEditName(value) // product.name
-            console.log(value, "product.name");
-            console.log(valdesc, "product.desc");
-            console.log(valcategoryid, "product.category_id");
+            // console.log(value, "product.name");
+            // console.log(valdesc, "product.desc");
+            // console.log(valcategoryid, "product.category_id");
             setEditProductCategoryId(index)
             // console.log(props.data.getProductDetail);
-            console.log(index, "product_detail.id");
+            // console.log(index, "product_detail.id");
             setEditDesc(valdesc)
             setEditPrice(valPrice);
             setEditStorage(valmemory_storage)
-            console.log(editStorage);
+            // console.log(editStorage);
             setEditColor(valcolor)
-            console.log(valcolorhex);
+            // console.log(valcolorhex);
             setEditColorHex(valcolorhex)
             setEditQuantity(valqty)
             // setShowEditProduct(false)
@@ -182,7 +182,7 @@ export default function AdminProducts(props){
         try {
             // setEditId(val);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/edit-product/detail`, {id: val})
-            console.log(response);
+            // console.log(response);
             setEditProductCategory(response.data.data.name)
         } catch (error) {
             
@@ -191,19 +191,19 @@ export default function AdminProducts(props){
     
     let updateProductAgain = async()=>{
         try {
-            console.log(editId); // product.id
+            // console.log(editId); // product.id
             let inputUpdateName = onUpdateName.current.value //product.name
-            console.log(inputUpdateName);
+            // console.log(inputUpdateName);
             let inputUpdateDescription = onUpdateDescription.current.value //product.description
             let inputUpdateCategory = onUpdateCategory.current.value.split(",")[1] // product.category_id
-            console.log(editProductCategoryId) // product_detail.id
+            // console.log(editProductCategoryId) // product_detail.id
             let inputUpdatePrice = onUpdatePrice.current.value // product_detail.price
             let inputUpdateStorage = onUpdateStorage.current.value // product_detail.memory_storage
             let inputUpdateColor = onUpdateColor.current.value // product_detail.color
             let inputUpdateColorHex = onUpdateColorHex.current.value // product_detail.color
             let inputUpdateQty = onUpdateQty.current.value // product_detail.qty
             let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a`, {id: editId, name: inputUpdateName, description: inputUpdateDescription, category_id: inputUpdateCategory })
-            console.log(response);
+            // console.log(response);
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
             fd.append('data', JSON.stringify({id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor, colorhex: inputUpdateColorHex, product_id: editId}))
@@ -212,7 +212,7 @@ export default function AdminProducts(props){
             }else{
 
                 let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a/a`, fd)
-                console.log(data);
+                // console.log(data);
             }
             // onUpdateName.current.value = ""
             // onUpdateDescription.current.value = ""
@@ -228,7 +228,7 @@ export default function AdminProducts(props){
             }, 100)
             setShowEditProduct(false)
         } catch (error) {
-            console.log(error.message);
+            // console.log(error.message);
             setTimeout(() => {
                 toast.error(error.message, {
                     duration: 3000
@@ -250,9 +250,9 @@ export default function AdminProducts(props){
     let deleteProduct = async()=>{
         try {
             let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a`, {id: deleteProductId})
-            console.log(data);
+            // console.log(data);
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a/a`, {id: deleteProductCategoryId})
-            console.log(response);
+            // console.log(response);
             setTimeout(() => {
                 toast.success('Delete Product Success', {
                     duration: 3000
@@ -271,20 +271,21 @@ export default function AdminProducts(props){
 
     let getName = async()=>{
         try {
-            let response = await axios.get(`http://localhost:8000/product/name-product/a`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/name-product/a`)
+            // console.log(response.data.data);
             setArrName(response.data.data);
         } catch (error) {
-            
+            // console.log(error.message);
         }
     }
 
     let getLocation = async()=>{
         try {
-            let response = await axios.get('http://localhost:8000/location')
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/location`)
             // console.log(response.data.data);
             setLocationWarehouse(response.data.data);
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 
@@ -295,7 +296,7 @@ export default function AdminProducts(props){
             let inputAddStorage = onAddStorage.current.value
             let inputAddColor = onAddColor.current.value
             let inputAddColorHex = onAddColorHex.current.value
-            let response = await axios.post(`http://localhost:8000/product/create-productdetail`, {product_id: inputAddProduct, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/create-productdetail`, {product_id: inputAddProduct, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex})
             setTimeout(() => {
                 toast.success('Add New Product Detail Success', {
                     duration: 3000
@@ -322,9 +323,9 @@ export default function AdminProducts(props){
             // setThisQty(0)
             let b = Number(onOperProduct.current.value)
             // let c = Number(onOperProductName.current.value)
-            console.log(b);
-            let response = await axios.post(`http://localhost:8000/location/namedetail`, {product_id: b})
-            console.log(response.data.data);
+            // console.log(b);
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/namedetail`, {product_id: b})
+            // console.log(response.data.data);
             setThisName(response.data.data);
         } catch (error) {
             setTimeout(() => {
@@ -341,8 +342,8 @@ export default function AdminProducts(props){
             let b = onOperProduct.current.value
             let c = onOperProductName.current.value
             let d = onOperQty.current.value
-            let response = await axios.post(`http://localhost:8000/location/locationwarehouse`, {qty: d, location_warehouse_id: a, product_detail_id: c, status: "Additional"})
-            console.log(response);
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/location/locationwarehouse`, {qty: d, location_warehouse_id: a, product_detail_id: c, status: "Additional"})
+            // console.log(response);
             setTimeout(() => {
                 toast.success('Add Product to Warehouse Success', {
                     duration: 3000
@@ -355,6 +356,14 @@ export default function AdminProducts(props){
         }
     }
 
+    let sumQty = async()=>{
+        try {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/get-count/a`)
+        } catch (error) {
+            
+        }
+    }
+
     useEffect(() => {
       props.func.getCategory()
       props.func.getProduct()
@@ -362,6 +371,7 @@ export default function AdminProducts(props){
       getEveryProducts(showPage)
       getName()
       getLocation()
+      sumQty()
     }, [])
     
 
@@ -410,7 +420,7 @@ export default function AdminProducts(props){
                                 />
                             </div>
                             <select
-                                onChange={() => {console.log(onAddProductWarehouse.current.value)}}
+                                // onChange={() => {}}
                                 ref={onAddProductWarehouse}
                                 id="category"
                                 className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
@@ -430,7 +440,7 @@ export default function AdminProducts(props){
                             <select
                                 onChange={(e) => {
                                     getNameProduct(e.target.value)
-                                    console.log(onOperProduct.current.value)
+                                    // console.log(onOperProduct.current.value)
                                 onOperProductName.current.value="chooseProductDetail"}}
                                 ref={onOperProduct}
                                 id="category"
@@ -449,8 +459,8 @@ export default function AdminProducts(props){
                                 />
                             </div>
                             <select
-                                onChange={(e) => {
-                                    console.log(e.target.value)}}
+                                // onChange={(e) => {
+                                //     console.log(e.target.value)}}
                                 ref={onOperProductName}
                                 id="detail"
                                 className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
@@ -501,7 +511,7 @@ export default function AdminProducts(props){
                                 />
                             </div>
                             <select
-                                onChange={() => console.log(onAddProduct.current.value)}
+                                // onChange={() => console.log(onAddProduct.current.value)}
                                 ref={onAddProduct}
                                 id="category"
                                 className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
@@ -591,7 +601,7 @@ export default function AdminProducts(props){
                                 />
                             </div>
                             <select
-                                onChange={() => console.log(onAddCategory.current.value)}
+                                // onChange={() => console.log(onAddCategory.current.value)}
                                 ref={onAddCategory}
                                 id="category"
                                 className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
@@ -712,7 +722,7 @@ export default function AdminProducts(props){
                                 />
                             </div>
                             <select
-                                onChange={() =>{ console.log(onUpdateCategory.current.value)}}
+                                // onChange={() =>{ console.log(onUpdateCategory.current.value)}}
                                 ref={onUpdateCategory}
                                 id="category"
                                 className="w-full mb-2 py-2 px-2 border border-black focus:ring-transparent focus:border-black"
@@ -986,13 +996,13 @@ export default function AdminProducts(props){
                                 }
                             </table>
                                 <div className='flex justify-center border p-5'>
-                                    <button className='border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {getEveryProducts(showPage.page, "prev");console.log(showPage)}}>
+                                    <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1?'hidden':'block'}`} onClick={()=> {getEveryProducts(showPage.page, "prev")}}>
                                         Previous
                                     </button>
                                     <div>
                                     Page {showPage.page}
                                     </div>
-                                    <button className='border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200' onClick={()=> {getEveryProducts(showPage.page, "next");console.log(showPage)}}>
+                                    <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getEveryProducts(showPage.page, "next")}}>
                                         Next
                                     </button>
                                 </div>
