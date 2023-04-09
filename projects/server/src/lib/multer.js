@@ -4,7 +4,7 @@ const multer = require('multer')
 // Import File System
 const fs = require('fs')
 
-let defaultPath = 'Public'
+let defaultPath = './../Public/images'
 var storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         // console.log(file)
