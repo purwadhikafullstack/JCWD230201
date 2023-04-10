@@ -173,7 +173,7 @@ export default function TransactionDetail() {
                                             Payment Proof :
                                         </div>
                                         <button className='m-4' onClick={() => setMaxpayment(true)}>
-                                            <img src={`http://localhost:8000/${transaction.upload_payment}`} className='w-12 h-20' alt="" />
+                                            <img src={`https://jcwd230201.purwadhikabootcamp.com/${transaction.upload_payment}`} className='w-12 h-20' alt="" />
                                             {/* <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-14 h-20' alt="" /> */}
                                         </button>
 
