@@ -230,7 +230,7 @@ export default function MenuAdminSetting(data) {
                   onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
                   placeholder={data.data.phone_number ? data.data.phone_number : 'Empty..'}
                   name="phone"
-                  maxLength={14}
+                  maxLength={13}
                   required={true}
                 />
               </div>

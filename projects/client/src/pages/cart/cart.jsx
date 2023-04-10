@@ -61,7 +61,7 @@ export default function Cart(props) {
 
             getData()
 
-            // props.func.getCart()
+            props.func.getCart()
         } catch (error) {
         }
     }

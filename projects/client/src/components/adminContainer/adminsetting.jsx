@@ -73,7 +73,11 @@ export default function AdminSetting() {
                 }, 2000)
             } catch (error) {
                 setList({ ...list, pop: false })
-                toast.error(error.response.data.message)
+                if(!error.response){
+                    toast.error(error.message)
+                } else{
+                    toast.error(error.response.data.message)
+                }
             }
         }
     }
@@ -198,7 +202,7 @@ export default function AdminSetting() {
                                         </div>
                                         <input onChange={() => setProfile({ ...profile, phone_number: nomor.current.value })} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                             ref={nomor}
-                                            maxLength={14}
+                                            maxLength={13}
                                             placeholder="Input phone_number"
                                             required={true}
                                         />

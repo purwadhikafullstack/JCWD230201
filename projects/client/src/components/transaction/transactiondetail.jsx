@@ -47,7 +47,7 @@ export default function TransactionDetail() {
                         <div className='fixed z-50 p-10 w-screen h-screen flex flex-col items-center'>
                             <div className='p-5 bg-white lg:w-1/3 w-1/2 h-1/2 xl:h-full'>
                                 <button onClick={() => setMaxpayment(false)}><AiOutlineClose size={'20px'} /></button>
-                                <img src={`http://localhost:8000/${transaction.upload_payment}`} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
+                                <img src={`${process.env.REACT_APP_API_IMAGE_URL}${transaction.upload_payment}`} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
                             </div>
                         </div> : null : null
             }
@@ -173,7 +173,7 @@ export default function TransactionDetail() {
                                             Payment Proof :
                                         </div>
                                         <button className='m-4' onClick={() => setMaxpayment(true)}>
-                                            <img src={`http://localhost:8000/${transaction.upload_payment}`} className='w-12 h-20' alt="" />
+                                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}${transaction.upload_payment}`} className='w-12 h-20' alt="" />
                                             {/* <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-14 h-20' alt="" /> */}
                                         </button>
 
