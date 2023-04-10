@@ -1,13 +1,14 @@
 //import sequelize 
-const { sequelize } = require('./../models')
-const { Op } = require('sequelize')
+const { sequelize } = require('./../models');
+const { Op } = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
+const path = require("path");
 
-const axios = require('axios')
+const axios = require('axios');
 
 //import models
-const db = require('./../models/index')
-const users = db.user
+const db = require('./../models/index');
+const users = db.user;
 
 
 //import hashing
@@ -17,10 +18,10 @@ const { hashPassword, hashMatch } = require('../lib/hashpassword');
 const { createToken } = require('../lib/jwt');
 
 // Import Delete Files
-const deleteFiles = require('./../helpers/deleteFiles')
+const deleteFiles = require('./../helpers/deleteFiles');
 
 // Import transporter
-const transporter = require('./../helpers/transporter')
+const transporter = require('./../helpers/transporter');
 
 
 
@@ -51,7 +52,7 @@ module.exports = {
             let resCreateUsers = await users.create({ id: uuidv4(), name, email, phone_number, password: await hashPassword('Abcde12345'), status: 'Unverified' }, { transaction: t })
             // console.log(resCreateUsers)
 
-            const template = await fs.readFile('./template/confirmation.html', 'utf-8')
+            const template = await fs.readFile(path.resolve(__dirname, '../template/confirmation.html'), 'utf-8')
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `https://jcwd230201.purwadhikabootcamp.com/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
@@ -196,9 +197,9 @@ module.exports = {
 
             if (!data) throw { message: 'Email not found' }
 
-            const template = await fs.readFile('./template/resetpassword.html', 'utf-8')
+            const template = await fs.readFile(path.resolve(__dirname, '../template/resetpassword.html'), 'utf-8')
             const templateToCompile = await handlebars.compile(template)
-            const newTemplate = templateToCompile({ name: data.name, email, url: `http://localhost:3000/reset-password/${data.id}` })
+            const newTemplate = templateToCompile({ name: data.name, email, url: `https://jcwd230201.purwadhikabootcamp.com/reset-password/${data.id}` })
             await transporter.sendMail({
                 from: 'iFhone',
                 to: email,
@@ -285,9 +286,9 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let getToken = req.dataToken
-            // console.log(getToken)
+            console.log(req.files)
 
-            let profilePicture = await users.update({ photo_profile: req.files.images[0].path }, {
+            let profilePicture = await users.update({ photo_profile: `Public/images/${req.files.images[0].filename}` }, {
                 where: {
                     id: getToken.id
                 }

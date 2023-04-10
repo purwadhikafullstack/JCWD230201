@@ -278,8 +278,8 @@ module.exports = {
 
             // let data = await db.product_detail.create({ price: dataToCreate.price, memory_storage: dataToCreate.memory_storage, color: dataToCreate.color, colorhex: dataToCreate.colorhex, qty: dataToCreate.qty, product_id: find.dataValues.id })
             let photo = await db.product_image.create({ img: req.files.images[0].path.split("/")[req.files.images[0].path.split("/").length-1], product_id: find.dataValues.id })
-            // console.log(req.files.images[0].path.split("/")[req.files.images[0].path.split("/").length-1])
-            // console.log(req.files.images[0].path)
+            console.log(req.files.images[0].path.split("/")[req.files.images[0].path.split("/").length-1])
+            console.log(req.files.images)
             await t.commit()
             res.status(201).send({
                 isError: false,
