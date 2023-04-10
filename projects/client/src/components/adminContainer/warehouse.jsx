@@ -43,11 +43,11 @@ export default function Warehouse() {
             let inputSubdistrict = onSubdistrict.current.value
             if (!inputSubdistrict || !inputWH_Address) throw { message: 'Incomplete Input' }
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/warehouse/addWH`, { province: inputProvince, city: inputCity, subdistrict: inputSubdistrict, address: inputWH_Address, city_id: onCity.current.value.split(",")[0], province_id: onProvince.current.value.split(", ")[0] })
-            toast.success(response.data.message)
+            toast('processing..')
             setShow(!show)
             setDataWH({ ...dataWH, pop: false })
             setTimeout(() => {
-                toast('wait..')
+                toast.success(response.data.message)
             }, 2000)
             setTimeout(() => {
                 window.location.reload(false)
@@ -577,7 +577,6 @@ export default function Warehouse() {
                                                     disabled={disable}
                                                     onClick={() => {
                                                         setDisable(true)
-                                                        toast('processing')
                                                         dataWH.choice == 1 ? updateWH() : dataWH.choice == 2 ? deleteWH() : postAddress()
                                                     }} data-modal-hide="popup-modal" type="button" className={`text-white ${dataWH.choice == 1 ? 'bg-green-500 hover:bg-green-700' : dataWH.choice == 2 ? 'bg-red-600 hover:bg-red-800' : 'bg-blue-500 hover:bg-blue-600'} focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2`}>
                                                     {
