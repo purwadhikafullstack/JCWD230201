@@ -264,9 +264,9 @@ export default function TransactionDetail() {
 
                                 <div className='w-3/4 flex gap-3'>
                                     :
-                                    <div className=' text-black'>
-                                        Aukdah apaan
-                                    </div>
+                                    <div className='font-bold text-emerald-600 text-xs'>
+                                {transaction.id}
+                            </div>
                                 </div>
                             </div>
                             <div className='flex'>

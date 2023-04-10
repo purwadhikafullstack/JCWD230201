@@ -162,10 +162,10 @@ export default function Dashboard() {
                                                 </div>
                                                 <div className="w-2/4">
                                                     <div className="flex justify-end mb-1">
-                                                        <span className="text-sm font-medium text-blue-700 dark:text-white">{`${Math.floor((item.qty / data.total_qty) * 100)}% `}</span>
+                                                        <span className="text-sm font-medium text-blue-700 dark:text-white">{`${item.qty?Math.floor((item.qty / data.total_qty) * 100):0}% `}</span>
                                                     </div>
                                                     <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                                        <div className="bg-blue-600 h-2.5 rounded-full duration-300 ease-in" style={{ width: `${Math.floor((item.qty / data.total_qty) * 100)}%` }}></div>
+                                                        <div className="bg-blue-600 h-2.5 rounded-full duration-300 ease-in" style={{ width: `${item.qty?Math.floor((item.qty / data.total_qty) * 100):0}%` }}></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,10 +189,10 @@ export default function Dashboard() {
                                                 </div>
                                                 <div className="w-1/2 mt-3">
                                                     <div className="flex justify-end mb-1">
-                                                        <span className="text-sm font-medium text-blue-700 dark:text-white">{`${Math.floor((item.qty / data.total_qty) * 100)}% `}</span>
+                                                        <span className="text-sm font-medium text-blue-700 dark:text-white">{`${item.qty?Math.floor((item.qty / data.total_qty) * 100):0}% `}</span>
                                                     </div>
                                                     <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                                        <div className="bg-blue-600 h-2.5 rounded-full duration-300 ease-in" style={{ width: `${Math.floor((item.qty / data.total_qty) * 100)}%` }}></div>
+                                                        <div className="bg-blue-600 h-2.5 rounded-full duration-300 ease-in" style={{ width: `${item.qty?Math.floor((item.qty / data.total_qty) * 100):0}%` }}></div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -30,7 +30,7 @@ export default function AdminSetting() {
         total_count: 0,
         disable: false,
         pop: false,
-        search:''
+        search: ''
     })
     let [add, setAdd] = useState(false)
 
@@ -42,9 +42,9 @@ export default function AdminSetting() {
         location_warehouse_id: '',
         password: ''
     })
-    let getDataWHA = async (page,search) => {
+    let getDataWHA = async (page, search) => {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/getAdmin?page=${page}&search=${search}`)
-        setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, total_pages: response.data.data.total_pages, loading: false, page,search })
+        setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, total_pages: response.data.data.total_pages, loading: false, page, search })
     }
     let getEmptyWH = async () => {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
@@ -57,6 +57,12 @@ export default function AdminSetting() {
             setList({ ...list, pop: false })
         } else {
             try {
+                if (isNaN(profile.phone_number)) throw { message: 'phone number cannot be alphabet' }
+                if (profile.phone_number.length < 8 || profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
+                if (profile.password.length < 8 && profile.password.length != 0) throw { message: 'Password at least has 8 characters' }
+
+                let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+                if (!character.test(profile.password) && profile.password.length != 0) throw { message: 'Password must contains number' }
                 let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/register`, { name: profile.name, email: profile.email, gender: profile.gender, phone_number: profile.phone_number, password: profile.password, location_warehouse_id: profile.location_warehouse_id })
                 toast.success(response.data.message)
                 setList({ ...list, pop: false })
@@ -67,7 +73,11 @@ export default function AdminSetting() {
                 }, 2000)
             } catch (error) {
                 setList({ ...list, pop: false })
-                toast.error(error.response.data.message)
+                if(!error.response){
+                    toast.error(error.message)
+                } else{
+                    toast.error(error.response.data.message)
+                }
             }
         }
     }
@@ -84,7 +94,7 @@ export default function AdminSetting() {
     }
 
     useEffect(() => {
-        getDataWHA(1,'')
+        getDataWHA(1, '')
     }, [])
 
     return (
@@ -109,10 +119,11 @@ export default function AdminSetting() {
                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                         <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                     </div>
-                                    <input ref={inputSearch} type="search" id="default-search" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search by name or email" required/>
-                                        <button onClick={()=>{
-                                            setList({...list, loading:true})
-                                            getDataWHA(1,inputSearch.current.value)}} className="text-white absolute right-2.5 bottom-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                                    <input ref={inputSearch} type="search" id="default-search" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search by name or email" required />
+                                    <button onClick={() => {
+                                        setList({ ...list, loading: true })
+                                        getDataWHA(1, inputSearch.current.value)
+                                    }} className="text-white absolute right-2.5 bottom-1 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
                                 </div>
                             </div>
                             <button onClick={() => {
@@ -157,11 +168,15 @@ export default function AdminSetting() {
                                         </div>
                                         <input className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                             ref={nama}
+                                            maxLength="20"
                                             onChange={() => setProfile({ ...profile, name: nama.current.value })}
                                             id="name"
                                             placeholder="Input Name"
                                             required={true}
                                         />
+                                        <div className={` text-sm text-gray-500 ml-1`}>
+                                            cannot be more than 20 character
+                                        </div>
                                     </div>
 
                                     <div className='my-5'>
@@ -187,7 +202,7 @@ export default function AdminSetting() {
                                         </div>
                                         <input onChange={() => setProfile({ ...profile, phone_number: nomor.current.value })} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
                                             ref={nomor}
-
+                                            maxLength={13}
                                             placeholder="Input phone_number"
                                             required={true}
                                         />
@@ -200,8 +215,12 @@ export default function AdminSetting() {
                                             />
                                         </div>
                                         <div className="flex items-center relative">
-                                            <input onChange={() => setProfile({ ...profile, password: password.current.value })} ref={password} disabled={list.disable} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
+                                            <input maxLength={15} onChange={() => setProfile({ ...profile, password: password.current.value })} ref={password} disabled={list.disable} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-96" />
                                             <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                                        </div>
+                                        <div className='flex flex-col gap-1 text-sm ml-1 text-red-500'>
+                                            <p className={`${profile.password.length > 8 || profile.password.length == 0 ? 'hidden' : ''}`}>password at least has 8 character</p>
+                                            <p className={`${/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/.test(profile.password) || profile.password.length == 0 ? 'hidden' : ''}`}>password must contain number</p>
                                         </div>
                                     </div>
 
@@ -293,116 +312,135 @@ export default function AdminSetting() {
 
                         </div>
 
-                        <div className="relative overflow-visible shadow-md z-0  sm:rounded-lg">
-                            <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th className="px-6 py-4">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            Gender
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            email
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            Phone number
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            Warehouse
-                                        </th>
-                                        <th className="px-6 py-4">
-                                            Action
-                                        </th>
-                                    </tr>
-
-                                </thead>
-                                <tbody>
-                                    {
-                                        list.loading ?
-                                            <tr>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
-                                                </td>
-                                            </tr>
-                                            :
-                                            list.dataAdmin.map((value, index) => {
-                                                return (
-                                                    value.role == 1 ?
-                                                        null :
-                                                        <tr className='border-blue-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
-                                                            <td className='px-2 w-max py-4'>
-                                                                <button onClick={() => {
-                                                                    setPictureindex(value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`)
-                                                                    setPicture(!picture)
-                                                                }} className='hover:underline-offset-4 hover:underline gap-3 flex justify-center items-center'>  <img src={`${process.env.REACT_APP_API_IMAGE_URL}${value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`}`} className="w-8 h-8 object-cover rounded-full" alt="" /> <p className='text-start w-1/2'> {value.name}</p></button>
-                                                            </td>
-                                                            <td className='px-6 py-4 gap-3'>
-                                                                {value.gender == "M" ? "Male" : "Female"}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {value.email}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {value.phone_number ? value.phone_number : '-'}
-                                                            </td>
-                                                            <td className="px-6 py-4">
-                                                                {
-                                                                    value.location_warehouse == null ?
-                                                                        '-' :
-                                                                        value.location_warehouse
-                                                                }
-                                                            </td>
-                                                            <td className='text-center '>
-                                                                <MenuAdminSetting data={value} />
-
-                                                            </td>
-                                                        </tr>
-                                                )
-                                            })
-                                    }
-                                </tbody>
-                            </table>
-                            {/* box */}
-                            <div className='flex justify-center p-5 gap-2'>
-                                <button
-                                    disabled={(list.page - 1) == 0}
-                                    onClick={() => {
-                                        setList({ ...list, loading: true })
-                                        getDataWHA(list.page - 1, list.search)
-                                    }} className='font-semibold rounded-l-lg px-4 hover:bg-white hover:text-black'>
-                                    Previous
-                                </button>
-                                <div>
-                                    Page {list.page} of {list?.total_pages}
+                        {
+                            list.dataAdmin.length == 0 ?
+                                <div className='flex flex-col h-full items-center justify-center'>
+                                    <lottie-player
+                                        autoplay
+                                        loop
+                                        mode="normal"
+                                        src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                        style={{ width: "200px" }}    >
+                                    </lottie-player>
+                                    <div className='text-2xl'>
+                                        Data not found
+                                    </div>
                                 </div>
-                                <button
-                                    disabled={(list.page + 1) > list.total_pages}
-                                    onClick={() => {
-                                        setList({ ...list, loading: true })
-                                        getDataWHA(list.page + 1, list.search)
-                                    }} className='font-semibold rounded-r-lg px-7 hover:bg-white hover:text-black'>
-                                    Next
-                                </button>
-                            </div>
+                                :
 
-                        </div>
+                                <div className="relative overflow-visible shadow-md z-0  sm:rounded-lg">
+                                    <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
+                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                            <tr>
+                                                <th className="px-6 py-4">
+                                                    Name
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Gender
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    email
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Phone number
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Warehouse
+                                                </th>
+                                                <th className="px-6 py-4">
+                                                    Action
+                                                </th>
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                list.loading ?
+                                                    <tr>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
+                                                    </tr>
+                                                    :
+                                                    list.dataAdmin.map((value, index) => {
+                                                        return (
+                                                            value.role == 1 ?
+                                                                null :
+                                                                <tr className='border-blue-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                                    <td className='px-2 w-max py-4'>
+                                                                        <button onClick={() => {
+                                                                            setPictureindex(value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`)
+                                                                            setPicture(!picture)
+                                                                        }} className='hover:underline-offset-4 hover:underline gap-3 flex justify-center items-center'>  <img src={`${process.env.REACT_APP_API_IMAGE_URL}${value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`}`} className="w-8 h-8 object-cover rounded-full" alt="" /> <p className='text-start w-1/2'> {value.name}</p></button>
+                                                                    </td>
+                                                                    <td className='px-6 py-4 gap-3'>
+                                                                        {value.gender == "M" ? "Male" : "Female"}
+                                                                    </td>
+                                                                    <td className="px-6 py-4">
+                                                                        {value.email}
+                                                                    </td>
+                                                                    <td className="px-6 py-4">
+                                                                        {value.phone_number ? value.phone_number : '-'}
+                                                                    </td>
+                                                                    <td className="px-6 py-4">
+                                                                        {
+                                                                            value.location_warehouse == null ?
+                                                                                '-' :
+                                                                                value.location_warehouse
+                                                                        }
+                                                                    </td>
+                                                                    <td className='text-center '>
+                                                                        <MenuAdminSetting data={value} />
+
+                                                                    </td>
+                                                                </tr>
+                                                        )
+                                                    })
+                                            }
+                                        </tbody>
+                                    </table>
+                                    {/* box */}
+                                    <div className='flex justify-center p-5 gap-2'>
+                                        <button
+                                            disabled={(list.page - 1) == 0}
+                                            onClick={() => {
+                                                setList({ ...list, loading: true })
+                                                getDataWHA(list.page - 1, list.search)
+                                            }} className='font-semibold rounded-l-lg px-4 hover:bg-white hover:text-black'>
+                                            Previous
+                                        </button>
+                                        <div>
+                                            Page {list.page} of {list?.total_pages}
+                                        </div>
+                                        <button
+                                            disabled={(list.page + 1) > list.total_pages}
+                                            onClick={() => {
+                                                setList({ ...list, loading: true })
+                                                getDataWHA(list.page + 1, list.search)
+                                            }} className='font-semibold rounded-r-lg px-7 hover:bg-white hover:text-black'>
+                                            Next
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                        }
+
                     </div>
 
                     <Toaster />

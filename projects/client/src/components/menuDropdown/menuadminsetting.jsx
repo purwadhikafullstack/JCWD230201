@@ -22,7 +22,7 @@ export default function MenuAdminSetting(data) {
     name: '',
     email: '',
     gender: '',
-    phone_number: '',
+    phone_number:"",
     location_warehouse_id: null,
     password: ''
   })
@@ -34,12 +34,13 @@ export default function MenuAdminSetting(data) {
 
   let submit = async () => {
     try {
-      if (isNaN(profile.phone_number) && profile.phone_number.length !=0) throw { message: 'Please input correct phone_number' }
-
-      if (profile.phone_number.length < 8 || profile.phone_number.length > 13 && profile.phone_number.length !=0) throw { message: 'Please input valid phone number' }
-
+      console.log(typeof profile.phone_number)
+      if(profile.phone_number.length !=0){
+        if (isNaN(profile.phone_number)) throw { message: 'phone number cannot be alphabet' }
+        if (profile.phone_number.length < 8 || profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
+      }
       if (profile.password.length < 8 && profile.password.length !=0) throw { message: 'Password at least has 8 characters' }
-
+      
       let character = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
       if (!character.test(profile.password) && profile.password.length !=0) throw { message: 'Password must contains number' }
 
@@ -50,6 +51,7 @@ export default function MenuAdminSetting(data) {
         window.location.reload(false)
       }, 2000)
     } catch (error) {
+      console.log(error)
       setVisible({ ...visible, pop: false, disable: false })
       if (!error.response) {
         toast.error(error.message)
@@ -76,13 +78,14 @@ export default function MenuAdminSetting(data) {
         <div>
           <Menu.Button
             onClick={() => {
+              console.log(data.data.phone_number?'a':'b')
               setProfile({
                 ...profile,
                 id: data.data.id,
                 name: data.data.name,
                 email: data.data.email,
                 gender: data.data.gender,
-                phone_number: data.data.phone_number,
+                phone_number: data.data.phone_number?data.data.phone_number:"",
                 location_warehouse_id: data.data.location_warehouse_id,
                 password: ''
               })
@@ -226,8 +229,8 @@ export default function MenuAdminSetting(data) {
                   className='w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' id="phone_number"
                   onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
                   placeholder={data.data.phone_number ? data.data.phone_number : 'Empty..'}
-                  type="tel" name="phone" pattern="+62[0-9]{11}"
-                  maxLength={14}
+                  name="phone"
+                  maxLength={13}
                   required={true}
                 />
               </div>
@@ -327,7 +330,7 @@ export default function MenuAdminSetting(data) {
                   {
                     visible.choice == 1 ? 'Yes, update' : 'Yes, delete'
                   }
-                </button>
+                </button> 
                 <button disabled={visible.disable} onClick={() => setVisible({ ...visible, pop: false })} data-modal-hide="popup-modal" type="button" className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Cancel</button>
               </div>
 
