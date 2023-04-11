@@ -1,9 +1,11 @@
 import axios from "axios"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { toast, Toaster } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 import { Spinner } from "flowbite-react"
+import { userData } from "../../data/userData"
+import Loading from "../../components/loading/loading"
 
 export default function Activation(props) {
 
@@ -12,7 +14,9 @@ export default function Activation(props) {
 
     let navigate = useNavigate()
 
-    const[disable,setDisable]=useState(false)
+    const { user, setUser } = useContext(userData)
+
+    const [disable, setDisable] = useState(false)
 
     const [visiblePassword, setVisiblePassword] = useState(false)
     const [visibleConfirmPassword, setVisibleConfirmPassword] = useState(false)
@@ -107,6 +111,7 @@ export default function Activation(props) {
 
     useEffect(() => {
         getStatusUser()
+        props.data.setConditionPage(true)
     }, [])
 
     if (statusUser === 'Verified') {
@@ -114,52 +119,58 @@ export default function Activation(props) {
     }
 
     return (
-        <>
-            <div className="pt-28 flex justify-center items-center h-screen">
-                <div className="flex flex-col h-max mx-5 md:w-max px-5 py-3 border border-gray-200 rounded-sm">
-                    <div className="flex justify-center font-bold text-xl md:text-3xl py-2 border-b-2 border-gray-500">
-                        Welcome to iFhone
-                    </div>
+        user == null ?
+            <Loading />
+            :
+            user.id != null ?
+                navigate('/')
+                :
+            <>
+                <div className="pt-28 flex justify-center items-center h-screen">
+                    <div className="flex flex-col h-max mx-5 md:w-max px-5 py-3 border border-gray-200 rounded-sm">
+                        <div className="flex justify-center font-bold text-xl md:text-3xl py-2 border-b-2 border-gray-500">
+                            Welcome to iFrit
+                        </div>
 
-                    <div className="py-3 font-semibold">
-                        Password
-                    </div>
-                    <div className="flex items-center relative">
-                        <input onChange={(e) => setInputPassword(e.target.value)} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
-                        <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
-                    </div>
-                    <div className="py-3 font-semibold">
-                        Confirm Password
-                    </div>
-                    <div className="flex items-center relative">
-                        <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
-                        <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
-                    </div>
-                    <div className="text-gray-400 font-semibold py-3">
-                        <ul>
+                        <div className="py-3 font-semibold">
                             Password
-                        </ul>
-                        <li className={(!inputPassword ? '' : character.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>At least have 8 characters</li>
-                        {/*  */}
-                        <li className={(!inputPassword ? '' : character1.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>Must contain Number</li>
-                    </div>
-                    {
-                        !disable?
-                            <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                                Submit
-                            </button>
-                            :
-                            <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
-                                <Spinner
-                                    aria-label="Medium sized spinner example"
-                                    size="md"
-                                /> Loading . . .
-                            </button>
-                    }
+                        </div>
+                        <div className="flex items-center relative">
+                            <input onChange={(e) => setInputPassword(e.target.value)} ref={password} type={typePassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
+                            <button className="absolute right-3 text-xl" onClick={changeVisiblePassword}>{visiblePassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                        </div>
+                        <div className="py-3 font-semibold">
+                            Confirm Password
+                        </div>
+                        <div className="flex items-center relative">
+                            <input ref={confirmPassword} type={typeConfirmPassword} placeholder="Input your password" className="focus:border-black focus:ring-transparent w-full md:w-96" />
+                            <button className="absolute right-3 text-xl" onClick={changeVisibleConfirmPassword}>{visibleConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}</button>
+                        </div>
+                        <div className="text-gray-400 font-semibold py-3">
+                            <ul>
+                                Password
+                            </ul>
+                            <li className={(!inputPassword ? '' : character.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>At least have 8 characters</li>
+                            {/*  */}
+                            <li className={(!inputPassword ? '' : character1.test(inputPassword) ? 'text-green-600' : 'text-red-600')}>Must contain Number</li>
+                        </div>
+                        {
+                            !disable ?
+                                <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                    Submit
+                                </button>
+                                :
+                                <button disabled={disable} onClick={() => onActivation()} className="bg-neutral-900 px-5 py-3 mt-5 text-white w-full">
+                                    <Spinner
+                                        aria-label="Medium sized spinner example"
+                                        size="md"
+                                    /> Loading . . .
+                                </button>
+                        }
 
+                    </div>
                 </div>
-            </div>
-            <Toaster />
-        </>
+                <Toaster />
+            </>
     )
 }

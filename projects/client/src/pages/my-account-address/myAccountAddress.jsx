@@ -193,7 +193,7 @@ export default function MyAccountAddress() {
                 duration: 1000
             })
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/add-address`, {
-                user_id: user.id.id,
+                user_id: user.id,
                 receiver_name: profile.name,
                 phone_number: profile.phone_number,
                 user_address: profile.address,
@@ -243,7 +243,6 @@ export default function MyAccountAddress() {
     }, [])
 
     return (
-        user ?
             <>
                 <div className={addressDB.length > 2 ? 'max-h-max' : 'h-screen'}>
                     {
@@ -865,7 +864,5 @@ export default function MyAccountAddress() {
                 </div>
                 <Toaster />
             </>
-            :
-            <Loading />
     )
 }

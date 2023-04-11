@@ -1,8 +1,15 @@
-export default function Error(){
-    return(
+import { useEffect } from "react"
+
+
+export default function Error(props) {
+
+    useEffect(() => {
+        props.data.setConditionPage(true)
+    }, [])
+    return (
         <div className='flex flex-col relative items-center justify-center h-full py-20'>
-               
-               <lottie-player
+
+            <lottie-player
                 autoplay
                 loop
                 mode="normal"
@@ -11,7 +18,7 @@ export default function Error(){
             </lottie-player>
 
             <div className='text-2xl absolute mt-64 font-semibold'>
-           PAGE NOT FOUND
+                PAGE NOT FOUND
             </div>
         </div>
     )

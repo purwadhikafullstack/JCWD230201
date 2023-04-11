@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useContext } from "react"
 import { userData } from "../../data/userData"
+import Loading from "../../components/loading/loading"
 
 export default function DashboardAccount() {
 
@@ -16,6 +17,6 @@ export default function DashboardAccount() {
             </div>
         </>
         :
-        <div>Loading</div>
+        <Loading/>
     )
 }
