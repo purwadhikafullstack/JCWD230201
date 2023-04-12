@@ -11,7 +11,7 @@ const upload = require('../middleware/upload')
 //path nya
 Router.post('/register', userController.register)
 Router.patch('/activation/:id', userController.activation)
-Router.get('/getStatus/:id', userController.getStatusUser)
+Router.get('/getStatus', tokenVerify, userController.getStatusUser)
 Router.post('/login', userController.userLogin)
 Router.post('/confirm-email', userController.confirmEmail)
 Router.patch('/reset-password/:id', userController.resetPassword)

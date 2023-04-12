@@ -56,7 +56,7 @@ module.exports = {
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name, email, url: `https://jcwd230201.purwadhikabootcamp.com/activation/${resCreateUsers.dataValues.id}` })
             await transporter.sendMail({
-                from: 'iFhone',
+                from: 'iFrit',
                 to: email,
                 subject: 'Account Activation',
                 html: newTemplate
@@ -116,12 +116,12 @@ module.exports = {
     },
     getStatusUser: async (req, res) => {
         try {
-            let { id } = req.params
+            let getToken = req.dataToken
             // console.log(id)
 
             let data = await db.user.findOne({
                 where: {
-                    id
+                    id:getToken.id
                 }
             })
 
@@ -201,7 +201,7 @@ module.exports = {
             const templateToCompile = await handlebars.compile(template)
             const newTemplate = templateToCompile({ name: data.name, email, url: `https://jcwd230201.purwadhikabootcamp.com/reset-password/${data.id}` })
             await transporter.sendMail({
-                from: 'iFhone',
+                from: 'iFrit',
                 to: email,
                 subject: 'Reset Password',
                 html: newTemplate
@@ -384,13 +384,14 @@ module.exports = {
         const t = await sequelize.transaction()
         try {
             let { user_id, receiver_name, user_address, phone_number, subdistrict, province_id, province, city_id, city } = req.body
-            // console.log(user_id)
+
 
             let checkData = await db.user_address.findOne({
                 where: {
-                    user_id
+                    user_id: user_id.id
                 }
             })
+
 
             let jalan = `${user_address}%20${subdistrict}%20${city}%20${province}`
             // console.log(jalan)
@@ -400,11 +401,11 @@ module.exports = {
 
             if (!checkData) {
                 await db.user_address.create({
-                    user_id, receiver_name, user_address, value: 1, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
+                    user_id: user_id.id, receiver_name, user_address, value: 1, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
                 }, { transaction: t })
             } else {
                 await db.user_address.create({
-                    user_id, receiver_name, user_address, value: 0, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
+                    user_id: user_id.id, receiver_name, user_address, value: 0, phone_number, subdistrict, province_id, province, city_id, city, latitude: response.data.results[0].geometry.lat, longitude: response.data.results[0].geometry.lng
                 }, { transaction: t })
             }
 
