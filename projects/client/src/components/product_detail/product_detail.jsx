@@ -6,7 +6,6 @@ import { toast } from 'react-hot-toast'
 import Loading from "../loading/loading";
 
 export default function ProductDetail(props) {
-
     const { id } = useParams()
 
     const [quantity, setQuantity] = useState(1)
@@ -25,9 +24,9 @@ export default function ProductDetail(props) {
         }
     }
 
-    let getSelected = async (mem) => {
+    let getSelected = async (mem,color) => {
         try {
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${colors}/${mem}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${color}/${mem}`)
             props.data.setMemory(mem)
             props.data.setSelected(response.data.data[0]);
         } catch (error) {
@@ -55,7 +54,6 @@ export default function ProductDetail(props) {
 
             props.func.getCart()
         } catch (error) {
-            // console.log(error)
             if (!error.response) {
                 toast.error(error.message)
             } else {
@@ -137,7 +135,10 @@ export default function ProductDetail(props) {
                                     return (
                                         <div>
                                             {value ?
-                                                <button onClick={() => setColors(value)} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
+                                                <button onClick={() =>{
+                                                    setColors(value)
+                                                    if(arrMemory[0]==0) getSelected(0, value)
+                                                    }} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
                                                     <div style={{ backgroundColor: `${arrColorHex[index]}` }} className={`w-4 h-4 border rounded-full`}></div> {value}
                                                 </button> : null
                                             }
@@ -159,7 +160,7 @@ export default function ProductDetail(props) {
                                 return (
                                     <div>
                                         {val ?
-                                            <button onClick={() => getSelected(val)} style={{ backgroundColor: props.data.memory == val ? "#113F90" : "white", color: props.data.memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
+                                            <button onClick={() => getSelected(val,colors)} style={{ backgroundColor: props.data.memory == val ? "#113F90" : "white", color: props.data.memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
                                                 {val} GB
                                             </button> : null
                                         }
