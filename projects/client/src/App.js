@@ -114,7 +114,7 @@ function App() {
     } catch (error) {
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
 
@@ -126,7 +126,7 @@ function App() {
 
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
 
@@ -257,7 +257,7 @@ function App() {
     } catch (error) {
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
   // let loginKeep = async () => {

@@ -815,8 +815,7 @@ module.exports = {
             var words = ''
 
             cart.forEach((item, index) => {
-                words += `UPDATE product_details, transactions SET product_details.qty = ${item.product_detail.qty} WHERE product_details.id = ${item.product_detail_id} AND transactions.id = "${kreat.dataValues.id}" AND upload_payment IS NULL ;`
-
+                words += `UPDATE product_details, transactions SET product_details.qty = product_details.qty +${item.qty} WHERE product_details.id = ${item.product_detail_id} AND transactions.id = "${kreat.dataValues.id}" AND upload_payment IS NULL ;`
             })
             console.log(words)
 
@@ -871,13 +870,11 @@ module.exports = {
                         id: item.product_detail_id
                     }
                 })
-
                 await db.product_detail.update({ qty: compare.dataValues.qty - item.qty }, {
                     where: {
                         id: item.product_detail_id
                     }
                 })
-
             }, { transaction: t })
 
             await t.commit()
