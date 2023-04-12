@@ -25,6 +25,7 @@ export default function Admin() {
     let [picture, setPicture] = useState(false)
     let navigate = useNavigate()
     let [tugel, setTugel] = useState(false)
+    let [open, setOpen] = useState(true)
 
     let logout = () => {
         toast('Logout..', {
@@ -110,8 +111,8 @@ export default function Admin() {
                             null : <TransactionDetail />
                     }
 
-                    <SidebarAdmin />
-                    <div className='text-black pl-60 flex flex-col'>
+                    <SidebarAdmin data={{open, setOpen}}/>
+                    <div className={`text-black ${open?`pl-60`:`pl-20`} flex flex-col`}>
                         {user.username ?
                             <div className='absolute z-20 right-0 top-0 p-5'>
                                 <div className='flex items-center gap-6'>
