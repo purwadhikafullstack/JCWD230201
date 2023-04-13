@@ -110,6 +110,11 @@ export default function MyAccountAddress() {
 
     let updateAddressUser = async () => {
         try {
+
+            if (isNaN(choosenUser.phone_number)) throw { message: "Please input a number" }
+
+            if (choosenUser.phone_number.length < 8 || choosenUser.phone_number.length > 13) throw { message: 'Please input your valid phone number' }
+
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/update-user_address`, {
                 id: choosenUser.id,
                 receiver_name: choosenUser.receiver_name,
@@ -142,6 +147,11 @@ export default function MyAccountAddress() {
 
         } catch (error) {
             // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
         }
     }
 
@@ -193,7 +203,7 @@ export default function MyAccountAddress() {
                 duration: 1000
             })
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/add-address`, {
-                user_id: user.id.id,
+                user_id: user.id,
                 receiver_name: profile.name,
                 phone_number: profile.phone_number,
                 user_address: profile.address,
@@ -243,7 +253,6 @@ export default function MyAccountAddress() {
     }, [])
 
     return (
-        user ?
             <>
                 <div className={addressDB.length > 2 ? 'max-h-max' : 'h-screen'}>
                     {
@@ -406,7 +415,7 @@ export default function MyAccountAddress() {
                                                             setModalEdit(!modalEdit)
                                                             setChoosenUser(value)
                                                         }} value={value} className="flex items-center bg-gray-400 text-white hover:bg-gray-300 mb-3 px-4 mt-3 mr-2 rounded-sm"><MdOutlineEdit className="mr-2" />Edit</button>
-                                                        {/* <Modal
+                                                        <Modal
                                                             show={modalEdit}
                                                             size="xl"
                                                             popup={true}
@@ -416,7 +425,7 @@ export default function MyAccountAddress() {
                                                             <Modal.Body>
                                                                 <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
                                                                     <h3 className="text-xl font-medium text-gray-900 dark:text-white text-center">
-                                                                        Edit Address aljsdajsdakjd
+                                                                        Edit Address
                                                                     </h3>
                                                                     <div>
                                                                         <div>
@@ -472,7 +481,7 @@ export default function MyAccountAddress() {
                                                                                 ref={province}
                                                                                 onChange={(e) => getCity(e.target.value)}
                                                                             >
-                                                                                <option>---Select Province---</option>
+                                                                                <option>{choosenUser.province ? choosenUser.province : "---Select Province---"}</option>
                                                                                 {
                                                                                     profile.provinceEdit.map((value, index) => {
                                                                                         return (
@@ -495,7 +504,7 @@ export default function MyAccountAddress() {
                                                                                     setChoosenUser({ ...choosenUser, city_id: e.target.value.split(',')[0], city: e.target.value.split(',')[1] })
                                                                                 }}
                                                                             >
-                                                                                <option>---Select City---</option>
+                                                                                <option>{choosenUser.city ? choosenUser.city : "---Select City---"}</option>
                                                                                 {
                                                                                     profile.cityEdit.map((value, index) => {
                                                                                         return (
@@ -530,7 +539,7 @@ export default function MyAccountAddress() {
                                                                     </div>
                                                                 </div>
                                                             </Modal.Body>
-                                                        </Modal> */}
+                                                        </Modal>
                                                     </div>
                                                     :
                                                     null
@@ -865,7 +874,5 @@ export default function MyAccountAddress() {
                 </div>
                 <Toaster />
             </>
-            :
-            <Loading />
     )
 }

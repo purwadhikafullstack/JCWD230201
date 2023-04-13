@@ -17,7 +17,7 @@ module.exports = {
             var page_size = 3;
             var offset = (page - 1) * page_size;
             var limit = page_size;
-            let test= null
+            
             if (!from && !to) {
                 if (order_status_id == 0) {
                     console.log('masuk 1')
@@ -30,6 +30,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -40,6 +41,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -54,6 +56,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -65,6 +68,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -93,6 +97,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -109,6 +114,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -125,6 +131,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -136,6 +143,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -148,18 +156,16 @@ module.exports = {
                             location_warehouse_id: warehouse,
                             updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
-                            },
-                            test
+                                [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
+                            }
                         }
                     })
                         : await db.transaction.count({
                             where: {
                                 updatedAt: {
                                     [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
-                                },
-                                test
+                                    [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
+                                }
                             }
                         })
                     var total_pages = Math.ceil(total_count / page_size)
@@ -168,7 +174,7 @@ module.exports = {
                             location_warehouse_id: warehouse,
                             updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                             }
                         },
                         include: [
@@ -176,6 +182,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -184,7 +191,7 @@ module.exports = {
                             where: {
                                 updatedAt: {
                                     [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                    [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                                 }
                             },
                             include: [
@@ -192,6 +199,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -202,7 +210,7 @@ module.exports = {
                             location_warehouse_id: warehouse, order_status_id,
                             updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                             }
                         }
                     })
@@ -210,7 +218,7 @@ module.exports = {
                             where: {
                                 order_status_id, updatedAt: {
                                     [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                    [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                                 }
                             }
                         })
@@ -220,7 +228,7 @@ module.exports = {
                             location_warehouse_id: warehouse, order_status_id,
                             updatedAt: {
                                 [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                             }
                         },
                         include: [
@@ -228,6 +236,7 @@ module.exports = {
                             { model: db.transaction_detail },
                             { model: db.order_status }
                         ],
+                        order:[['createdAt', 'DESC']],
                         offset,
                         limit
                     })
@@ -236,7 +245,7 @@ module.exports = {
                             where: {
                                 order_status_id, updatedAt: {
                                     [Op.gte]: moment(from).add(1, 'days').format().split("T")[0],
-                                    [Op.lte]: moment(to).add(1, 'days').format().split("T")[0]
+                                    [Op.lt]: moment(to).add(2, 'days').format().split("T")[0]
                                 }
                             },
                             include: [
@@ -244,6 +253,7 @@ module.exports = {
                                 { model: db.transaction_detail },
                                 { model: db.order_status }
                             ],
+                            order:[['createdAt', 'DESC']],
                             offset,
                             limit
                         })
@@ -815,8 +825,7 @@ module.exports = {
             var words = ''
 
             cart.forEach((item, index) => {
-                words += `UPDATE product_details, transactions SET product_details.qty = ${item.product_detail.qty} WHERE product_details.id = ${item.product_detail_id} AND transactions.id = "${kreat.dataValues.id}" AND upload_payment IS NULL ;`
-
+                words += `UPDATE product_details, transactions SET product_details.qty = product_details.qty +${item.qty} WHERE product_details.id = ${item.product_detail_id} AND transactions.id = "${kreat.dataValues.id}" AND upload_payment IS NULL ;`
             })
             console.log(words)
 
@@ -871,13 +880,11 @@ module.exports = {
                         id: item.product_detail_id
                     }
                 })
-
                 await db.product_detail.update({ qty: compare.dataValues.qty - item.qty }, {
                     where: {
                         id: item.product_detail_id
                     }
                 })
-
             }, { transaction: t })
 
             await t.commit()

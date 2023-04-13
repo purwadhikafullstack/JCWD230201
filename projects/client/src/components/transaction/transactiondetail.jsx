@@ -40,14 +40,14 @@ export default function TransactionDetail() {
     }
 
     return (
-        <div className="fixed z-30 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 ">
+        <div className="fixed z-30 lg:w-screen w-full h-screen flex items-center justify-center bg-black bg-opacity-50 ">
             {
                 transaction.upload_payment ?
                     maxpayment ?
-                        <div className='fixed z-50 p-10 w-screen h-screen flex flex-col items-center'>
+                        <div className='fixed z-50 p-10 lg:w-screen w-fit h-fit lg:h-screen flex flex-col items-center'>
                             <div className='p-5 bg-white lg:w-1/3 w-1/2 h-1/2 xl:h-full'>
                                 <button onClick={() => setMaxpayment(false)}><AiOutlineClose size={'20px'} /></button>
-                                <img src={`https://jcwd230201.purwadhikabootcamp.com/${transaction.upload_payment}`} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
+                                <img src={`${process.env.REACT_APP_API_IMAGE_URL}${transaction.upload_payment}`} className='w-full h-full object-contain overflow-y-auto bg-gray-200 bg-opacity-20' alt="" />
                             </div>
                         </div> : null : null
             }
@@ -115,7 +115,7 @@ export default function TransactionDetail() {
                                                         <div className='flex'>
                                                             <img className='w-20 h-20 object-contain' src={require(`../../Assets/${item.product_img}`)} alt="" />
                                                             <div className='flex flex-col justify-start py-2'>
-                                                                <div className='text-lg font-semibold'>
+                                                                <div className='lg:text-lg text-sm font-semibold'>
                                                                     {item.product_name}
                                                                 </div>
                                                                 <div className='text-gray-500 text-xs'>
@@ -150,7 +150,7 @@ export default function TransactionDetail() {
                                                                 <div className='text-gray-500'>
                                                                     total harga
                                                                 </div>
-                                                                <div className='text-lg font-semibold'>
+                                                                <div className='lg:text-lg text-sm font-semibold'>
                                                                     Rp. {(item.price * item.qty).toLocaleString()}
                                                                 </div>
                                                             </div>
@@ -173,7 +173,7 @@ export default function TransactionDetail() {
                                             Payment Proof :
                                         </div>
                                         <button className='m-4' onClick={() => setMaxpayment(true)}>
-                                            <img src={`https://jcwd230201.purwadhikabootcamp.com/${transaction.upload_payment}`} className='w-12 h-20' alt="" />
+                                            <img src={`${process.env.REACT_APP_API_IMAGE_URL}${transaction.upload_payment}`} className='w-12 h-20' alt="" />
                                             {/* <img src={require(`../../Assets/${transaction.upload_payment}.jpeg`)} className='w-14 h-20' alt="" /> */}
                                         </button>
 

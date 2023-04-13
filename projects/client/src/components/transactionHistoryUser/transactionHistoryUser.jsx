@@ -24,6 +24,7 @@ export default function TransactionHistory() {
     const [message, setMessage] = useState('')
 
     const [date, setDate] = useState([])
+    const [dateCreated, setDateCreated] = useState([])
 
     const [arrProducts, setArrProducts] = useState([])
     const [showPage, setShowPage] = useState(1)
@@ -61,7 +62,7 @@ export default function TransactionHistory() {
 
             var allDate = []
             response.data.data.forEach(value => {
-                var dateString = value.updatedAt
+                var dateString = value.createdAt
                 var justClock = new Date(dateString).toTimeString();
                 var justDate = new Date(dateString).toUTCString();
                 allDate.push(`${justDate.split(' ').slice(0, 4).join(' ')} ${justClock.split(' ').slice(0, 1).join(' ')}`)
@@ -120,6 +121,7 @@ export default function TransactionHistory() {
             fd.append('images', payment[0])
             fd.append('id', input)
 
+            setDisable(true)
             let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/payment-proof`, fd)
             // console.log(data)
 
@@ -135,8 +137,15 @@ export default function TransactionHistory() {
             setTimeout(() => {
                 window.location.reload(false)
             }, 3000)
+            setDisable(false)
         } catch (error) {
             // console.log(error)
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
+            setDisable(false)
         }
     }
 
@@ -151,7 +160,7 @@ export default function TransactionHistory() {
     }
 
     return (
-        transaction.length !==0 ?
+        transaction.length !== 0 ?
             <>
                 <div className="border rounded-sm bg-white">
                     <div className="px-5 py-3 border-b">
@@ -192,7 +201,7 @@ export default function TransactionHistory() {
                                             <p>
                                                 Status:
                                             </p>
-                                            <p className={shotgunStatus[value.order_status_id-1]}>
+                                            <p className={shotgunStatus[value.order_status_id - 1]}>
                                                 {value.order_status.status}
                                             </p>
                                         </div>
@@ -249,13 +258,13 @@ export default function TransactionHistory() {
                             })
                         }
                         <div className='flex justify-center border p-5'>
-                            <button className={`border font-semibold rounded-l-lg px-7 hover:bg-black hover:text-white ${showPage.page === 1 ? `hidden` : `block`}`} onClick={() => { getData(showPage.page, "prev") }}>
+                            <button disabled={showPage.page === 1 ? true : false} className={`border font-semibold rounded-l-lg px-7  ${showPage.page === 1 ? `disabled:cursor-not-allowed` : `block hover:bg-black hover:text-white`}`} onClick={() => { getData(showPage.page, "prev") }}>
                                 Previous
                             </button>
                             <div>
                                 Page {showPage.page}
                             </div>
-                            <button className={`border font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white ${showPage.page === showPage.pages ? `hidden` : `block`}`} onClick={() => { getData(showPage.page, "next") }}>
+                            <button disabled={showPage.page === showPage.pages ? true : false} className={`border font-semibold rounded-r-lg px-7  ${showPage.page === showPage.pages ? `disabled:cursor-not-allowed` : `block hover:bg-black hover:text-white`}`} onClick={() => { getData(showPage.page, "next") }}>
                                 Next
                             </button>
                         </div>

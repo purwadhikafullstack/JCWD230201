@@ -114,7 +114,7 @@ function App() {
     } catch (error) {
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
 
@@ -126,12 +126,12 @@ function App() {
 
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
 
   let getProduct = async (id, ada, _page, btn) => {
-    console.log(ada);
+    // console.log(ada);
     setCek(ada);
     try {
         if(ada==undefined){
@@ -140,7 +140,7 @@ function App() {
         }else if(btn==="prev"){
             _page=Number(_page)-1
         }
-        console.log(true);
+        // console.log(true);
         let {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}?page=${_page?_page:showPages}`)
         setShowPage({page: data.page, pages: data.pages, total: data.total})
         setShow(data.data)
@@ -257,7 +257,7 @@ function App() {
     } catch (error) {
     }
     finally{
-      sumQty()
+      // sumQty()
     }
   }
   // let loginKeep = async () => {
@@ -272,20 +272,11 @@ function App() {
 
   //   }
   // }
-  let notRegister = () => {
+  let notRegister = async() => {
     try {
-
-      // let response = await axios.get('http://localhost:8000/users/keep-login', {
-      //   headers: {
-      //     token: localStorage.getItem('token')
-      //   }
-      // })
-      // // console.log(response)
-      // setVerifyStatus(response.data.data.status);
-
       if ((localStorage.getItem("token") == null)) {
         setTimeout(() => {
-          toast.error('Login or Regist First', {
+          toast.error('Login or regist first', {
             duration: 3000
           })
         }, 1000)
@@ -294,6 +285,26 @@ function App() {
           navigate('/')
         }, 3000)
       }
+
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/status-user`, {
+        headers: {
+          token: localStorage.getItem('token')
+        }
+      })
+      
+
+      if (response.data.data.status==="Unverified") {
+        setTimeout(() => {
+          toast.error('Please verify account first', {
+            duration: 3000
+          })
+        }, 1000)
+
+        setTimeout(() => {
+          navigate('/')
+        }, 3000)
+      }
+      
     } catch (error) {
 
     }
@@ -359,9 +370,9 @@ function App() {
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/login' element={<Login data={{ setConditionPage, conditionPage }} />} />
-              <Route path='/register' element={<Register />} />
+              <Route path='/register' element={<Register data={{setConditionPage}}/>} />
               <Route path='/activation/:id' element={<Activation data={{ setConditionPage }} />} />
-              <Route path='/confirm-email' element={<ConfirmEmail data={{ setChance, chance }} />} />
+              <Route path='/confirm-email' element={<ConfirmEmail data={{ setChance, chance,setConditionPage }} />} />
               <Route path='/reset-password/:id' element={<ResetPassword data={{ setConditionPage, setChance }} />} />
               <Route path='/my-account' element={<MyAccount data={{ itemCart, setItemCart }} />}>
                 <Route path='' element={<DashboardAccount />} />
@@ -372,7 +383,7 @@ function App() {
               </Route>
               <Route path='/cart' element={<Cart func={{ getCart }} data={{ itemCart, setItemCart, totalPrice, loading, setLoading, setLoadingIndex, loadingIndex }} />} />
               <Route path='/login-admin' element={<AdminLogin />} />
-              <Route path='*' element={<Error />} />
+              <Route path='*' element={<Error data={{setConditionPage}}/>} />
               <Route path='/product/:id' element={<Product data={{ arrColor, show, detail, detailProduct, nyow, adaSort, loadingPage, showPage, cek  }} func={{ getProduct, getColor }} />} />
               <Route path='/product/productdetail/:id' element={<ProductDetail func={{ setShowDetail, getProductDetail, getCart }} data={{ showDetail, show, detail, detailProduct, itemCart, detailQty, verifyStatus, initialPrice, loadingPage, setSelected, selected,memory,setMemory }} />} />
               <Route path='/shipping' element={<Shipping func={{ setShowDetail, getProductDetail, notRegister, setItemCart }} />} />

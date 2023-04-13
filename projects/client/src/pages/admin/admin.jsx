@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 import { RiArrowDropDownLine, RiNotificationBadgeLine } from 'react-icons/ri'
-import { AiOutlineSearch } from 'react-icons/ai'
+import { AiOutlineSearch,AiOutlineMenu } from 'react-icons/ai'
 import { Modal, Button } from 'flowbite-react'
 import axios from 'axios'
 import initialPP from '../../Assets/Blank_PP.jpg'
@@ -25,6 +25,7 @@ export default function Admin() {
     let [picture, setPicture] = useState(false)
     let navigate = useNavigate()
     let [tugel, setTugel] = useState(false)
+    let [open, setOpen] = useState(false), [toogleMA,setToogleMA] = useState(false)
 
     let logout = () => {
         toast('Logout..', {
@@ -45,6 +46,7 @@ export default function Admin() {
 
     let updateProfilePicture = async () => {
         try {
+            if(profile.length==0) throw {message:'Please select image first'}
             let fd = new FormData()
             fd.append('images', profile[0])
 
@@ -72,7 +74,9 @@ export default function Admin() {
             }, 3000)
 
         } catch (error) {
-            toast.error('Error')
+            toast.error(error.message)
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -91,7 +95,6 @@ export default function Admin() {
 
         } catch (error) {
             setMessage(error.message)
-
         }
     }
 
@@ -109,16 +112,27 @@ export default function Admin() {
                         transaction == null ?
                             null : <TransactionDetail />
                     }
-
-                    <SidebarAdmin />
-                    <div className='text-black pl-60 flex flex-col'>
+                    <SidebarAdmin data={{ open, setOpen, toogleMA,setToogleMA }} />
+                    <div className={`text-black ${open ? `lg:pl-60` : `lg:pl-20`} duration-300 flex flex-col`}>
                         {user.username ?
-                            <div className='absolute z-20 right-0 top-0 p-5'>
+                            <div style={{ backgroundImage: `url(${process.env.REACT_APP_API_IMAGE_URL}Public/images/PIMG-1679298297754.jpeg)`, backgroundSize: 'cover' }} className='w-full flex justify-between fixed lg:relative z-10 p-5'>
+                                    <div className='hidden lg:flex lg:flex-col lg:gap-1 lg:w-full text-white'>
+                                        <p className='text-2xl font-semibold'>
+                                            Welcome, Admin iFrit
+                                        </p>
+                                        <p className='opacity-70 ml-1'>
+                                            All business in iFrit
+                                        </p>
+                                    </div>
+                                    <button onClick={()=>setOpen(true)} className='lg:hidden text-white'>
+                                        <AiOutlineMenu size={'23px'}/>
+                                    </button>
+                                  
                                 <div className='flex items-center gap-6'>
-                                    <button className='p-2 hover:bg-stone-200 rounded-full'>
+                                    <button className='p-2 hover:bg-stone-200 rounded-full lg:text-black  text-white'>
                                         <RiNotificationBadgeLine size={'18px'} />
                                     </button>
-                                    <button className=' p-2 hover:bg-stone-200 rounded-full'>
+                                    <button className=' p-2 hover:bg-stone-200 rounded-full lg:text-black text-white'>
                                         <AiOutlineSearch size={'20px'} />
                                     </button>
                                     <div className='relative group inline-block'>
@@ -132,17 +146,20 @@ export default function Admin() {
                                                     {user.username}
                                                 </div>
                                                 <button className="text-gray-700 w-full text-start block px-4 py-2 hover:bg-violet-700 hover:text-white  text-sm" onClick={() => setPicture(!picture)}>
-                                                  See Profile
+                                                    See Profile
                                                 </button>
                                                 <button onClick={() => setModal(!modal)} className=" text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm">
                                                     Change Profile Picture
                                                 </button>
-                                                <button onClick={() => logout()} className="text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm" role="menuitem" tabIndex="-1" id="menu-item-3">Sign out</button> 
+                                                <button onClick={() => logout()} className="text-gray-700 hover:bg-violet-700 hover:text-white block w-full px-4 py-2 text-left text-sm" role="menuitem" tabIndex="-1" id="menu-item-3">Sign out</button>
                                                 <Modal
                                                     show={modal}
                                                     size="md"
                                                     popup={true}
-                                                    onClose={() => setModal(!modal)}
+                                                    onClose={() =>{
+                                                        setProfile([])
+                                                        setMessage('')
+                                                        setModal(!modal)}}
                                                 >
                                                     <Modal.Header />
                                                     <Modal.Body>
@@ -176,19 +193,14 @@ export default function Admin() {
                                                 >
                                                     <Modal.Header />
                                                     <Modal.Body className='flex items-center justify-center'>
-                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile}`} alt="" />
+                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}${user.photo_profile?user.photo_profile:'Public/images/Blank_PP.jpg'}`} alt="" />
                                                     </Modal.Body>
                                                 </Modal>
 
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* <button className='border-b border-stone-300 py-2 px-3' onClick={() => logout()}>
-                                    Logout
-                                </button> */}
                                 </div>
-                                {/* top bar */}
                             </div>
                             :
                             null

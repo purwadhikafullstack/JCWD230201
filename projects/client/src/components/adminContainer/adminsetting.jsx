@@ -30,7 +30,7 @@ export default function AdminSetting() {
         total_count: 0,
         disable: false,
         pop: false,
-        search: ''
+        search: '', page_size:0
     })
     let [add, setAdd] = useState(false)
 
@@ -43,8 +43,8 @@ export default function AdminSetting() {
         password: ''
     })
     let getDataWHA = async (page, search) => {
-        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/getAdmin?page=${page}&search=${search}`)
-        setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, total_pages: response.data.data.total_pages, loading: false, page, search })
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/admin/allAdmin?page=${page}&search=${search}`)
+        setList({ ...list, dataAdmin: response.data.data.loader, total_count: response.data.data.total_count, page_size:response.data.data.page_size, total_pages: response.data.data.total_pages, loading: false, page, search })
     }
     let getEmptyWH = async () => {
         let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/warehouse/AvailableWH`)
@@ -100,7 +100,7 @@ export default function AdminSetting() {
     return (
         user ?
             user.role == 1 ?
-                <div className="p-5 flex flex-col gap-2">
+                <div className="p-5 flex flex-col gap-2 lg:pt-2 pt-24">
                     <div className='flex flex-col gap-1 mb-8'>
 
                         <div className="text-2xl font-semibold">
@@ -111,9 +111,9 @@ export default function AdminSetting() {
                         </div>
                     </div>
 
-                    <div className='relative overflow-x-auto shadow-md border p-4 border-y-4 border-blue-500 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
+                    <div className='relative overflow-x-auto shadow-md border p-4 border-y-4 border-blue-500 rounded-md px-6 py-7 bg-stone-800 text-slate-200'>
                         <div className='flex justify-between mb-5'>
-                            <div className='w-1/3'>
+                            <div className='w-2/3 lg:w-1/3'>
                                 <label for="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -140,7 +140,7 @@ export default function AdminSetting() {
                                 show={picture}
                                 size="md"
                                 popup={true}
-                                onClose={() => setPicture(!picture)}
+                                onClose={() =>list.disable?null:setPicture(!picture)}
                             >
                                 <Modal.Header />
                                 <Modal.Body className='flex items-center justify-center'>
@@ -152,7 +152,7 @@ export default function AdminSetting() {
                                 show={add}
                                 size="md"
                                 popup={true}
-                                onClose={() => setAdd(!add)}>
+                                onClose={() => list.disable?null:setAdd(!add)}>
                                 <Modal.Header />
                                 <Modal.Body>
                                     <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
@@ -197,7 +197,7 @@ export default function AdminSetting() {
                                     <div className='my-5'>
                                         <div className="mb-2 block">
                                             <Label
-                                                value="phone_number"
+                                                value="phone number"
                                             />
                                         </div>
                                         <input onChange={() => setProfile({ ...profile, phone_number: nomor.current.value })} className='w-full py-2 px-2 border border-stone-500 rounded-md focus:ring-transparent focus:border-black'
@@ -270,7 +270,7 @@ export default function AdminSetting() {
                                 show={list.pop}
                                 size="md"
                                 popup={true}
-                                onClose={() => setList({ ...list, pop: false })}
+                                onClose={() =>list.disable?null:setList({ ...list, pop: false })}
                             >
                                 <Modal.Header />
 
@@ -327,11 +327,13 @@ export default function AdminSetting() {
                                     </div>
                                 </div>
                                 :
-
-                                <div className="relative overflow-visible shadow-md z-0  sm:rounded-lg">
-                                    <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
+                                <table className="w-full text-sm text-center border border-blue-500 text-gray-500 dark:text-gray-400">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                             <tr>
+                                            <th className="px-6 py-4">
+                                                    No
+                                                </th>
                                                 <th className="px-6 py-4">
                                                     Name
                                                 </th>
@@ -375,6 +377,9 @@ export default function AdminSetting() {
                                                         <td className="px-6 py-4 text-center">
                                                             <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
                                                         </td>
+                                                        <td className="px-6 py-4 text-center">
+                                                            <AiOutlineLoading3Quarters className='animate-spin' size={'20px'} />
+                                                        </td>
                                                     </tr>
                                                     :
                                                     list.dataAdmin.map((value, index) => {
@@ -382,6 +387,9 @@ export default function AdminSetting() {
                                                             value.role == 1 ?
                                                                 null :
                                                                 <tr className='border-blue-500 bg-stone-800 border-b dark:bg-gray-900 dark:border-gray-700 text-slate-200'>
+                                                                     <td className='px-6 py-4 gap-3'>
+                                                                        {list.page_size*(list.page-1)+(index+1)}
+                                                                    </td>
                                                                     <td className='px-2 w-max py-4'>
                                                                         <button onClick={() => {
                                                                             setPictureindex(value.photo_profile ? value.photo_profile : `Public/images/Blank_PP.jpg`)
@@ -415,24 +423,24 @@ export default function AdminSetting() {
                                         </tbody>
                                     </table>
                                     {/* box */}
-                                    <div className='flex justify-center p-5 gap-2'>
+                                    <div className='flex justify-center pt-3 pb-4 gap-2'>
                                         <button
-                                            disabled={(list.page - 1) == 0}
+                                            disabled={(list.page - 1) == 0 || list.loading}
                                             onClick={() => {
                                                 setList({ ...list, loading: true })
                                                 getDataWHA(list.page - 1, list.search)
-                                            }} className='font-semibold rounded-l-lg px-4 hover:bg-white hover:text-black'>
+                                            }} className='font-semibold rounded-l-lg  px-4 hover:bg-white hover:text-black'>
                                             Previous
                                         </button>
                                         <div>
                                             Page {list.page} of {list?.total_pages}
                                         </div>
                                         <button
-                                            disabled={(list.page + 1) > list.total_pages}
+                                            disabled={(list.page + 1) > list.total_pages || list.loading}
                                             onClick={() => {
                                                 setList({ ...list, loading: true })
                                                 getDataWHA(list.page + 1, list.search)
-                                            }} className='font-semibold rounded-r-lg px-7 hover:bg-white hover:text-black'>
+                                            }} className='font-semibold rounded-r-lg  px-7 hover:bg-white hover:text-black'>
                                             Next
                                         </button>
                                     </div>

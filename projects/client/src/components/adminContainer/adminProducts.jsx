@@ -124,6 +124,9 @@ export default function AdminProducts(props){
             let inputAddCategory = onAddCategory.current.value
             let inputAddDescription = onAddDescription.current.value
             
+            if(inputAddName.length<1||inputAddCategory.length<1||inputAddDescription.length<1){
+                throw new Error('Input Must Be Filled')
+            }
             // let inputAddQuantity = onAddQuantity.current.value
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
@@ -142,6 +145,7 @@ export default function AdminProducts(props){
             }, 100)
             setShowAddProduct(false)
             props.func.getCategory()
+            getEveryProducts()
         } catch (error) {
             // console.log(error);
             setTimeout(() => {
@@ -202,16 +206,16 @@ export default function AdminProducts(props){
             let inputUpdateColor = onUpdateColor.current.value // product_detail.color
             let inputUpdateColorHex = onUpdateColorHex.current.value // product_detail.color
             let inputUpdateQty = onUpdateQty.current.value // product_detail.qty
-            let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a`, {id: editId, name: inputUpdateName, description: inputUpdateDescription, category_id: inputUpdateCategory })
+            let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/product-update`, {id: editId, name: inputUpdateName, description: inputUpdateDescription, category_id: inputUpdateCategory })
             // console.log(response);
             let fd = new FormData()
             fd.append('images', imgProduct.photo_product[0])
             fd.append('data', JSON.stringify({id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor, colorhex: inputUpdateColorHex, product_id: editId}))
             if(imgProduct.photo_product.length==0){
-                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a/a/a`, {id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor,colorhex: inputUpdateColorHex, product_id: editId})
+                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/detail-product-update`, {id: editProductCategoryId, qty: inputUpdateQty, price: inputUpdatePrice, memory_storage: inputUpdateStorage, color: inputUpdateColor,colorhex: inputUpdateColorHex, product_id: editId})
             }else{
 
-                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/update-product/detail/a/a/a`, fd)
+                let data = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/product/image-post`, fd)
                 // console.log(data);
             }
             // onUpdateName.current.value = ""
@@ -227,6 +231,7 @@ export default function AdminProducts(props){
                 })
             }, 100)
             setShowEditProduct(false)
+            getEveryProducts()
         } catch (error) {
             // console.log(error.message);
             setTimeout(() => {
@@ -249,9 +254,10 @@ export default function AdminProducts(props){
 
     let deleteProduct = async()=>{
         try {
-            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a`, {id: deleteProductId})
+            // console.log(deleteProductId);
+            // let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/product-delete`, {id: deleteProductId})
             // console.log(data);
-            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/delete-product/detail/a/a/a`, {id: deleteProductCategoryId})
+            let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/product-detail-delete`, {id: deleteProductCategoryId})
             // console.log(response);
             setTimeout(() => {
                 toast.success('Delete Product Success', {
@@ -260,6 +266,7 @@ export default function AdminProducts(props){
             }, 100)
             setShowDeleteProduct(false)
             props.func.getProduct()
+            getEveryProducts()
         } catch (error) {
             setTimeout(() => {
                 toast.error(error.message, {
@@ -296,6 +303,9 @@ export default function AdminProducts(props){
             let inputAddStorage = onAddStorage.current.value
             let inputAddColor = onAddColor.current.value
             let inputAddColorHex = onAddColorHex.current.value
+            if(inputAddProduct.length<1||inputAddPrice.length<1||inputAddStorage.length<1||inputAddColorHex.length<1){
+                throw new Error('Input Must Be Filled')
+            }
             let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/product/create-productdetail`, {product_id: inputAddProduct, price: inputAddPrice, memory_storage: inputAddStorage, color: inputAddColor, colorhex: inputAddColorHex})
             setTimeout(() => {
                 toast.success('Add New Product Detail Success', {
@@ -309,6 +319,7 @@ export default function AdminProducts(props){
             onAddColorHex.current.value = ""
             setShowAddDetail(false)
             props.func.getCategory()
+            getEveryProducts()
         } catch (error) {
             setTimeout(() => {
                 toast.error(error.message, {
@@ -336,6 +347,13 @@ export default function AdminProducts(props){
         }
     }
 
+    let sumQty = async()=>{
+        try {
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/get-count/a`)
+        } catch (error) {
+            
+        }
+    }
     let postLocation = async()=>{
         try {
             let a = onAddProductWarehouse.current.value
@@ -351,18 +369,12 @@ export default function AdminProducts(props){
             }, 100)
             setShowAddWarehouse(false)
             props.func.getCategory()
+            sumQty()
         } catch (error) {
             
         }
     }
 
-    let sumQty = async()=>{
-        try {
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/get-count/a`)
-        } catch (error) {
-            
-        }
-    }
 
     useEffect(() => {
       props.func.getCategory()
@@ -376,24 +388,24 @@ export default function AdminProducts(props){
     
 
     return(
-        <div>
+        <div >
             {/* {console.log(props.data.show)} */}
-            <div className='flex justify-end pr-12'>
+            <div className='flex justify-center'>
                 
                 {user.role == 1?
-                    <div className='flex gap-4'>
-                        <Button onClick={()=>{setShowAddProduct(!showAddProduct)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
-                            <div className='text-md'>
+                    <div className='flex gap-2 md:gap-4'>
+                        <Button onClick={()=>{setShowAddProduct(!showAddProduct)}} className="md:mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white md:w-[170px] md:h-[40px]"> 
+                            <div className='text-sm sm:text-md'>
                                 Add Product
                             </div>
                         </Button>
-                        <Button onClick={()=>{setShowAddDetail(!showAddDetail)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
+                        <Button onClick={()=>{setShowAddDetail(!showAddDetail)}} className="md:mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white md:w-[170px] md:h-[40px]"> 
                             <div className='text-md'>
                                 Add Detail
                             </div>
                         </Button>
-                        <Button onClick={()=>{setShowAddWarehouse(!showAddWarehouse)}} className="mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white w-[170px] h-[40px]"> 
-                            <div className='text-md'>
+                        <Button onClick={()=>{setShowAddWarehouse(!showAddWarehouse)}} className="md:mr-5 hover:border-black border rounded-lg hover:text-black border-black bg-neutral-900 hover:bg-white md:w-[170px] md:h-[40px]"> 
+                            <div className='text-sm md:text-md'>
                                 Add to Warehouse
                             </div>
                         </Button>
@@ -630,59 +642,9 @@ export default function AdminProducts(props){
                             placeholder="Description"
                             required={true}
                         />
-                        {/* <div className="mb-2 block">
-                            <Label
-                                value="Price"
-                            />
-                        </div>
-                        <input ref={onAddPrice} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
-                            id="price"
-                            placeholder="899000"
-                            required={true}
-                        />
-                        <div className="mb-2 block">
-                            <Label
-                                value="Storage"
-                            />
-                        </div>
-                        <input ref={onAddStorage} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
-                            id="Storage"
-                            placeholder="128"
-                            required={true}
-                        />
-                        <div className="mb-2 block">
-                            <Label
-                                value="Color"
-                            />
-                        </div>
-                        <input ref={onAddColor} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
-                            id="Color"
-                            placeholder="White"
-                            required={true}
-                        />
-                        <div className="mb-2 block">
-                            <Label
-                                value="Color Hex"
-                            />
-                        </div>
-                        <input ref={onAddColorHex} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
-                            id="ColorHex"
-                            placeholder="#DF2E38"
-                            required={true}
-                        />
-                        <div className="mb-2 block">
-                            <Label
-                                value="Quantity"
-                            />
-                        </div>
-                        <input ref={onAddQuantity} className='mb-2 w-full py-2 px-2 border border-black focus:ring-transparent focus:border-black' 
-                            id="Quantity"   
-                            placeholder="24"
-                            required={true}
-                        /> */}
                     </div>
                     <div className=" flex justify-center py-5">
-                        <Button onClick={()=>addProduct()} className='hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]'>                                                                                
+                        <Button onClick={()=>addProduct()} className={`hover:border-black text-white border rounded-sm hover:text-black border-black bg-neutral-900 hover:bg-white w-[640px]`}>                                                                                
                             Submit
                         </Button>
                     </div>
@@ -858,8 +820,8 @@ export default function AdminProducts(props){
                 {/* Delete Product */}
 
             </div>
-            <div className="flex justify-center p-10">
-                <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
+            <div className="flex justify-center p-10 overflow-x-hidden">
+                <div className='border-y-4 border-yellow-300 rounded-md w-96 md:w-full bg-stone-800 text-slate-200'>
                     <div className="flex justify-center gap-10 p-5">
                         <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
                             <table className="w-full text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
@@ -958,7 +920,7 @@ export default function AdminProducts(props){
                                                         <td className="px-6 py-3">
                                                             {value.product.name}
                                                         </td>
-                                                        <tr className="px-6">
+                                                        <tr className="px-6 ">
                                                             {value.product.description.slice(0, 100)}...
                                                         </tr>
                                                         <td className="px-6 py-3">
@@ -995,6 +957,8 @@ export default function AdminProducts(props){
                                 })
                                 }
                             </table>
+                        </div>
+                    </div>
                                 <div className='flex justify-center border p-5'>
                                     <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1?'hidden':'block'}`} onClick={()=> {getEveryProducts(showPage.page, "prev")}}>
                                         Previous
@@ -1006,8 +970,6 @@ export default function AdminProducts(props){
                                         Next
                                     </button>
                                 </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

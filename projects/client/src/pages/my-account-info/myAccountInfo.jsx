@@ -2,7 +2,6 @@ import axios from "axios"
 import { useContext, useEffect, useRef, useState } from "react"
 import { toast, Toaster } from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
-import initialPP from '../../Assets/Blank_PP.jpg'
 
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 
@@ -37,6 +36,7 @@ export default function MyAccountInfo() {
     })
     const [modal, setModal] = useState(false)
     const [inputPassword, setInputPassword] = useState()
+    const [disablePicture, setDisablePicture] = useState(false)
 
     let getProfile = async () => {
         try {
@@ -54,14 +54,20 @@ export default function MyAccountInfo() {
     let onImageValidation = (e) => {
         try {
             let files = [...e.target.files]
-            // console.log(files[0])
             setProfile({ ...profile, photo_profile: files })
+
+            if (files.length === 0) {
+                setDisablePicture(true)
+            } else {
+                setDisablePicture(false)
+            }
 
             if (files.length !== 0) {
                 files.forEach((value) => {
                     if (value.size > 1000000) throw { message: `${value.name} more than 1000 Kb` }
                 })
             }
+            setMessage('')
         } catch (error) {
             setMessage(error.message)
         }
@@ -69,12 +75,12 @@ export default function MyAccountInfo() {
 
     let updateProfilePicture = async () => {
         try {
+            if(profile.photo_profile.length==0) throw {message:'Please select image first'}
             let fd = new FormData()
             fd.append('images', profile.photo_profile[0])
-
-            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/update-photo_profile`, fd, {
+            let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/photo_profile`, fd, {
                 headers: {
-                    "token": localStorage.getItem('token')
+                    token: localStorage.getItem('token')
                 }
             })
 
@@ -95,8 +101,10 @@ export default function MyAccountInfo() {
                 window.location.reload(false)
             }, 3000)
 
+            setDisablePicture(false)
         } catch (error) {
-            toast.error('Error')
+            toast.error(error.message)
+            setDisablePicture(false)
         }
     }
 
@@ -111,9 +119,9 @@ export default function MyAccountInfo() {
 
             if (profile.name && profile.phone_number && !profile.oldpassword && !profile.newpassword) {
 
-                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/update-data_profile`, { name: profile.name, phone_number: profile.phone_number }, {
+                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/data_profile`, { name: profile.name, phone_number: profile.phone_number }, {
                     headers: {
-                        "token": localStorage.getItem('token')
+                        token: localStorage.getItem('token')
                     }
                 })
             } else if (profile.name && profile.phone_number && profile.oldpassword && profile.newpassword) {
@@ -125,9 +133,9 @@ export default function MyAccountInfo() {
 
                 if (profile.newpassword !== profile.newconfirmpassword) throw { message: 'Confirm password wrong' }
 
-                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/update-data_profile`, { name: profile.name, phone_number: profile.phone_number, oldpassword: profile.oldpassword, newpassword: profile.newpassword }, {
+                await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/users/data_profile`, { name: profile.name, phone_number: profile.phone_number, oldpassword: profile.oldpassword, newpassword: profile.newpassword }, {
                     headers: {
-                        "token": localStorage.getItem('token')
+                        token: localStorage.getItem('token')
                     }
                 })
 
@@ -171,7 +179,10 @@ export default function MyAccountInfo() {
                                 show={modal}
                                 size="md"
                                 popup={true}
-                                onClose={() => setModal(!modal)}
+                                onClose={() =>{
+                                    setProfile({...profile, photo_profile:[]})
+                                    setMessage('')
+                                    setModal(!modal)}}
                             >
                                 <Modal.Header />
                                 <Modal.Body>
@@ -184,7 +195,9 @@ export default function MyAccountInfo() {
                                             {message}
                                         </div>
                                         <div className="w-full justify-center flex">
-                                            <button onClick={() => updateProfilePicture()} className=" text-white bg-black border border-black hover:bg-white hover:text-black font-semibold rounded-sm px-10 py-2">
+                                            <button disabled={disablePicture} onClick={() =>{
+                                            setDisablePicture(true)
+                                            updateProfilePicture()}} className=" text-white bg-black border border-black hover:bg-white hover:text-black disabled:cursor-not-allowed font-semibold rounded-sm px-10 py-2">
                                                 Submit
                                             </button>
                                         </div>
@@ -250,7 +263,7 @@ export default function MyAccountInfo() {
                     </div>
                 </div>
                 <div className="border py-5 px-5">
-                    <button disable={disable} onClick={() => updateDataProfile()} className="bg-black text-white hover:bg-white hover:text-black border border-black font-semibold px-10 py-2 rounded-sm">
+                    <button disabled={disable} onClick={() => updateDataProfile()} className="bg-black text-white hover:bg-white hover:text-black border border-black font-semibold px-10 py-2 rounded-sm">
                         SAVE
                     </button>
                 </div>

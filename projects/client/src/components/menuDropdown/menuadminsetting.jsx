@@ -34,7 +34,6 @@ export default function MenuAdminSetting(data) {
 
   let submit = async () => {
     try {
-      console.log(typeof profile.phone_number)
       if(profile.phone_number.length !=0){
         if (isNaN(profile.phone_number)) throw { message: 'phone number cannot be alphabet' }
         if (profile.phone_number.length < 8 || profile.phone_number.length > 13) throw { message: 'Please input valid phone number' }
@@ -166,7 +165,7 @@ export default function MenuAdminSetting(data) {
         show={visible.update}
         size="lg"
         popup={true}
-        onClose={() => setVisible({ ...visible, update: visible.update ? false : true })}>
+        onClose={() => visible.disable?null:setVisible({ ...visible, update: visible.update ? false : true })}>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6 px-6 pb-4 sm:pb-6 lg:px-8 xl:pb-8">
@@ -297,7 +296,7 @@ export default function MenuAdminSetting(data) {
         show={visible.pop}
         size="md"
         popup={true}
-        onClose={() => setVisible({ ...visible, pop: false })}
+        onClose={() =>  visible.disable?null:setVisible({ ...visible, pop: false })}
       >
         <Modal.Header />
 

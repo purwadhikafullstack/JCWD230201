@@ -48,7 +48,6 @@ export default function Cart(props) {
 
             // props.func.getCart()
 
-
         } catch (error) {
         }
     }
@@ -74,6 +73,7 @@ export default function Cart(props) {
             getData()
 
         } catch (error) {
+            setLoading(false)
             // console.log(error)
             if (!error.response) {
                 toast.error(error.message)
@@ -83,7 +83,22 @@ export default function Cart(props) {
         }
     }
 
+    let onSubmit = () => {
+        try {
+            productCart.forEach((value, index) => {
+                if (value.product_detail.qty === 0) throw { message: `Product ${value.product.name}, ${value.product_detail.memory_storage} GB, ${value.product_detail.color} out of stock` }
+                if (value.product_detail.qty < value.qty) throw { message: `Product ${value.product.name}, ${value.product_detail.memory_storage} GB, ${value.product_detail.color} has limited stocks` }
+            })
+            navigate('/shipping')
 
+        } catch (error) {
+            if (!error.response) {
+                toast.error(error.message)
+            } else {
+                toast.error(error.response.data.message)
+            }
+        }
+    }
 
     useEffect(() => {
         getData()
@@ -109,7 +124,7 @@ export default function Cart(props) {
                                                         <div className="flex justify-between p-3 h-max md:h-[100px]">
                                                             <div className="flex items-center w-full">
                                                                 <div className="flex justify-center bg-red-400">
-                                                                    <img src={require(`../../Assets/${value.product.product_images[0].img}`)} alt="...." className='w-[60px]' />
+                                                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product.product_images[0].img}`} alt="...." className='w-[60px]' />
                                                                 </div>
                                                                 <div className='text-sm'>
                                                                     <div className='font-semibold text-neutral-600'>
@@ -163,7 +178,7 @@ export default function Cart(props) {
                                                                                             setModalDelete(!modalDelete)
                                                                                             setCartToDelete(value)
                                                                                         }}
-                                                                                    className='text-lg px-3 py-1'
+                                                                                        className='text-lg px-3 py-1'
                                                                                     >
                                                                                         <BsTrash />
                                                                                     </button>
@@ -306,7 +321,7 @@ export default function Cart(props) {
                                         <div className="py-4 flex justify-between">
                                             Total<span className="font-bold">Rp. {totalPrice.toLocaleString()}</span>
                                         </div>
-                                        <button onClick={() => navigate('/shipping')} className="bg-neutral-900 text-white w-full py-1 rounded-sm">
+                                        <button onClick={() => onSubmit()} className="bg-neutral-900 text-white w-full py-1 rounded-sm">
                                             BUY
                                         </button>
                                     </div>
@@ -318,7 +333,7 @@ export default function Cart(props) {
                                     <span className='text-sm mr-1'>Total</span><span className="font-bold text-xl">Rp {totalPrice.toLocaleString()}</span>
                                 </div>
                                 <div className='flex items-center'>
-                                    <button onClick={() => navigate('/shipping')} className="bg-neutral-900 text-white px-7 py-1 rounded-sm">
+                                    <button onClick={() => onSubmit()} className="bg-neutral-900 text-white px-7 py-1 rounded-sm">
                                         BUY
                                     </button>
                                 </div>

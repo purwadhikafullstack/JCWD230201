@@ -88,7 +88,6 @@ export default function TransactionXYZ() {
     let getAllTr = async () => {
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
         let response = await axios.post('http://localhost:8000/transaction/getAllTransaction', user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0 } : { order_status_id: 0 })
-        console.log(response.data.data)
         setDataTR(response.data.data)
        
 
@@ -112,7 +111,6 @@ export default function TransactionXYZ() {
             setPickWH(wh)
             setPickStatus(status)
             var response = await axios.post('http://localhost:8000/transaction/getAllTransaction', { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null })
-            console.log(response.data.data)
             setDataTR(response.data.data)
 
             let loaderPrice = [], loaderDate = []

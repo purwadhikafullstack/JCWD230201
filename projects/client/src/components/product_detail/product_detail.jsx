@@ -1,14 +1,14 @@
 import axios from "axios"
 import { Carousel } from "flowbite-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast'
 import Loading from "../loading/loading";
+import { userData } from "../../data/userData";
 
 export default function ProductDetail(props) {
-
     const { id } = useParams()
-
+    let {user} = useContext(userData)
     const [quantity, setQuantity] = useState(1)
     const [colors, setColors] = useState([])
     const [memory, setMemory] = useState([])
@@ -25,9 +25,9 @@ export default function ProductDetail(props) {
         }
     }
 
-    let getSelected = async (mem) => {
+    let getSelected = async (mem,color) => {
         try {
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${colors}/${mem}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/product/${id}/${color}/${mem}`)
             props.data.setMemory(mem)
             props.data.setSelected(response.data.data[0]);
         } catch (error) {
@@ -37,6 +37,7 @@ export default function ProductDetail(props) {
 
     let addToCart = async () => {
         try {
+            if(user.role != null) throw { message:'Please login as user'}
             if (props.data.verifyStatus === 'Unverified') throw { message: "Your account not verified" }
 
             if (!localStorage.getItem("token")) throw { message: "Please login first" }
@@ -55,7 +56,6 @@ export default function ProductDetail(props) {
 
             props.func.getCart()
         } catch (error) {
-            // console.log(error)
             if (!error.response) {
                 toast.error(error.message)
             } else {
@@ -97,7 +97,7 @@ export default function ProductDetail(props) {
             <Loading />
             :
             <>
-                <div className="pt-20 md:pt-32 grid justify-center w-screen md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
+                <div className="pt-20 md:pt-32 grid justify-center w-full md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
                     <div className="lg:hidden flex items-center justify-between bg-white w-full px-3 md:px-5 py-2 border-b-2 fixed z-10 top-20">
                         <div className="text-xl font-semibold">
                             {props.data.detail.name}
@@ -109,7 +109,7 @@ export default function ProductDetail(props) {
                     <div className="w-full h-full md:w-96 md:h-full lg:w-96 lg:h-full -z-10">
                         <div className="grid h-[500px] md:h-[300px] lg:h-96">
                             <Carousel>
-                                <img src={require(`../../../../server/src/Public/images/${props.data.detail.product_images[0].img}`)} alt="...." className="w-44 md:w-80 lg:w-96" />
+                                <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${props.data.detail.product_images[0].img}`} alt="...." className="w-44 md:w-80 lg:w-96" />
 
                             </Carousel>
                         </div>
@@ -137,7 +137,10 @@ export default function ProductDetail(props) {
                                     return (
                                         <div>
                                             {value ?
-                                                <button onClick={() => setColors(value)} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
+                                                <button onClick={() =>{
+                                                    setColors(value)
+                                                    if(arrMemory[0]==0) getSelected(0, value)
+                                                    }} style={{ backgroundColor: colors == value ? "#113F90" : "white", color: colors == value ? "white" : "black" }} className="flex items-center gap-2 border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white min-w-[100px]">
                                                     <div style={{ backgroundColor: `${arrColorHex[index]}` }} className={`w-4 h-4 border rounded-full`}></div> {value}
                                                 </button> : null
                                             }
@@ -159,7 +162,7 @@ export default function ProductDetail(props) {
                                 return (
                                     <div>
                                         {val ?
-                                            <button onClick={() => getSelected(val)} style={{ backgroundColor: props.data.memory == val ? "#113F90" : "white", color: props.data.memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
+                                            <button onClick={() => getSelected(val,colors)} style={{ backgroundColor: props.data.memory == val ? "#113F90" : "white", color: props.data.memory == val ? "white" : "black" }} className="border border-gray-400 px-3 py-1 rounded hover:bg-neutral-700 hover:text-white focus:bg-neutral-700 focus:text-white">
                                                 {val} GB
                                             </button> : null
                                         }
