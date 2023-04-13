@@ -79,11 +79,11 @@ export default function Product(props){
                                         <div className=''>
                                             {!props.data.nyow?
                                                 <div className='min-h-[5px]' >
-                                                    <img src={require(`../../../../server/src/Public/images/${value.product_images[0].img}`)} className='flex items-start h-96 object-cover ' alt="hai" />
+                                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product_images[0].img}`} className='flex items-start h-96 object-cover ' alt="hai" />
                                                 </div>
                                                 :
                                                 <div className='min-h-[5px]' >
-                                                    <img src={require(`../../../../server/src/Public/images/${value.product.product_images[0].img}`)} className='flex items-start h-96 object-cover' alt="hai" />
+                                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product.product_images[0].img}`} className='flex items-start h-96 object-cover' alt="hai" />
                                                 </div>
                                             }
                                             <div className=''>

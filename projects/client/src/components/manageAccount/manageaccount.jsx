@@ -33,7 +33,7 @@ export default function ManageAccount(props){
             toogleMA ?
                 props.data.open?
                     <div className='flex flex-col gap-3 mt-3' >
-                        <button onClick={()=> navigate('all-user') }  className='ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
+                        <button onClick={()=> navigate('all-user') }  className={`ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`}>
                             <FiUsers size={'18px'} />
                             All Account
                         </button>
@@ -45,11 +45,11 @@ export default function ManageAccount(props){
                     </div>
                 :
                     <div className='flex flex-col gap-3 mt-3' >
-                        <button onClick={()=> navigate('all-user') }  className='ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
+                        <button onClick={()=> navigate('all-user') }  className={`ml-5 flex text-sm focus:opacity-100 items-center gap-2 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
                             <FiUsers size={'18px'} />
                         </button>
 
-                        <button onClick={()=> navigate('setting') } className='ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
+                        <button onClick={()=> navigate('setting') } className={`ml-5 flex text-sm focus:opacity-100 items-center gap-2 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
                             <FiUserPlus size={'18px'} />
                         </button>
                     </div>

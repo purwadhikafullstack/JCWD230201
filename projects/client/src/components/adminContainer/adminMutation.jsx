@@ -387,12 +387,12 @@ export default function AdminMutation(){
     }
     
     return(
-        <div className="p-5 flex flex-col gap-8 min-h-screen">
+        <div className="p-5 flex flex-col gap-8 min-h-screen overflow-x-hidden">
             <div className="text-2xl font-semibold">
                 {user.warehouse}'s Mutation
             </div>
             <div>
-                <div className='flex justify-between'>
+                <div className='flex flex-col-reverse md:flex justify-between'>
                     <div className='flex items-center mt-5 mb-5'>
                         <div className='flex gap-5 ml-5'>
                             {
@@ -598,22 +598,22 @@ export default function AdminMutation(){
                             myMutation.map((value, index)=>{
                                 return(
                                     <div className='flex flex-col rounded-md border border-slate-200 shadow-sm z-0'>
-                                            <div className='flex font-semibold gap-3 p-3'>
-                                                <div className='flex w-1/2 gap-3'>
+                                            <div className='flex flex-col md:flex-row font-semibold gap-3 p-3'>
+                                                <div className='flex md:w-1/2 gap-3'>
                                                     {/* <div className='font-semibold'>
                                                         {value.id}
                                                     </div> */}
-                                                    <div className={`${shotgunStatus[value.order_status_id - 1]} px-2 rounded-xl py-1`}>
+                                                    <div className={`${shotgunStatus[value.order_status_id - 1]} flex px-2 rounded-xl py-1`}>
                                                         {value.order_status.status}
                                                     </div>
 
-                                                    <div className='flex items-center opacity-50 gap-3'>
+                                                    <div className='flex justify-end items-center opacity-50 gap-3'>
                                                         <BsClock />
                                                         {value.updatedAt.slice(0, 10)}
                                                     </div>
                                                 </div>
 
-                                                <div className='flex w-1/2 justify-end items-center gap-3'>
+                                                <div className='flex w-full md:justify-end items-center gap-3'>
                                                     <div className='opacity-60 text-sm font-medium'>
                                                         Request to :
                                                     </div>
@@ -624,24 +624,24 @@ export default function AdminMutation(){
                                             <div className='flex px-5 justify-between'>
                                                 <div className='w-4/5 flex flex-col'>
                                                     <div className='flex'>
-                                                        <img src={require(`../../../../server/src/Public/images/${value.product_detail.product.product_images[0].img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product_detail.product.product_images[0].img}`} className='w-20 h-20 object-contain' alt="" />
                                                         <div className='mt-4 font-bold flex flex-col items-start'>
                                                             <button>
                                                             {value.product_detail.product.name}
                                                             </button>
-                                                            <div className='flex gap-2'>
+                                                            <div className='flex flex-col gap-2'>
                                                             {
                                                                 (value.product_detail.color==null && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className=' opacity-60 font-lg'>
                                                                         Price: Rp. {value.product_detail.price}
                                                                     </div>
                                                                     :
                                                                     (value.product_detail.color && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className=' opacity-60 font-lg'>
                                                                         Price: {value.product_detail.price}, Color: {value.product_detail.color}
                                                                     </div>
                                                                     :
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className=' opacity-60 font-lg'>
                                                                         Color: {value.product_detail.color}, Storage: {value.product_detail.memory_storage} GB
                                                                     </div>
                                                             }
@@ -650,7 +650,7 @@ export default function AdminMutation(){
                                                     </div>
                                                 </div>
 
-                                                <div className='w-1/5 flex'>
+                                                <div className='hidden md:w-1/5 md:flex'>
                                                     <div className='border'></div>
                                                     <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
                                                         <div className='text-sm font-medium opacity-60'>Total Products</div>
@@ -659,13 +659,20 @@ export default function AdminMutation(){
                                                 </div>
                                             </div>
 
-                                            <div className='flex items-center gap-8 p-5'>
+                                            <div className='flex items-center justify-between gap-8 p-5'>
                                                 <div className='flex items-center gap-2'>
                                                     <div>
                                                         Category : 
                                                     </div>
                                                     <div className=' text-green-500'>
                                                         {value.product_detail.product.category.name}
+                                                    </div>
+                                                </div>
+                                                    <div className=' flex justify-end md:hidden'>
+                                                    <div className='border'></div>
+                                                    <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
+                                                        <div className='text-sm font-medium opacity-60'>Total Products</div>
+                                                        <div>{value.qty} Pcs</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -694,8 +701,8 @@ export default function AdminMutation(){
                             myRequest.map((value, index)=>{
                                 return(
                                     <div className='flex flex-col rounded-md border border-slate-200 shadow-sm z-0'>
-                                            <div className='flex font-semibold gap-3 p-3'>
-                                                <div className='flex w-1/2 gap-3'>
+                                            <div className='flex flex-col md:flex-row font-semibold gap-3 p-3'>
+                                                <div className='flex md:w-1/2 gap-3'>
                                                     {/* <div className='font-semibold'>
                                                         {value.id}
                                                     </div> */}
@@ -703,12 +710,12 @@ export default function AdminMutation(){
                                                         {value.order_status.status}
                                                     </div>
 
-                                                    <div className='flex items-center opacity-50 gap-3'>
+                                                    <div className='flex justify-end items-center opacity-50 gap-3'>
                                                         <BsClock />
                                                         {value.updatedAt.slice(0, 10)}
                                                     </div>
                                                 </div>
-                                                <div className='flex w-1/2 justify-end items-center gap-3'>
+                                                <div className='flex w-full md:justify-end items-center gap-3'>
                                                     <div className='opacity-60 text-sm font-medium'>
                                                         Request from :
                                                     </div>
@@ -719,24 +726,24 @@ export default function AdminMutation(){
                                             <div className='flex px-5 justify-between'>
                                                 <div className='w-4/5 flex flex-col'>
                                                     <div className='flex'>
-                                                    <img src={require(`../../../../server/src/Public/images/${value.product_detail.product.product_images[0].img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product_detail.product.product_images[0].img}`} className='w-20 h-20 object-contain' alt="" />
                                                         <div className='mt-4 font-bold flex flex-col items-start'>
                                                             <button>
                                                             {value.product_detail.product.name}
                                                             </button>
-                                                            <div className='flex gap-2'>
+                                                            <div className='flex flex-col gap-2'>
                                                             {
                                                                 (value.product_detail.color==null && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Price: Rp. {value.product_detail.price}
                                                                     </div>
                                                                     :
                                                                     (value.product_detail.color && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Price: {value.product_detail.price}, Color: {value.product_detail.color}
                                                                     </div>
                                                                     :
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Color: {value.product_detail.color}, Storage: {value.product_detail.memory_storage} GB
                                                                     </div>
                                                             }
@@ -744,7 +751,7 @@ export default function AdminMutation(){
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className='w-1/5 flex'>
+                                                <div className='hidden md:w-1/5 md:flex'>
                                                     <div className='border'></div>
                                                     <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
                                                         <div className='text-sm font-medium opacity-60'>Total Products</div>
@@ -753,7 +760,7 @@ export default function AdminMutation(){
                                                 </div>
                                             </div>
 
-                                            <div className='flex justify-between items-center gap-8 p-5'>
+                                            <div className='flex items-center justify-between p-5'>
                                                 <div className='flex items-center gap-2'>
                                                     <div>
                                                         Category : 
@@ -896,17 +903,17 @@ export default function AdminMutation(){
                             })
                             :
                             <div className='flex flex-col h-full items-center justify-center'>
-                            <lottie-player
-                                autoplay
-                                loop
-                                mode="normal"
-                                src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
-                                style={{ width: "200px" }}    >
-                            </lottie-player>
-                            <div className='text-2xl'>
-                                Data not found
-                            </div>
-                        </div>
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                            style={{ width: "200px" }}    >
+                                        </lottie-player>
+                                        <div className='text-2xl'>
+                                            Data not found
+                                        </div>
+                                    </div>
                         }
                     </div>
                 : null}
