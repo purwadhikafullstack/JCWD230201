@@ -912,13 +912,13 @@ export default function AdminMutation(){
                 : null}
             </div>
             <div className='flex justify-center p-5'>
-                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1||showPage.page==undefined?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "prev");getMutation(forStatus, showPage.page, "prev");console.log(showPage);console.log(forStatus)}}>
+                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1||showPage.page==undefined?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "prev");getMutation(forStatus, showPage.page, "prev")}}>
                     Previous
                 </button>
                 <div>
                     {myMutation.length<=2?null:`Page ${showPage.page}`}
                 </div>
-                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "next");getMutation(forStatus, showPage.page, "next");console.log(showPage);console.log(forStatus)}}>
+                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getMutationn(forStatus, showPage.page, "next");getMutation(forStatus, showPage.page, "next")}}>
                     Next
                 </button>
             </div>

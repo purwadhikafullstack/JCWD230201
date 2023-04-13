@@ -8,17 +8,29 @@ const axios = require('axios')
 
 module.exports = {
     getDataWH: async (req, res) => {
-        let {page} = req.query
+        let { page, inputSearch } = req.query
         var page_size = 4;
         var offset = (page - 1) * page_size;
         var limit = page_size;
 
-        var total_count = await db.location_warehouse.count()
+        var total_count = await db.location_warehouse.count({  where: {
+            [Op.or]: [
+                { province: { [Op.startsWith]: inputSearch } },
+                { city: { [Op.startsWith]: inputSearch } },
+                { subdistrict: { [Op.startsWith]: inputSearch } }
+            ]
+        }})
         var total_pages = Math.ceil(total_count / page_size)
 
 
         let getWH = await db.location_warehouse.findAll({
-            offset,limit
+            where: {
+                [Op.or]: [
+                    { province: { [Op.startsWith]: inputSearch } },
+                    { city: { [Op.startsWith]: inputSearch } },
+                    { subdistrict: { [Op.startsWith]: inputSearch } }
+                ]
+            }, offset, limit
         })
 
         res.status(201).send({
@@ -27,23 +39,23 @@ module.exports = {
             data: {
                 getWH,
                 total_count,
-                total_pages
+                total_pages, page_size
             }
         })
     },
-    getEmptyWH:async(req,res)=>{
+    getEmptyWH: async (req, res) => {
         let getWH = await db.location_warehouse.findAll({
-                include:[{model:db.admin}]
+            include: [{ model: db.admin }]
         })
-        console.log(getWH[6].dataValues.admin==null)
-        let loader =    getWH.filter((item)=> item.dataValues.admin==null)
+        console.log(getWH[6].dataValues.admin == null)
+        let loader = getWH.filter((item) => item.dataValues.admin == null)
         // getWH.forEach(item=>item.dataValues.admin==null?loader.push(item.admin):null)
-        
-        
+
+
         res.status(201).send({
-            isError:false,
-            message:'Get Data Success!',
-            data:loader
+            isError: false,
+            message: 'Get Data Success!',
+            data: loader
         })
 
     },
@@ -83,23 +95,23 @@ module.exports = {
             }
         )
         res.status(201).send({
-            isError:false,
-            message:'Update WH success!'
+            isError: false,
+            message: 'Update WH success!'
         })
     },
-    deleteWH: async(req,res)=>{
-        let {id}= req.body
+    deleteWH: async (req, res) => {
+        let { id } = req.body
 
         await db.location_warehouse.destroy({
-            where:{
+            where: {
                 id
             }
         })
         res.status(201).send({
-            isError:false,
-            message:'Delete WH Success!'
+            isError: false,
+            message: 'Delete WH Success!'
         })
     }
-   
+
 
 }

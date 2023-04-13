@@ -5,7 +5,7 @@ const Router = express.Router()
 const {logController} = require('../controllers') // Akan otomatis mengambil file index.js nya
 // const upload = require('../middleware/upload')
 
-Router.get('/getlog', logController.getAllLog )
+Router.get('/log-history', logController.getAllLog )
 
 
 module.exports = Router

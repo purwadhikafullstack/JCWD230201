@@ -2,7 +2,6 @@ import axios from "axios"
 import { useContext, useEffect, useRef, useState } from "react"
 import { toast, Toaster } from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
-import initialPP from '../../Assets/Blank_PP.jpg'
 
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 
@@ -54,7 +53,6 @@ export default function MyAccountInfo() {
     let onImageValidation = (e) => {
         try {
             let files = [...e.target.files]
-            // console.log(files[0])
             setProfile({ ...profile, photo_profile: files })
 
             if (files.length !== 0) {
@@ -69,6 +67,7 @@ export default function MyAccountInfo() {
 
     let updateProfilePicture = async () => {
         try {
+            if(profile.photo_profile.length==0) throw {message:'Please select image first'}
             let fd = new FormData()
             fd.append('images', profile.photo_profile[0])
 
@@ -96,7 +95,7 @@ export default function MyAccountInfo() {
             }, 3000)
 
         } catch (error) {
-            toast.error('Error')
+            toast.error(error.message)
         }
     }
 
@@ -171,7 +170,10 @@ export default function MyAccountInfo() {
                                 show={modal}
                                 size="md"
                                 popup={true}
-                                onClose={() => setModal(!modal)}
+                                onClose={() =>{
+                                    setProfile({...profile, photo_profile:[]})
+                                    setMessage('')
+                                    setModal(!modal)}}
                             >
                                 <Modal.Header />
                                 <Modal.Body>

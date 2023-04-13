@@ -92,7 +92,7 @@ module.exports = {
                 data: {
                     loader,
                     total_count,
-                    total_pages
+                    total_pages,page_size
                 }
             })
         } catch (error) {
@@ -149,28 +149,54 @@ module.exports = {
         }
     },
     getAllUser: async (req, res) => {
-        let { page, code } = req.query
+        let { page, code, inputSearch } = req.query
         const page_size = 5;
         const offset = (page - 1) * page_size;
         const limit = page_size;
 
         if (code == 1) {
 
-            var total_count = await db.user.count()
+            var total_count = await db.user.count({
+                where:{
+                    [Op.or]: [
+                        { email: { [Op.startsWith]: inputSearch} },
+                        { name: { [Op.startsWith]: inputSearch} },
+                        {phone_number: { [Op.startsWith]: inputSearch} },
+                    ]
+                }
+            })
             var total_pages = Math.ceil(total_count / page_size)
             var allUser = await db.user.findAll({
+                where:{
+                    [Op.or]: [
+                        {phone_number: { [Op.startsWith]: inputSearch} },
+                        { email: { [Op.startsWith]: inputSearch} },
+                        { name: { [Op.startsWith]: inputSearch} }
+                    ]
+                },
                 offset, limit
             })
 
         } else if (code == 2) {
 
-            var total_count = await db.admin.count({ where: { role: 2 } })
+            var total_count = await db.admin.count({ where: { role: 2,
+                [Op.or]: [
+                    { email: { [Op.startsWith]: inputSearch} },
+                    { name: { [Op.startsWith]: inputSearch} },
+                    { phone_number: { [Op.startsWith]: inputSearch} }
+                ]
+             }})
             var total_pages = Math.ceil(total_count / page_size)
             var allAdmin = await db.admin.findAll({
                 where: {
-                    role: 2
+                    role: 2,
+                    [Op.or]: [
+                        { phone_number: { [Op.startsWith]: inputSearch} },
+                        { name: { [Op.startsWith]: inputSearch} },
+                        { email: { [Op.startsWith]: inputSearch} }
+                    ]
                 },
-                include: { model: db.location_warehouse }
+                include: { model: db.location_warehouse}
                 ,
                 offset, limit
             })
@@ -181,7 +207,7 @@ module.exports = {
             data: {
                 response: allUser ? allUser : allAdmin,
                 total_count,
-                total_pages
+                total_pages, page_size
             }
         })
     },
