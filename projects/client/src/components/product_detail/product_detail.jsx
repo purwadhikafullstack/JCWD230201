@@ -107,7 +107,7 @@ export default function ProductDetail(props) {
                     <div className="w-full h-full md:w-96 md:h-full lg:w-96 lg:h-full -z-10">
                         <div className="grid h-[500px] md:h-[300px] lg:h-96">
                             <Carousel>
-                                <img src={require(`../../../../server/src/Public/images/${props.data.detail.product_images[0].img}`)} alt="...." className="w-44 md:w-80 lg:w-96" />
+                                <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${props.data.detail.product_images[0].img}`} alt="...." className="w-44 md:w-80 lg:w-96" />
 
                             </Carousel>
                         </div>

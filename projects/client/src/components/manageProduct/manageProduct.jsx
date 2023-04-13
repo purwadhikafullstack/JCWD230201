@@ -43,10 +43,10 @@ export default function ManageProduct(props){
                     </div>
                     :
                     <div className='flex flex-col gap-3 mt-3' >
-                        <button onClick={() => navigate('products')} className='ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
+                        <button onClick={() => navigate('products')} className={`ml-5 flex text-sm focus:opacity-100 items-center gap-2 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
                             <BsInbox size={'20px'} />
                         </button>
-                        <button onClick={() => navigate('products-location')} className='ml-5 flex text-sm focus:opacity-100 items-center gap-2 opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'>
+                        <button onClick={() => navigate('products-location')} className={`ml-5 flex text-sm focus:opacity-100 items-center gap-2 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
                             <BsInboxes size={'20px'} />
                         </button>
                     </div>

@@ -36,13 +36,26 @@ export default function AdminProductListLocation(props){
         try {
             let a = Number(onUpdateInc.current.value)+defaultQty
             let b = defaultQty - Number(onUpdateDec.current.value)
-            // console.log(Number(a));
-            // console.log(Number(b));
 
-            if(b<0){
+            if(isNaN(onUpdateInc.current.value) || isNaN(onUpdateDec.current.value)){
+                toast.error("Quantity Must Be Number")
+                a=""
+                b=""
+                onUpdateInc.current.value = ""
+                onUpdateDec.current.value = ""
+            }
+            else if(b<0){
                 toast.error("Quantity Cannot Be Minus")
+                a=""
+                b=""
+                onUpdateInc.current.value = ""
+                onUpdateDec.current.value = ""
             }else if(onUpdateInc.current.value==0&&onUpdateDec.current.value==0){
                 toast.error("Quantity Must Be Filled")
+                a=""
+                b=""
+                onUpdateInc.current.value = ""
+                onUpdateDec.current.value = ""
             }
             else if(onUpdateInc.current.value>0&&onUpdateDec.current.value==0){
                 // console.log("Masuk Pertama")
@@ -59,6 +72,10 @@ export default function AdminProductListLocation(props){
                 props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page)
                 setShowIncQty(!showIncQty)
                 setShowModal(!showModal)
+                a=""
+                b=""
+                onUpdateInc.current.value = ""
+                onUpdateDec.current.value = ""
             }else if(onUpdateInc.current.value==0&&onUpdateDec.current.value>0){
                 // console.log("Masuk Kedua")
                 let response = await axios.patch(`${process.env.REACT_APP_API_BASE_URL}/location/update`,{id: quantity, qty: b})
@@ -74,6 +91,10 @@ export default function AdminProductListLocation(props){
                 props.func.getLocationProduct(user.warehouse_id, props.data.showPage.page)
                 setShowDecQty(!showDecQty)
                 setShowModal(!showModal)
+                a=""
+                b=""
+                onUpdateInc.current.value = ""
+                onUpdateDec.current.value = ""
             }
 
             a=""
@@ -93,7 +114,7 @@ export default function AdminProductListLocation(props){
     }, [])
     
     return(
-        <div>
+        <div className="overflow-x-hidden">
             {/* Modal Increment */}
             <Modal
                 show={showIncQty}
@@ -176,12 +197,12 @@ export default function AdminProductListLocation(props){
                     </Modal.Body>
                 </Modal>
 
-            <div className="flex justify-center">
-                <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
-                        <div className="flex justify-center gap-10 p-5">
-                            <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
-                                <table className="w-[1000px] text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
-                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <div className="flex justify-center p-10 overflow-x-hidden">
+                <div className='border-y-4 border-yellow-300 rounded-md w-96 md:w-full bg-stone-800 text-slate-200'>
+                    <div className="flex justify-center gap-10 p-5">
+                        <div className="relative overflow-y-auto shadow-md  sm:rounded-lg">
+                            <table className="w-full text-sm text-center border border-yellow-300 text-gray-500 dark:text-gray-400">
+                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
                                         <th scope="col" className="px-6 py-3">
                                             Id
@@ -245,6 +266,8 @@ export default function AdminProductListLocation(props){
                                     })
                                 }
                             </table>
+                        </div>
+                    </div>
                                 {
                                     user.role == 1?
                             <div className='flex justify-center border p-5'>
@@ -270,8 +293,6 @@ export default function AdminProductListLocation(props){
                                     </button>
                                 </div>
                                 }
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

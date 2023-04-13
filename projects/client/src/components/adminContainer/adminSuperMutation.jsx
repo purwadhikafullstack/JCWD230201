@@ -134,7 +134,7 @@ export default function AdminSuperMutation(){
     }
     
     return(
-        <div className="p-5 flex flex-col gap-8 min-h-screen">
+        <div className="p-5 flex flex-col gap-8 min-h-screen overflow-x-hidden">
             <div className="text-2xl font-semibold">
                 All Warehouse Mutation
             </div>
@@ -146,8 +146,8 @@ export default function AdminSuperMutation(){
                         return(
                             <div className='gap-5 px-4 py-2 bg-stone-800 flex border-b-4 border-lime-300 rounded-md group'>                            
                                 <div className='flex flex-col items-end'>
-                                    <button onClick={()=>{getMutation(value.id, null, null, null);wayaw(value.id)}} className=" rounded text-white min-w-[100px] ">
-                                        <p className='text-lg font-semibold'>{value.city} </p>
+                                    <button onClick={()=>{getMutation(value.id, null, null, null);wayaw(value.id)}} className=" rounded text-white min-w-[200px] lg:min-w-[100px] ">
+                                        <p className='text-sm md:text-xl font-semibold'>{value.city} </p>
                                     </button>
                                 </div>
                             </div>
@@ -157,9 +157,9 @@ export default function AdminSuperMutation(){
                 </div>:null
             }
             <div>
-                <div className='flex justify-between'>
-                    <div className='flex items-center mt-5 mb-5'>
-                        <div className='flex gap-5 ml-5'>
+                <div className='flex justify-between gap-5'>
+                    <div className='flex  mt-5 mb-5'>
+                        <div className='flex gap-5'>
                             <button className={`font-semibold hover:text-black 'underline-offset-4 underline text-black' : 'text-gray-300'} `}>
                                 Warehouse {ab[adaNama-1]}
                             </button>
@@ -184,22 +184,22 @@ export default function AdminSuperMutation(){
                             myMutation.map((value, index)=>{
                                 return(
                                     <div className='flex flex-col rounded-md border border-slate-200 shadow-sm z-0'>
-                                            <div className='flex font-semibold gap-3 p-3'>
-                                                <div className='flex w-1/2 gap-3'>
+                                            <div className='flex flex-col md:flex-row font-semibold gap-3 p-3'>
+                                                <div className='flex md:w-1/2 gap-3'>
                                                     {/* <div className='font-semibold'>
                                                         {value.id}
                                                     </div> */}
-                                                    <div className={`${shotgunStatus[value.order_status_id - 1]} px-2 rounded-xl py-1`}>
+                                                    <div className={`${shotgunStatus[value.order_status_id - 1]} flex justify-start px-2 rounded-xl py-1`}>
                                                         {value.order_status.status}
                                                     </div>
 
-                                                    <div className='flex items-center opacity-50 gap-3'>
+                                                    <div className='flex justify-end items-center opacity-50 gap-3'>
                                                         <BsClock />
                                                         {value.updatedAt.slice(0, 10)}
                                                     </div>
                                                 </div>
 
-                                                <div className='flex w-1/2 justify-end items-center gap-3'>
+                                                <div className='flex w-full md:justify-end items-center gap-3'>
                                                     <div className='opacity-60 text-sm font-medium'>
                                                         Request to :
                                                     </div>
@@ -210,24 +210,24 @@ export default function AdminSuperMutation(){
                                             <div className='flex px-5 justify-between'>
                                                 <div className='w-4/5 flex flex-col'>
                                                     <div className='flex'>
-                                                        <img src={require(`../../../../server/src/Public/images/${value.product_detail.product.product_images[0].img}`)} className='w-20 h-20 object-contain' alt="" />
+                                                        <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product_detail.product.product_images[0].img}`} className='w-20 h-20 object-contain' alt="" />
                                                         <div className='mt-4 font-bold flex flex-col items-start'>
                                                             <button>
                                                             {value.product_detail.product.name}
                                                             </button>
-                                                            <div className='flex gap-2'>
+                                                            <div className='flex flex-col gap-2'>
                                                             {
                                                                 (value.product_detail.color==null && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Price: Rp. {value.product_detail.price}
                                                                     </div>
                                                                     :
                                                                     (value.product_detail.color && value.product_detail.memory_storage==null)==true?
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Price: {value.product_detail.price}, Color: {value.product_detail.color}
                                                                     </div>
                                                                     :
-                                                                    <div className='text-center opacity-60 font-lg'>
+                                                                    <div className='opacity-60 font-lg'>
                                                                         Color: {value.product_detail.color}, Storage: {value.product_detail.memory_storage} GB
                                                                     </div>
                                                             }
@@ -236,7 +236,7 @@ export default function AdminSuperMutation(){
                                                     </div>
                                                 </div>
 
-                                                <div className='w-1/5 flex'>
+                                                <div className='hidden md:w-1/5 md:flex'>
                                                     <div className='border'></div>
                                                     <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
                                                         <div className='text-sm font-medium opacity-60'>Total Products</div>
@@ -245,7 +245,7 @@ export default function AdminSuperMutation(){
                                                 </div>
                                             </div>
 
-                                            <div className='flex items-center gap-8 p-5'>
+                                            <div className='flex items-center justify-between gap-8 p-5'>
                                                 <div className='flex items-center gap-2'>
                                                     <div>
                                                         Category : 
@@ -254,28 +254,41 @@ export default function AdminSuperMutation(){
                                                         {value.product_detail.product.category.name}
                                                     </div>
                                                 </div>
+                                                    <div className=' flex justify-end md:hidden'>
+                                                    <div className='border'></div>
+                                                    <div className='flex flex-col w-full h-full items-center justify-center text-lg font-bold'>
+                                                        <div className='text-sm font-medium opacity-60'>Total Products</div>
+                                                        <div>{value.qty} Pcs</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                 )
                             })
                             :
-                            <div className='h-full w-full flex flex-col items-center justify-center'>
-                                <img src={noData} width={'300px'} alt="" />
-                                <div className='text-xl font-semibold'>
-                                    Sorry Data Not Found
-                                </div>
-                            </div>
+                            <div className='flex flex-col h-full items-center justify-center'>
+                                        <lottie-player
+                                            autoplay
+                                            loop
+                                            mode="normal"
+                                            src="https://assets9.lottiefiles.com/packages/lf20_QbzmYGklCe.json"
+                                            style={{ width: "200px" }}    >
+                                        </lottie-player>
+                                        <div className='text-2xl'>
+                                            Data not found
+                                        </div>
+                                    </div>
                         }
                     </div>
             </div>
             <div className='flex justify-center p-5'>
-                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==1?'hidden':'block'}`} onClick={()=> {getMutationn(adaNama, showPage.page, "prev", forStatus);getMutation(adaNama, showPage.page, "prev", forStatus)}}>
+                <button className={`border font-semibold rounded-l-lg px-4 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${myMutation.length>0?`block`:`hidden`} ${showPage.page==1?'hidden':'block'}`} onClick={()=> {getMutationn(adaNama, showPage.page, "prev", forStatus);getMutation(adaNama, showPage.page, "prev", forStatus)}}>
                     Previous
                 </button>
                 <div>
                     Page {showPage.page}
                 </div>
-                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getMutationn(adaNama, showPage.page, "next", forStatus);getMutation(adaNama, showPage.page, "next", forStatus)}}>
+                <button className={`border font-semibold rounded-r-lg px-7 text-stone-800 bg-slate-200 hover:bg-stone-800 hover:text-slate-200 ${myMutation.length>0?`block`:`hidden`} ${showPage.page==showPage.pages?'hidden':'block'}`} onClick={()=> {getMutationn(adaNama, showPage.page, "next", forStatus);getMutation(adaNama, showPage.page, "next", forStatus)}}>
                     Next
                 </button>
             </div>

@@ -124,7 +124,7 @@ export default function Cart(props) {
                                                         <div className="flex justify-between p-3 h-max md:h-[100px]">
                                                             <div className="flex items-center w-full">
                                                                 <div className="flex justify-center bg-red-400">
-                                                                    <img src={require(`../../Assets/${value.product.product_images[0].img}`)} alt="...." className='w-[60px]' />
+                                                                    <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${value.product.product_images[0].img}`} alt="...." className='w-[60px]' />
                                                                 </div>
                                                                 <div className='text-sm'>
                                                                     <div className='font-semibold text-neutral-600'>
