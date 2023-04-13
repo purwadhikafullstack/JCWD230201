@@ -1,13 +1,14 @@
 import axios from "axios"
 import { Carousel } from "flowbite-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast'
 import Loading from "../loading/loading";
+import { userData } from "../../data/userData";
 
 export default function ProductDetail(props) {
     const { id } = useParams()
-
+    let {user} = useContext(userData)
     const [quantity, setQuantity] = useState(1)
     const [colors, setColors] = useState([])
     const [memory, setMemory] = useState([])
@@ -36,6 +37,7 @@ export default function ProductDetail(props) {
 
     let addToCart = async () => {
         try {
+            if(user.role != null) throw { message:'Please login as user'}
             if (props.data.verifyStatus === 'Unverified') throw { message: "Your account not verified" }
 
             if (!localStorage.getItem("token")) throw { message: "Please login first" }
