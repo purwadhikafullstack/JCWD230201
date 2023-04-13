@@ -100,7 +100,7 @@ export default function Activation(props) {
 
     let getStatusUser = async () => {
         try {
-            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus/${id}`)
+            let resultStatus = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/status-user/${id}`)
             setStatusUser(resultStatus.data.data.status)
             // console.log(resultStatus.data.data.status)
 

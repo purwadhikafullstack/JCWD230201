@@ -95,7 +95,7 @@ export default function ProductDetail(props) {
             <Loading />
             :
             <>
-                <div className="pt-20 md:pt-32 grid justify-center w-screen md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
+                <div className="pt-20 md:pt-32 grid justify-center w-full md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
                     <div className="lg:hidden flex items-center justify-between bg-white w-full px-3 md:px-5 py-2 border-b-2 fixed z-10 top-20">
                         <div className="text-xl font-semibold">
                             {props.data.detail.name}
@@ -107,7 +107,7 @@ export default function ProductDetail(props) {
                     <div className="w-full h-full md:w-96 md:h-full lg:w-96 lg:h-full -z-10">
                         <div className="grid h-[500px] md:h-[300px] lg:h-96">
                             <Carousel>
-                                <img src={require(`../../../../server/src/Public/images/${props.data.detail.product_images[0].img}`)} alt="...." className="w-44 md:w-80 lg:w-96" />
+                                <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${props.data.detail.product_images[0].img}`} alt="...." className="w-44 md:w-80 lg:w-96" />
 
                             </Carousel>
                         </div>

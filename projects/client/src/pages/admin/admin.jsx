@@ -112,7 +112,6 @@ export default function Admin() {
                         transaction == null ?
                             null : <TransactionDetail />
                     }
-
                     <SidebarAdmin data={{ open, setOpen, toogleMA,setToogleMA }} />
                     <div className={`text-black ${open ? `lg:pl-60` : `lg:pl-20`} duration-300 flex flex-col`}>
                         {user.username ?
@@ -201,12 +200,7 @@ export default function Admin() {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* <button className='border-b border-stone-300 py-2 px-3' onClick={() => logout()}>
-                                    Logout
-                                </button> */}
                                 </div>
-                                {/* top bar */}
                             </div>
                             :
                             null

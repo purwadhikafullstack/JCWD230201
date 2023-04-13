@@ -22,7 +22,9 @@ export default function SidebarAdmin(props) {
     // console.log(props.data.open)
     let navigate = useNavigate()
     return (
+
         <div className={`fixed px-5 py-5 ${props.data.open ? `lg:w-60 w-fit` : `lg:w-20 lg:block -translate-x-32 lg:-translate-x-0`} duration-300 h-full text-white bg-black z-20`}>
+       // <div className={`hidden lg:block lg:fixed px-5 py-5 ${props.data.open? `w-60`:`w-20`} duration-300 h-full text-white bg-black z-20`}>
             <div className='flex flex-col h-full'>
                 <button onClick={() =>navigate('/')} className={`w-fit ${props.data.open ? 'ml-3' : ''} mb-10 object-contain relative flex items-end`}>
                     <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${props.data.open ? 'F_logo' : 'favicon(1)'}.png`} alt="" width={`${props.data.open ? '80px' : '25px'}`} />
@@ -87,7 +89,6 @@ export default function SidebarAdmin(props) {
                             <BsCurrencyDollar size={'20px'} />
                         </button>
                     }
-
                     {props.data.open ?
                         <button onClick={() => navigate('log-product')} className={`flex items-center gap-3 ${location.pathname.split('/')[2] == 'log-product' ? '' : 'opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100'}`}>
                             <AiOutlineHistory size={'22px'} />
@@ -112,29 +113,29 @@ export default function SidebarAdmin(props) {
                     <ManageProduct data={{ ...props.data }} />
                     {
                         user.role == 2 ?
-                            props.data.open ?
-                                <button onClick={() => navigate('mutation')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                                    <BsMailbox size={'20px'} />
-                                    Mutation
-                                </button>
-                                :
-                                <button onClick={() => navigate('mutation')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                                    <BsMailbox size={'20px'} />
-                                </button>
+                        props.data.open?
+                            <button onClick={() => navigate('mutation')} className={`flex items-center gap-3 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
+                                <BsMailbox size={'20px'} />
+                                Mutation
+                            </button>
+                            :
+                            <button onClick={() => navigate('mutation')} className={`flex items-center gap-3 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
+                                <BsMailbox size={'20px'} />
+                            </button>
                             :
                             null
                     }
                     {
                         user.role == 1 ?
-                            props.data.open ?
-                                <button onClick={() => navigate('mutation-super')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                                    <BsMailbox size={'20px'} />
-                                    All Mutation
-                                </button>
-                                :
-                                <button onClick={() => navigate('mutation-super')} className='flex items-center opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100 gap-3 '>
-                                    <BsMailbox size={'20px'} />
-                                </button>
+                        props.data.open?
+                            <button onClick={() => navigate('mutation-super')} className={`flex items-center gap-3 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
+                                <BsMailbox size={'20px'} />
+                                All Mutation
+                            </button>
+                            :
+                            <button onClick={() => navigate('mutation-super')} className={`flex items-center gap-3 ${props.data.open?`opacity-50 ease-in duration-200 hover:opacity-100 hover:translate-x-6 hover:delay-100`:`opacity-50 hover:opacity-100`}`}>
+                                <BsMailbox size={'20px'} />
+                            </button>
                             :
                             null
                     }
