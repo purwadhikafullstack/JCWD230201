@@ -118,10 +118,10 @@ export default function Admin() {
                             <div style={{ backgroundImage: `url(${process.env.REACT_APP_API_IMAGE_URL}Public/images/PIMG-1679298297754.jpeg)`, backgroundSize: 'cover' }} className='w-full flex justify-between fixed lg:relative z-10 p-5'>
                                     <div className='hidden lg:flex lg:flex-col lg:gap-1 lg:w-full text-white'>
                                         <p className='text-2xl font-semibold'>
-                                            Welcome, Admin iFhone
+                                            Welcome, Admin iFrit
                                         </p>
                                         <p className='opacity-70 ml-1'>
-                                            All business in iFhone
+                                            All business in iFrit
                                         </p>
                                     </div>
                                     <button onClick={()=>setOpen(true)} className='lg:hidden text-white'>
