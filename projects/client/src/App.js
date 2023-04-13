@@ -286,7 +286,7 @@ function App() {
         }, 3000)
       }
 
-      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/getStatus`, {
+      let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/users/status-user`, {
         headers: {
           token: localStorage.getItem('token')
         }

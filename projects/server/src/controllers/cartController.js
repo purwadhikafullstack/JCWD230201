@@ -141,7 +141,7 @@ module.exports = {
 
 
             if (type === "+") {
-                if (parseInt(qtyx) + 1 > checkQty.dataValues.product_detail.dataValues.qty) throw { message: 'Items Exceed of Stock' }
+                if (parseInt(qtyx) + 1 > checkQty.dataValues.product_detail.dataValues.qty) throw { message: 'Item has limited stock' }
                 let getData = await db.cart.update({
                     qty: parseInt(qtyx) + 1
                 }, {
