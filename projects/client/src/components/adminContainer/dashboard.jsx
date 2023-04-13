@@ -29,7 +29,7 @@ export default function Dashboard() {
 
     let getData = async (warehouse_id) => {
         try {
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dash/getDash?warehouse_id=${warehouse_id}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dash/allDash?warehouse_id=${warehouse_id}`)
             let duit = 0
             response.data.data.balances.forEach((item, index) => {
                 item.transaction_details.forEach((item, index) => {
@@ -55,17 +55,8 @@ export default function Dashboard() {
         data.loading ?
             <Loading />
             :
-            <div className=" h-full pb-6">
-                <div style={{ backgroundImage: `url(${process.env.REACT_APP_API_IMAGE_URL}Public/images/PIMG-1679298297754.jpeg)`, backgroundSize: 'cover' }} className='mb-6 flex flex-col gap-1 w-full p-4 text-white'>
-                    <p className='text-2xl font-semibold'>
-                        Welcome, Admin iFhone
-                    </p>
-                    <p className='opacity-70 ml-1'>
-                        All business in iFhone
-                    </p>
-                </div>
-
-                <div className=' flex flex-col px-6'>
+            <div className=" h-full py-6 lg:pt-2 pt-24">
+                <div className=' flex flex-col px-4'>
                     <div className='flex'>
                         <div className='flex flex-col'>
                             <div className="text-xl font-semibold">
@@ -75,8 +66,8 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div className="flex w-full mt-4 gap-6">
-                        <div className='flex gap-8 justify-between  w-full text-white'>
-                            <div className='h-20 gap-5 px-2 py-3 w-max bg-stone-800 flex rounded-md border-b-4 border-yellow-300 text-white group'>
+                        <div className='flex flex-col lg:flex-row gap-8 w-fit lg:w-full text-white'>
+                            <div className='h-20 gap-5 px-2 py-3 bg-stone-800 flex rounded-md border-b-4 border-yellow-300 text-white group'>
                                 <div className='flex items-center justify-center px-4 text-center rounded-full bg-white group-hover:rotate-12 group-hover:duration-200'>
                                     <GrTransaction width={'20px'} />
                                 </div>
@@ -105,13 +96,13 @@ export default function Dashboard() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='h-20 gap-5 px-2 py-3 bg-stone-800 flex border-b-4 border-slate-400 rounded-md group'>
+                            <div className='h-20 gap-5 px-2 py-3  bg-stone-800 flex border-b-4 border-slate-400 rounded-md group'>
                                 <div className='flex items-center justify-center px-3 text-center rounded-full bg-white group-hover:rotate-12 group-hover:duration-200'>
                                     <AiOutlineStock color='black' size={'24px'} />
                                 </div>
                                 <div className='flex flex-col items-end'>
                                     <p className='text-md font-semibold'>Rp. {(data.balances).toLocaleString()}</p>
-                                    <div className='flex text-white items-center text-sm gap-1'>
+                                    <div className='flex text-white items-end text-sm gap-1'>
                                         total Balances
                                     </div>
                                 </div>
@@ -138,8 +129,8 @@ export default function Dashboard() {
 
                     </div>
                 </div>
-                <div className='flex justify-between'>
-                    <div className="w-1/2 h-full px-6 flex flex-col mt-10">
+                <div className='flex flex-col lg:flex-row lg:justify-between'>
+                    <div className="w-full lg:w-1/2 h-full px-6 flex flex-col mt-10">
                         <div className="flex flex-col  w-full min-h-fit px-9 pt-5 bg-stone-800 text-white rounded-md">
                             <div className="w-full flex flex-col mb-5 pb-2">
                                 <div className="flex justify-between items-center border-b pb-3 border-white ">
@@ -175,7 +166,7 @@ export default function Dashboard() {
                             }
                         </div>
                     </div>
-                    <div className='w-1/2 px-6 mt-4'>
+                    <div className='w-full lg:w-1/2 px-6 mt-4'>
                         <p className='text-xl mb-3 font-semibold'>Top gainers</p>
                         <div className='flex flex-col gap-4'>
                             {

@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker'
 import React from 'react'
 import Select from 'react-select'
 import Loading from './../loading/loading'
+import { TbNotebook, TbReceipt } from "react-icons/tb"
 
 export default function LogProduct() {
     let { user } = useContext(userData)
@@ -25,7 +26,7 @@ export default function LogProduct() {
         pilihProduk: 1,
         pilihProdukIndex: 0,
         namaProduk: '',
-        statusIndex:0
+        statusIndex: 0
     })
 
     let [filterStatus, setFilterStatus] = useState([
@@ -42,7 +43,7 @@ export default function LogProduct() {
     }
 
     let getAllLog = async (page, warehouse_id, code, date, pilihKategori, pilihProduk, pilihProdukIndex, filterStatus) => {
-        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/log/getlog?page=${page}&warehouse_id=${warehouse_id}&code=${code}&date=${date}&pilihKategori=${pilihKategori}&pilihProduk=${pilihProduk}&filterStatus=${filterStatus.value}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/log/log-history?page=${page}&warehouse_id=${warehouse_id}&code=${code}&date=${date}&pilihKategori=${pilihKategori}&pilihProduk=${pilihProduk}&filterStatus=${filterStatus.value}`)
 
         if (code == 1) {
             let loader = [], loader2 = []
@@ -66,25 +67,53 @@ export default function LogProduct() {
             setDataLog({
                 ...dataLog, log: response.data.data.getData, product: loader, code, page, date, pilihKategori, pilihProduk, pilihProdukIndex, loading: false,
                 total_count: response.data.data.total_count, category: response.data.data.category, namaProduk: loader[pilihProdukIndex].label,
-                total_pages: response.data.data.total_pages, warehouse: warehouse_id, date: date == 0 ? new Date() : new Date(date), statusIndex:filterStatus.index
+                total_pages: response.data.data.total_pages, warehouse: warehouse_id, date: date == 0 ? new Date() : new Date(date), statusIndex: filterStatus.index
             })
         }
 
     }
 
     useEffect(() => {
-        getAllLog(1, user.warehouse_id ? user.warehouse_id : 0, 1, 0, 1, 0, 0,{ value: '', label: 'All Status', index: 0 })
+        getAllLog(1, user.warehouse_id ? user.warehouse_id : 0, 1, 0, 1, 0, 0, { value: '', label: 'All Status', index: 0 })
         filter()
     }, [])
 
     return (
-        <div className="p-5">
-            <div className="text-2xl font-semibold">
-                Log Product
+        <div className="px-5 lg:pt-8 pt-24">
+            <div className='flex justify-between'>
+                <div>
+                    <div className="text-2xl font-semibold">
+                        Log Product
+                    </div>
+                    <div className='text-gray-400 text-sm mb-6'>
+                        {dataLog.total_count} log found
+                    </div>
+                </div>
+                {
+                    !user.warehouse ?
+                        <div className='lg:hidden'>
+                            <select
+                                onChange={(e) => {
+                                    setDataLog({ ...dataLog, loading: true, warehouse: e.target.value })
+                                    getAllLog(1, e.target.value, dataLog.code, dataLog.date, dataLog.pilihKategori,
+                                        dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
+                                }}
+                                className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
+                                <option value={0}>All Warehouse Log</option>
+                                {
+                                    dataFilter.map((item, index) => {
+                                        return (
+                                            <option value={item.id}>{item.city}</option>
+                                        )
+                                    })
+                                }
+                            </select>
+                        </div> :
+                        <p className='text-md lg:hidden gap-2 flex items-end font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p>
+
+                }
             </div>
-            <div className='text-gray-400 text-sm mb-6'>
-                {dataLog.total_count} log found
-            </div>
+
             <div>
 
                 <div className='flex justify-between gap-3 my-5 '>
@@ -98,8 +127,10 @@ export default function LogProduct() {
                                             setDataLog({ ...dataLog, loading: true })
                                             getAllLog(1, dataLog.warehouse, index + 1, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                         }}
-                                        className={`font-semibold relative hover:text-gray-200 ${dataLog.code == index + 1 ? 'text-gray-200' : 'text-gray-400'}  `}
+                                        className={`font-semibold flex gap-2 items-center relative hover:text-gray-200 ${dataLog.code == index + 1 ? 'text-gray-200' : 'text-gray-400'}  `}
                                     >
+                                        {item == 'Summary' ? <TbNotebook /> : <TbReceipt />}
+
                                         {item}
                                     </button>
                                 </div>
@@ -116,7 +147,7 @@ export default function LogProduct() {
                                 selected={dataLog.date}
                                 onChange={(date) => {
                                     setDataLog({ ...dataLog, date, loading: true })
-                                    getAllLog(1, dataLog.warehouse, dataLog.code, date.toLocaleDateString(), dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                    getAllLog(1, dataLog.warehouse, dataLog.code, date.toLocaleDateString(), dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                 }}
                             />
 
@@ -127,12 +158,12 @@ export default function LogProduct() {
 
                         {
                             !user.warehouse ?
-                                <div>
+                                <div className='hidden lg:block'>
                                     <select
                                         onChange={(e) => {
                                             setDataLog({ ...dataLog, loading: true, warehouse: e.target.value })
                                             getAllLog(1, e.target.value, dataLog.code, dataLog.date, dataLog.pilihKategori,
-                                                dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                                dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                         }}
                                         className="border-gray-200 focus:ring-0 focus:border-border-200 focus:outline-none rounded-md" placeholder="Select Warehouse">
                                         <option value={0}>All Warehouse Log</option>
@@ -145,7 +176,7 @@ export default function LogProduct() {
                                         }
                                     </select>
                                 </div> :
-                                <p className='text-md gap-2 flex items-end font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p>
+                                <p className='text-md hidden gap-2 lg:flex items-end font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p>
 
                         }
 
@@ -159,9 +190,9 @@ export default function LogProduct() {
                     dataLog.loading ?
                         <Loading />
                         :
-                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-green-500 rounded-lg px-12 py-7 bg-stone-800 text-slate-200">
+                        <div className="relative overflow-x-auto shadow-md border p-4 border-y-4 border-green-500 rounded-lg px-6 py-7 bg-stone-800 text-slate-200">
                             <div className='flex justify-between w-full'>
-                                <div className='flex w-3/4 gap-10 mb-4'>
+                                <div className='flex w-1/2 lg:w-3/4 gap-10 mb-4 overflow-x-auto'>
                                     {
                                         dataLog.category?.map((item, index) => {
                                             return (
@@ -170,7 +201,7 @@ export default function LogProduct() {
                                                     onClick={() => {
                                                         setDataLog({ ...dataLog, loading: true, warehouse: index + 1 })
                                                         getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, index + 1,
-                                                            0, 0,filterStatus[dataLog.statusIndex])
+                                                            0, 0, filterStatus[dataLog.statusIndex])
                                                     }}
                                                     className={`font-semibold relative hover:text-gray-200 ${dataLog.pilihKategori == index + 1 ? 'underline-offset-4 underline text-gray-200' : 'text-gray-500'}  `}
                                                 >
@@ -180,7 +211,7 @@ export default function LogProduct() {
                                         })}
                                 </div>
 
-                                <div className='w-1/4 mb-5'>
+                                <div className='w-1/2 lg:w-1/4 mb-5'>
                                     <Select
                                         menuPosition="fixed"
                                         className="basic-single text-black"
@@ -190,7 +221,7 @@ export default function LogProduct() {
                                         // isLoading={dataLog.loading}
                                         onChange={(e) => {
                                             setDataLog({ ...dataLog, loading: true })
-                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index,filterStatus[dataLog.statusIndex])
+                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, e.value, e.index, filterStatus[dataLog.statusIndex])
                                         }}
                                         maxMenuHeight={220}
                                         options={dataLog.product} >
@@ -198,7 +229,7 @@ export default function LogProduct() {
                                     </Select>
                                 </div>
                             </div>
-                            <div className="relative overflow-x-auto shadow-md  sm:rounded-lg">
+                            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                                 <table className="w-full text-sm text-center border border-green-500 text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr >
@@ -285,12 +316,12 @@ export default function LogProduct() {
                                 </table>
                             </div>
 
-                            <div className='flex justify-center p-5 gap-2'>
+                            <div className='flex justify-center pt-3 pb-4 gap-2'>
                                 <button
-                                    disabled={(dataLog.page - 1) == 0}
+                                    disabled={(dataLog.page - 1) == 0 || dataLog.loading}
                                     onClick={() => {
                                         setDataLog({ ...dataLog, loading: true, page: dataLog.page - 1 })
-                                        getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                        getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                     }} className='font-semibold rounded-l-lg px-4 hover:bg-white hover:text-black'>
                                     Previous
                                 </button>
@@ -298,10 +329,10 @@ export default function LogProduct() {
                                     Page {dataLog.page} of {dataLog?.total_pages}
                                 </div>
                                 <button
-                                    disabled={(dataLog.page + 1) > dataLog.total_pages}
+                                    disabled={(dataLog.page + 1) > dataLog.total_pages || dataLog.loading}
                                     onClick={() => {
                                         setDataLog({ ...dataLog, loading: true, page: dataLog.page + 1 })
-                                        getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                        getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                     }} className='font-semibold rounded-r-lg px-7 hover:bg-white hover:text-black'>
                                     Next
                                 </button>
@@ -332,21 +363,21 @@ export default function LogProduct() {
                                             )
                                         })}
                                 </div>
-                                
+
                                 <div className='flex gap-4 mb-5'>
                                     <Select
-                                 
-                                 className="basic-single text-black"
-                                 classNamePrefix="select"
-                                 defaultValue={filterStatus[dataLog.statusIndex]}
-                                 onChange={(e) => {
-                                    setDataLog({ ...dataLog, loading: true})
-                                    getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, e)
-                                }}
-                                maxMenuHeight={220}
-                                options={filterStatus} >
-                                   
-                                </Select>
+
+                                        className="basic-single text-black"
+                                        classNamePrefix="select"
+                                        defaultValue={filterStatus[dataLog.statusIndex]}
+                                        onChange={(e) => {
+                                            setDataLog({ ...dataLog, loading: true })
+                                            getAllLog(1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, e)
+                                        }}
+                                        maxMenuHeight={220}
+                                        options={filterStatus} >
+
+                                    </Select>
                                     <Select
                                         className="basic-single text-black"
                                         classNamePrefix="select"
@@ -422,7 +453,7 @@ export default function LogProduct() {
                                                                             <div>{item.product_detail?.memory_storage != 1000 ? item.product_detail?.memory_storage + ' ' + 'GB' : (item.product_detail?.memory_storage / 1000) + ' ' + 'TB'}</div>
                                                                     }
                                                                     <div>{item.product_detail?.processor}</div>
-                                                                    {item.product_detail?.screen_size.length>0? <div>{item.product_detail?.screen_size} inch</div>:null}
+                                                                    {item.product_detail?.screen_size.length > 0 ? <div>{item.product_detail?.screen_size} inch</div> : null}
                                                                     <div>{item.product_detail?.weight * 1000} g</div>
                                                                 </td>
                                                             </tr>
@@ -433,7 +464,7 @@ export default function LogProduct() {
                                         </table>
                                         <div className='flex justify-center p-5 gap-2'>
                                             <button
-                                                disabled={(dataLog.page - 1) == 0}
+                                                disabled={(dataLog.page - 1) == 0 || dataLog.loading}
                                                 onClick={() => {
                                                     setDataLog({ ...dataLog, loading: true, page: dataLog.page - 1 })
                                                     getAllLog(dataLog.page - 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
@@ -444,10 +475,10 @@ export default function LogProduct() {
                                                 Page {dataLog.page} of {dataLog?.total_pages}
                                             </div>
                                             <button
-                                                disabled={(dataLog.page + 1) > dataLog.total_pages}
+                                                disabled={(dataLog.page + 1) > dataLog.total_pages || dataLog.loading}
                                                 onClick={() => {
                                                     setDataLog({ ...dataLog, loading: true, page: dataLog.page + 1 })
-                                                    getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex,filterStatus[dataLog.statusIndex])
+                                                    getAllLog(dataLog.page + 1, dataLog.warehouse, dataLog.code, dataLog.date, dataLog.pilihKategori, dataLog.pilihProduk, dataLog.pilihProdukIndex, filterStatus[dataLog.statusIndex])
                                                 }} className='font-semibold rounded-r-lg px-7 hover:bg-black hover:text-white'>
                                                 Next
                                             </button>

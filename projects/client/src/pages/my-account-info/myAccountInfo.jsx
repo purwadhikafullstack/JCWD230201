@@ -2,7 +2,6 @@ import axios from "axios"
 import { useContext, useEffect, useRef, useState } from "react"
 import { toast, Toaster } from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
-import initialPP from '../../Assets/Blank_PP.jpg'
 
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 
@@ -55,7 +54,6 @@ export default function MyAccountInfo() {
     let onImageValidation = (e) => {
         try {
             let files = [...e.target.files]
-            // console.log(files[0])
             setProfile({ ...profile, photo_profile: files })
 
             if (files.length === 0) {
@@ -77,12 +75,9 @@ export default function MyAccountInfo() {
 
     let updateProfilePicture = async () => {
         try {
-            
-            
+            if(profile.photo_profile.length==0) throw {message:'Please select image first'}
             let fd = new FormData()
             fd.append('images', profile.photo_profile[0])
-
-            setDisablePicture(true)
             let data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/photo_profile`, fd, {
                 headers: {
                     token: localStorage.getItem('token')
@@ -108,7 +103,7 @@ export default function MyAccountInfo() {
 
             setDisablePicture(false)
         } catch (error) {
-            toast.error('Please choose your photo')
+            toast.error(error.message)
             setDisablePicture(false)
         }
     }
@@ -184,7 +179,10 @@ export default function MyAccountInfo() {
                                 show={modal}
                                 size="md"
                                 popup={true}
-                                onClose={() => setModal(!modal)}
+                                onClose={() =>{
+                                    setProfile({...profile, photo_profile:[]})
+                                    setMessage('')
+                                    setModal(!modal)}}
                             >
                                 <Modal.Header />
                                 <Modal.Body>
@@ -197,7 +195,9 @@ export default function MyAccountInfo() {
                                             {message}
                                         </div>
                                         <div className="w-full justify-center flex">
-                                            <button disabled={disablePicture} onClick={() => updateProfilePicture()} className=" text-white bg-black border border-black hover:bg-white hover:text-black disabled:cursor-not-allowed font-semibold rounded-sm px-10 py-2">
+                                            <button disabled={disablePicture} onClick={() =>{
+                                            setDisablePicture(true)
+                                            updateProfilePicture()}} className=" text-white bg-black border border-black hover:bg-white hover:text-black disabled:cursor-not-allowed font-semibold rounded-sm px-10 py-2">
                                                 Submit
                                             </button>
                                         </div>

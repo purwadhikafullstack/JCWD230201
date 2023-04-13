@@ -58,8 +58,11 @@ export default function AdminLogin() {
         !user ?
             <Loading />
             :
-            user.id ?
+            user.role != null?
                 navigate('/admin')
+                :
+                user.id?
+                navigate('/')
                 :
                 <>
                     {/* Main */}

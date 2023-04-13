@@ -66,7 +66,7 @@ export default function SalesReport() {
                     color: 'white'
                 }
             })
-            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id ? user.warehouse_id : 0}&page=${1}`)
+            let response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/allSales?start=${pickY}-01-01&end=${parseInt(pickY) + 1}-01-01&type=${pickT}&WH=${user.warehouse_id ? user.warehouse_id : 0}&page=${1}`)
             let total_price = 0, total_tr = 0, total_ongkir = 0, total_discount = 0
             response.data.data.forEach((item, index) => {
                 total_ongkir += item.ongkir
@@ -91,14 +91,14 @@ export default function SalesReport() {
         try {
 
             if (!M) {
-                var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
+                var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/allSales?start=${Y}-01-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
 
 
             } else if (M) {
                 if (M.split(',')[0] == 12) {
-                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/allSales?start=${Y}-${M.split(',')[0]}-01&end=${parseInt(Y) + 1}-01-01&type=${T}&WH=${WH}&page=${page}`)
                 } else {
-                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/getSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}&page=${page}`)
+                    var response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/transaction/allSales?start=${Y}-${M.split(',')[0]}-01&end=${Y}-${parseInt(M) + 1}-01&type=${T}&WH=${WH}&page=${page}`)
                 }
 
             }
@@ -149,7 +149,7 @@ export default function SalesReport() {
 
 
     return (
-            <div className="min-h-screen px-10 pt-3 pb-10">
+            <div className="min-h-screen px-5 pt-24 lg:pt-3 pb-10">
 
                 <div className="flex flex-col mt-2 mb-5 ">
                     <div className='text-2xl font-semibold'>
@@ -168,8 +168,8 @@ export default function SalesReport() {
                         this year
                     </div>
 
-                    <div className='flex justify-between mb-2 text-white '>
-                        <div className='w-1/2 flex gap-5'>
+                    <div className='flex flex-col lg:flex-row lg:justify-between mb-2 text-white '>
+                        <div className='w-fit lg:w-1/2 flex lg:flex-row flex-col gap-5'>
                             <div className='h-20 gap-5 px-4 py-3 bg-stone-800 flex border-b-4 border-lime-300 rounded-md group'>
                                 <div className='flex items-center justify-center px-3.5 text-center rounded-full bg-white group-hover:rotate-12 group-hover:duration-200'>
                                     <FiShoppingBag color='black' size={'24px'} />
@@ -197,7 +197,7 @@ export default function SalesReport() {
                                 </div>
                             </div>
                         </div>
-                        <div className='w-1/2 flex gap-5 justify-end'>
+                        <div className='lg:w-1/2 w-full mt-4 lg:mt-0 flex gap-5 justify-end'>
                             <div className='flex gap-5'>
                                 <div className={`sm:min-w-fit block}`}>
                                     <div className="mb-2 block sm:min-w-fit">
@@ -251,7 +251,7 @@ export default function SalesReport() {
 
                             {
                                 user.warehouse_id > 0 ?
-                                    <p className='text-md gap-2 flex items-center h-20 font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p> : 
+                                    <p className='text-md gap-2 flex items-center justify-end h-20 font-medium text-black'> <p>Warehouse</p>  {user.warehouse}</p> : 
                                     <div className='sm:min-w-fit'>
                                         <div className="mb-2">
                                             <Label
@@ -283,7 +283,7 @@ export default function SalesReport() {
                     </div>
                 </div>
 
-                <div className='border-y-4 border-yellow-300 rounded-md px-12 py-7 bg-stone-800 text-slate-200'>
+                <div className='border-y-4 lg:text-md lg:text-lg text-xs border-yellow-300 rounded-md px-6 py-7 bg-stone-800 text-slate-200'>
 
                     <div className='flex gap-4'>
                         <button onClick={() => getSales(pickY, pickM, 1, pickWH, visible.page)} disabled={pickT == 1 ? true : false} className={`font-semibold ${pickT == 1 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
@@ -293,7 +293,7 @@ export default function SalesReport() {
                             setVisible({ ...visible, category: [] })
                             getSales(pickY, pickM, 2, pickWH, visible.page)
                         }} disabled={pickT == 2 ? true : false} className={`font-semibold ${pickT == 2 ? `scale-110 underline-offset-4 underline` : `hover:underline hover:underline-offset-4 transition duration-150 ease-in-out hover:scale-110 hover:bg-stone-700`}  px-2 `}>
-                            Product Category
+                            Category
                         </button>
                         <button onClick={() => {
                             setVisible({ ...visible, category: [] })
@@ -331,9 +331,9 @@ export default function SalesReport() {
                                     :
                                         <div className='flex flex-col'>
                                             <SalesProduct data={visible} />
-                                            <div className='flex justify-center p-5 gap-2'>
+                                            <div className='flex justify-center py-4 gap-2'>
                                                 <button
-                                                    disabled={(visible.page - 1) < visible.total_pages}
+                                                    disabled={(visible.page - 1) < visible.total_pages || visible.loading}
                                                     onClick={() => {
                                                         setVisible({...visible, loading:true})
                                                         getSales(pickY, pickM, pickT, pickWH, visible.page - 1)
@@ -345,7 +345,7 @@ export default function SalesReport() {
                                                     Page {visible.page} of {visible.total_pages}
                                                 </div>
                                                 <button
-                                                    disabled={(visible.page + 1) > visible.total_pages}
+                                                    disabled={(visible.page + 1) > visible.total_pages || visible.loading}
                                                     onClick={() => {
                                                         setVisible({...visible, loading:true})
                                                         getSales(pickY, pickM, pickT, pickWH, visible.page + 1)

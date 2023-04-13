@@ -46,7 +46,6 @@ export default function AdminSettingProfile() {
 
     let submit = async (input) => {
         let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/admin/update`, input)
-        console.log(response)
         toast.success(response.data.message)
         setTimeout(() => {
             window.location.reload(false)

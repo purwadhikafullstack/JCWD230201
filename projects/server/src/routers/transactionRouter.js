@@ -6,11 +6,11 @@ const { transactionController } = require('../controllers') // Akan otomatis men
 const { tokenVerify } = require('../middleware/verifyToken')
 const upload = require('../middleware/upload')
 
-Router.post('/getAllTransaction', transactionController.allTransaction)
+Router.post('/allTransaction', transactionController.allTransaction)
 Router.post('/getTransactionWH', transactionController.transactionWH)
 Router.post('/filter', transactionController.filter)
 Router.post('/FWarehouse', transactionController.filterWH)
-Router.get('/getSales', transactionController.getSales)
+Router.get('/allSales', transactionController.getSales)
 Router.post('/createOrder',tokenVerify, transactionController.CreateOrder)
 Router.patch('/update', transactionController.updateOrder)
 Router.patch('/ship', transactionController.shipOrder)

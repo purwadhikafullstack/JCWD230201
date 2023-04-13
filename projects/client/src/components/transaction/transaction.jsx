@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Loading from '../loading/loading'
 import toast, { Toaster } from 'react-hot-toast'
 import '@lottiefiles/lottie-player'
+import {GrPowerReset} from 'react-icons/gr'
 
 export default function Transaction() {
     const { transaction, setTransaction } = useContext(TransactionData)
@@ -64,7 +65,7 @@ export default function Transaction() {
     let getAllTr = async () => {
 
         setPickWH(user.warehouse_id ? user.warehouse_id : 0)
-        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/getAllTransaction`, user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0, page: 1 } : { warehouse: 0, order_status_id: 0, page: 1 })
+        let response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/allTransaction`, user.warehouse_id ? { warehouse: user.warehouse_id, order_status_id: 0, page: 1 } : { warehouse: 0, order_status_id: 0, page: 1 })
         setListData({
             ...listData, dataTR: response.data.data.response, total_count: response.data.data.total_count
             , total_pages: response.data.data.total_pages, loading: false
@@ -90,7 +91,7 @@ export default function Transaction() {
         setPickWH(wh)
         setPickStatus(status)
         try {
-            var response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/getAllTransaction`, { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null, page: slot ? slot : 1 })
+            var response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/transaction/allTransaction`, { warehouse: wh, order_status_id: status, from: from ? from.toISOString().split("T")[0] : null, to: to ? to.toISOString().split("T")[0] : null, page: slot ? slot : 1 })
 
             let loaderPrice = [], loaderDate = []
             for (let i = 0; i < response.data.data.response.length; i++) {
@@ -137,16 +138,25 @@ export default function Transaction() {
         proses ?
             <Loading />
             :
-            <div className="p-5">
+            <div className="p-5 pt-24 lg:pt-3">
                 <div className="text-2xl font-semibold">
                     Transaction
                 </div>
                 <div className='text-gray-500 font-semibold mb-6'>
                     {listData.total_count} transactions found
                 </div>
+
+                <button className='flex gap-2 items-center lg:hidden' onClick={()=>{
+                    setSelectedDate({...selectedDate,from:'',to:''})
+                    setDate({...selectedDate,from:'',to:''})
+                    getTr(pickWH, pickStatus,'','', 1)
+                }}>
+                    <GrPowerReset/>
+                  <p>reset date</p>
+                </button>
     
                 <div>
-                    <div className='flex justify-between gap-3 '>
+                    <div className='flex lg:justify-between gap-3 '>
                         <div className='flex gap-5 items-center'>
                             <div className='flex flex-col gap-1'>
                                 <label className='pl-2 text-sm text-gray-600' htmlFor="A">Start date</label>
@@ -185,6 +195,16 @@ export default function Transaction() {
                                     }}
                                 />
                             </div>
+                            
+                <button className='lg:flex gap-2 items-center hidden' onClick={()=>{
+                    setSelectedDate({...selectedDate,from:'',to:''})
+                    setDate({...selectedDate,from:'',to:''})
+                    setListData({...listData,loading:true})
+                    getTr(pickWH, pickStatus,'','', 1)
+                }}>
+                    <GrPowerReset/>
+                  <p>reset date</p>
+                </button>
                         </div>
                         <div className='flex gap-3'>
                             {
@@ -204,7 +224,7 @@ export default function Transaction() {
                                                 })
                                             }
                                         </select>
-                                    </div> : <div className='flex items-end gap-2 text-md font-medium'> <p>warehouse</p> {user.warehouse} </div>
+                                    </div> : <div className='flex items-end gap-2 text-md font-medium'> <p>Warehouse</p> {user.warehouse} </div>
                             }
 
                         </div>
@@ -212,7 +232,7 @@ export default function Transaction() {
                     </div>
 
                     <div className='flex justify-start items-center mt-5'>
-                        <div className='flex gap-5 ml-5'>
+                        <div className='flex gap-5 ml-5 overflow-x-auto'>
                             {
                                 shotgun.map((item, index) => {
                                     return (
@@ -242,14 +262,14 @@ export default function Transaction() {
                             <div className='flex flex-col gap-7'>
                                 {listData.dataTR.map((item, index) => {
                                     return (
-                                        <div className='flex flex-col rounded-md border border-y-4 border-stone-300 shadow-sm z-0'>
+                                        <div className='flex flex-col rounded-md border lg:w-full w-fit border-y-4 border-stone-300 shadow-sm z-0'>
                                             <div className='flex font-semibold gap-3 pt-3 px-3'>
                                                 <div className='flex w-3/4 gap-3'>
                                                     <div className='font-semibold text-emerald-600 text-md'>
                                                         {item.id}
                                                     </div>
 
-                                                    <div className={`${shotgunStatus[item.order_status_id - 1]} px-2 rounded-xl py-1`}>
+                                                    <div className={`${shotgunStatus[item.order_status_id - 1]} px-2 h-fit rounded-xl py-1`}>
                                                         {item.order_status.status}
                                                     </div>
 
@@ -270,7 +290,7 @@ export default function Transaction() {
                                                     }
                                                 </div>
 
-                                                <div className='flex w-1/4 justify-start items-center gap-3'>
+                                                <div className='flex w-fit justify-start items-center gap-3'>
                                                     <div className='opacity-60 text-sm font-medium'>
                                                         Deliver from :
                                                     </div>
@@ -407,7 +427,7 @@ export default function Transaction() {
                                 }
                                 <div className='flex justify-center p-5 gap-2'>
                                     <button
-                                        disabled={(listData.slot - 1) == 0}
+                                        disabled={(listData.slot - 1) == 0 || listData.loading}
                                         onClick={() => {
                                             setListData({ ...listData, loading: true })
                                             getTr(pickWH, pickStatus, selectedDate.from, selectedDate.to, listData.slot - 1)
@@ -418,7 +438,7 @@ export default function Transaction() {
                                         Page {listData.slot} of {listData.total_pages}
                                     </div>
                                     <button
-                                        disabled={(listData.page + 1) > listData.total_pages}
+                                        disabled={(listData.page + 1) > listData.total_pages || listData.loading}
                                         onClick={() => {
                                             setListData({ ...listData, loading: true })
                                             getTr(pickWH, pickStatus, selectedDate.from, selectedDate.to, listData.slot + 1)
