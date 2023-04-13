@@ -95,7 +95,7 @@ export default function ProductDetail(props) {
             <Loading />
             :
             <>
-                <div className="pt-20 md:pt-32 grid justify-center w-screen md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
+                <div className="pt-20 md:pt-32 grid justify-center w-full md:flex md:justify-center lg:flex lg:justify-center md:gap-7 relative">
                     <div className="lg:hidden flex items-center justify-between bg-white w-full px-3 md:px-5 py-2 border-b-2 fixed z-10 top-20">
                         <div className="text-xl font-semibold">
                             {props.data.detail.name}
