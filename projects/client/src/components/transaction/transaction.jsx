@@ -427,7 +427,7 @@ export default function Transaction() {
                                 }
                                 <div className='flex justify-center p-5 gap-2'>
                                     <button
-                                        disabled={(listData.slot - 1) == 0}
+                                        disabled={(listData.slot - 1) == 0 || listData.loading}
                                         onClick={() => {
                                             setListData({ ...listData, loading: true })
                                             getTr(pickWH, pickStatus, selectedDate.from, selectedDate.to, listData.slot - 1)
