@@ -50,6 +50,7 @@ export default function MenuAdminSetting(data) {
         window.location.reload(false)
       }, 2000)
     } catch (error) {
+      console.log(error)
       setVisible({ ...visible, pop: false, disable: false })
       if (!error.response) {
         toast.error(error.message)
@@ -76,6 +77,7 @@ export default function MenuAdminSetting(data) {
         <div>
           <Menu.Button
             onClick={() => {
+              console.log(data.data.phone_number?'a':'b')
               setProfile({
                 ...profile,
                 id: data.data.id,
