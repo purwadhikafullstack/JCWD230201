@@ -24,7 +24,6 @@ export default function SidebarAdmin(props) {
     return (
 
         <div className={`fixed px-5 py-5 ${props.data.open ? `lg:w-60 w-fit` : `lg:w-20 lg:block -translate-x-32 lg:-translate-x-0`} duration-300 h-full text-white bg-black z-20`}>
-       // <div className={`hidden lg:block lg:fixed px-5 py-5 ${props.data.open? `w-60`:`w-20`} duration-300 h-full text-white bg-black z-20`}>
             <div className='flex flex-col h-full'>
                 <button onClick={() =>navigate('/')} className={`w-fit ${props.data.open ? 'ml-3' : ''} mb-10 object-contain relative flex items-end`}>
                     <img src={`${process.env.REACT_APP_API_IMAGE_URL}Public/images/${props.data.open ? 'F_logo' : 'favicon(1)'}.png`} alt="" width={`${props.data.open ? '80px' : '25px'}`} />
