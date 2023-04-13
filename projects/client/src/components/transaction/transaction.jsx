@@ -427,7 +427,7 @@ export default function Transaction() {
                                 }
                                 <div className='flex justify-center p-5 gap-2'>
                                     <button
-                                        disabled={(listData.slot - 1) == 0 || listData.loading}
+                                        disabled={(listData.slot - 1) == 0}
                                         onClick={() => {
                                             setListData({ ...listData, loading: true })
                                             getTr(pickWH, pickStatus, selectedDate.from, selectedDate.to, listData.slot - 1)
@@ -438,7 +438,7 @@ export default function Transaction() {
                                         Page {listData.slot} of {listData.total_pages}
                                     </div>
                                     <button
-                                        disabled={(listData.page + 1) > listData.total_pages || listData.loading}
+                                        disabled={(listData.slot + 1) > listData.total_pages}
                                         onClick={() => {
                                             setListData({ ...listData, loading: true })
                                             getTr(pickWH, pickStatus, selectedDate.from, selectedDate.to, listData.slot + 1)
